@@ -10,10 +10,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
+import javax.annotation.security.PermitAll;
+
 @PageTitle("Home")
-@Route(value = "home", layout = MainLayout.class)
-@RouteAlias(value = "", layout = MainLayout.class)
-@AnonymousAllowed
+@Route(value = "", layout = MainLayout.class)
+@PermitAll
 public class HomeView extends VerticalLayout {
 
     public HomeView() {

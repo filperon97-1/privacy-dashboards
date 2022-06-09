@@ -1,9 +1,6 @@
 package com.privacydashboard.application.data.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name= "iot_app")
@@ -20,14 +17,12 @@ public class IoTApp extends AbstractEntity{
     public void setName(String name) {
         this.name = name;
     }
-
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
     }
-
     public User getDataController() {
         return dataController;
     }

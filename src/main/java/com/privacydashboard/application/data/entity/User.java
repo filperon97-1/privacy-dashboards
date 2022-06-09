@@ -2,6 +2,8 @@ package com.privacydashboard.application.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.Role2;
+
 import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -22,6 +24,9 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    private Role2 role2;
+
     @Lob
     private String profilePictureUrl;
 
@@ -54,6 +59,12 @@ public class User extends AbstractEntity {
     }
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+    public Role2 getRole2() {
+        return role2;
+    }
+    public void setRole2(Role2 role2) {
+        this.role2 = role2;
     }
 
 }
