@@ -19,8 +19,18 @@ import java.util.List;
 @Route(value = "", layout = MainLayout.class)
 @PermitAll
 public class HomeView extends VerticalLayout {
+    //DA ELIMINARE
+    private List<User> userList;
+    private UserService userService;
 
-    public HomeView() {
+    public HomeView(UserService userService) {
+        //DA ELIMINARE
+        this.userService=userService;
+        userList=userService.findAll();
+        for(User user: userList){
+            add(new H2(user.getUsername() + " " + user.getHashedPassword() + " " + user.getDataRole()));
+        }
+        //FINE ELIMINAZIONE
         setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
