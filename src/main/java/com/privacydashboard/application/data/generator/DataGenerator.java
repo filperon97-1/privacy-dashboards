@@ -1,7 +1,7 @@
 package com.privacydashboard.application.data.generator;
 
+import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.Role2;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.UserRepository;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -36,7 +36,7 @@ public class DataGenerator {
             user.setProfilePictureUrl(
                     "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
             user.setRoles(Collections.singleton(Role.USER));
-            user.setRole2(Role2.SUBJECT);
+            user.setDataRole(DataRole.SUBJECT);
             userRepository.save(user);
             User admin = new User();
             admin.setName("Emma Powerful");
@@ -45,7 +45,7 @@ public class DataGenerator {
             admin.setProfilePictureUrl(
                     "https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
             admin.setRoles(Set.of(Role.USER, Role.ADMIN));
-            admin.setRole2(Role2.CONTROLLER);
+            admin.setDataRole(DataRole.CONTROLLER);
             userRepository.save(admin);
 
             logger.info("Generated demo data");

@@ -1,25 +1,31 @@
 package com.privacydashboard.application.views.login;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
-import com.vaadin.flow.component.login.LoginOverlay;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.*;
 
+@Route("login")
 @PageTitle("Login")
-@Route(value = "login")
-public class LoginView extends LoginOverlay {
-    public LoginView() {
-        setAction("login");
+public class LoginView extends VerticalLayout implements BeforeEnterObserver {
+    private final LoginForm loginForm= new LoginForm();     //Basic login template
 
-        LoginI18n i18n = LoginI18n.createDefault();
-        i18n.setHeader(new LoginI18n.Header());
-        i18n.getHeader().setTitle("Privacy Dashboard");
-        i18n.getHeader().setDescription("Login using user/user or admin/admin");
-        i18n.setAdditionalInformation(null);
-        setI18n(i18n);
-
-        setForgotPasswordButtonVisible(false);
-        setOpened(true);
+    public LoginView(){
+        addClassName("login");
+        setSizeFull();
+        setAlignItems(Alignment.CENTER);
+        loginForm.setForgotPasswordButtonVisible(true);
+        loginForm.setAction("login");
+        add(new H1("Privacy Dashboard"), loginForm, new RouterLink("Register", RegisterView.class));
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent){
+        if(beforeEnterEvent.getLocation().getQueryParameters().getParameters().containsKey("error")){
+            loginForm.setError(true);
+        }
+
+    }
 }

@@ -1,6 +1,8 @@
 package com.privacydashboard.application.data.service;
 
 import com.privacydashboard.application.data.entity.User;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +39,12 @@ public class UserService {
     public int count() {
         return (int) repository.count();
     }
+
+    public void addUser(User user){
+        repository.save(user);
+    }
+
+    // aggiunta
+    public List<User> findAll(){ return repository.findAll();}
 
 }

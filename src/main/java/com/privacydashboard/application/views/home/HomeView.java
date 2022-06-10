@@ -1,5 +1,7 @@
 package com.privacydashboard.application.views.home;
 
+import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.UserService;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -11,6 +13,7 @@ import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import javax.annotation.security.PermitAll;
+import java.util.List;
 
 @PageTitle("Home")
 @Route(value = "", layout = MainLayout.class)

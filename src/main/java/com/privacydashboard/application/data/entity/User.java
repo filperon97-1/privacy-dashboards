@@ -2,7 +2,7 @@ package com.privacydashboard.application.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.Role2;
+import com.privacydashboard.application.data.DataRole;
 
 import java.util.Set;
 import javax.persistence.ElementCollection;
@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "application_user")
@@ -25,7 +26,7 @@ public class User extends AbstractEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
     @Enumerated(EnumType.STRING)
-    private Role2 role2;
+    private DataRole dataRole;
 
     @Lob
     private String profilePictureUrl;
@@ -60,11 +61,11 @@ public class User extends AbstractEntity {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
-    public Role2 getRole2() {
-        return role2;
+    public DataRole getDataRole() {
+        return dataRole;
     }
-    public void setRole2(Role2 role2) {
-        this.role2 = role2;
+    public void setDataRole(DataRole dataRole) {
+        this.dataRole = dataRole;
     }
 
 }

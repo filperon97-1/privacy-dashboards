@@ -39,4 +39,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     }
 
+    public boolean registerUser(User user){
+        userRepository.save(user);
+        return true;
+    }
+
 }
