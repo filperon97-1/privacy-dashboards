@@ -29,10 +29,8 @@ import java.util.List;
 
 /*
  TO DO:
- - CONTROLLO DELLA REGISTRAZIONE(FARLO QUI O IN UN METODO PIU INTERNO??)
- - MESSAGGI D'ERRORE SIMIL LOGIN
- - COMBOBOX HA ERRORI
- - AZIONI DOPO LA FINE DELLA REGISTRAZIONE
+ - Check della password fatto anche sul primo PasswordField e non solo sul secondo
+ - Quando il browser chiede di salvare le credenziali c'è la HashPassword
  */
 @Route("registration")
 @PageTitle("Registration")
@@ -51,10 +49,7 @@ public class RegisterView extends VerticalLayout {
         this.passwordEncoder=passwordEncoder;
         addClassName("registration");
         setAlignItems(Alignment.CENTER);
-        //metodo1
         implementBinder();
-
-
         Button registerButton= new Button("Register", e-> confirm());
         add(new H1("Registration"), username, password, confirmPassword, dataRole, registerButton);
     }
@@ -80,25 +75,7 @@ public class RegisterView extends VerticalLayout {
         return passwordEncoder.encode(password);
     }
 
-    // DA COMPLETARE LA VERIFICA
     private void confirm(){
-    //private void confirm(String username, String password, String confirmPassword, DataRole dataRole){
-        //metodo 2
-        /*if (username.isEmpty()){
-            Notification.show("enter a valid username");
-            return;
-        }
-        if(password.isEmpty() || confirmPassword.isEmpty()){
-
-        }
-        User user=new User();
-        user.setUsername(username);
-        user.setHashedPassword(passwordEncoder.encode(password));
-        user.setDataRole(dataRole);
-        userService.addUser(user);*/
-
-
-        //metodo 1
         User user=new User();
         try{
             binder.writeBean(user);
@@ -106,7 +83,6 @@ public class RegisterView extends VerticalLayout {
             e.printStackTrace();
         }
         userService.addUser(user);
-        UI.getCurrent().getPage().setLocation("/");
-        // reinderizza alla pagina Home facendo il login o alla pagina login
+        UI.getCurrent().getPage().setLocation("/"); // reinderizza alla pagina login
     }
 }
