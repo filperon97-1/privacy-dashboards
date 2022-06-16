@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@PageTitle("AppsView")
+@PageTitle("Apps")
 @Route(value = "apps-view", layout = MainLayout.class)
 @PermitAll
 public class AppsView extends VerticalLayout {

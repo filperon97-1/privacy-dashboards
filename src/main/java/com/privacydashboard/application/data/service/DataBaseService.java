@@ -28,4 +28,8 @@ public class DataBaseService {
     public Set<String> getConsensesFromUserAndApp(User user, IoTApp app){
         return userAppRelationRepository.getUserAppRelationFromUserIdAndAppId(user.getId(), app.getId()).getConsenses();
     }
+
+    public List<User> getUsersFromApp(IoTApp app){
+        return userAppRelationRepository.getUsersFromAppId(app.getId());
+    }
 }

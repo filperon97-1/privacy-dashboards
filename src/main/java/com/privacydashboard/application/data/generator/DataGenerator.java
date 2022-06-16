@@ -89,6 +89,81 @@ public class DataGenerator {
             userAppRelation2.setConsenses(Set.of("consenso1", "consenso2"));
             userAppRelationRepository.save(userAppRelation2);
 
+            //AGGIUNGIAMO UN BEL PO'  DI ROBE
+            User[] subjects, controller, DPO;
+            IoTApp[] apps;
+            subjects= new User[50];
+            controller= new User[50];
+            DPO=new User[50];
+            apps=new IoTApp[50];
+            for(int i=0; i<50;i++){
+                subjects[i]= new User();
+                subjects[i].setUsername("subject" + String.valueOf(i));
+                subjects[i].setName("subject" + String.valueOf(i));
+                subjects[i].setHashedPassword(passwordEncoder.encode("subject" + String.valueOf(i)));
+                subjects[i].setRoles(Collections.singleton(Role.USER));
+                subjects[i].setDataRole(DataRole.SUBJECT);
+                userRepository.save(subjects[i]);
+
+                controller[i]= new User();
+                controller[i].setUsername("controller" + String.valueOf(i));
+                controller[i].setName("controller" + String.valueOf(i));
+                controller[i].setHashedPassword(passwordEncoder.encode("controller" + String.valueOf(i)));
+                controller[i].setRoles(Collections.singleton(Role.USER));
+                controller[i].setDataRole(DataRole.CONTROLLER);
+                userRepository.save(controller[i]);
+
+                DPO[i]= new User();
+                DPO[i].setUsername("DPO" + String.valueOf(i));
+                DPO[i].setName("DPO" + String.valueOf(i));
+                DPO[i].setHashedPassword(passwordEncoder.encode("DPO" + String.valueOf(i)));
+                DPO[i].setRoles(Collections.singleton(Role.USER));
+                DPO[i].setDataRole(DataRole.DPO);
+                userRepository.save(DPO[i]);
+
+                apps[i]= new IoTApp();
+                apps[i].setDescription("description" + String.valueOf(i));
+                apps[i].setName("appppp" + String.valueOf(i));
+                apps[i].setDataController(controller[i]);
+                ioTAppRepository.save(apps[i]);
+
+            }
+
+            for(int i=0;i<50;i++){
+                //SUBJECT I CON LE APP [I-5, I]
+                for(int j=i-5;j<=i;j++){
+                    if(j>=0){
+                        UserAppRelation userAppRelation=new UserAppRelation();
+                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setIdUser(subjects[i].getId());
+                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelationRepository.save(userAppRelation);
+                    }
+                }
+
+                //CONTROLLER I CON LE APP [I, I+5]
+                for(int j=i;j<=i+5;j++){
+                    if(j<50){
+                        UserAppRelation userAppRelation=new UserAppRelation();
+                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setIdUser(controller[i].getId());
+                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelationRepository.save(userAppRelation);
+                    }
+                }
+
+                //DPO I CON LE APP [I-2,I+3]
+                for(int j=i;j<=i+5;j++){
+                    if(j<50 && j>=0){
+                        UserAppRelation userAppRelation=new UserAppRelation();
+                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setIdUser(DPO[i].getId());
+                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelationRepository.save(userAppRelation);
+                    }
+                }
+            }
+
 
             //FINE AGGIUNTA
 
