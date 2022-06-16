@@ -2,12 +2,14 @@ package com.privacydashboard.application.views;
 
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.security.AuthenticatedUser;
+import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
-import com.privacydashboard.application.views.notifications.NotificationsView;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -20,19 +22,17 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import java.util.Optional;
 
-/**
- * The main view is a top-level placeholder for other views.
- */
 public class MainLayout extends AppLayout {
-
-    /**
-     * A simple navigation item component, based on ListItem element.
-     */
     public static class MenuItemInfo extends ListItem {
 
         private final Class<? extends Component> view;
@@ -53,7 +53,6 @@ public class MainLayout extends AppLayout {
         public Class<?> getView() {
             return view;
         }
-
         /**
          * Simple wrapper to create icons using LineAwesome iconset. See
          * https://icons8.com/line-awesome
@@ -70,6 +69,7 @@ public class MainLayout extends AppLayout {
 
     }
 
+    // the text will change based on the current page(afterNavigation())
     private H1 viewTitle;
 
     private AuthenticatedUser authenticatedUser;
@@ -92,8 +92,10 @@ public class MainLayout extends AppLayout {
 
         viewTitle = new H1();
         viewTitle.addClassNames("view-title");
+        Icon bellIcon= new Icon(VaadinIcon.BELL_O);
+        bellIcon.addClassNames("bell-icon");
 
-        Header header = new Header(toggle, viewTitle);
+        Header header = new Header(toggle, viewTitle, bellIcon);
         header.addClassNames("view-header");
         return header;
     }
@@ -131,7 +133,13 @@ public class MainLayout extends AppLayout {
         return new MenuItemInfo[]{ //
                 new MenuItemInfo("Home", "la la-file", HomeView.class), //
 
-                new MenuItemInfo("Notifications", "la la-list", NotificationsView.class), //
+                new MenuItemInfo("Contacts", "la la-list", ContactsView.class), //
+
+                new MenuItemInfo("Messages", "la la-list", HomeView.class), //
+
+                new MenuItemInfo("Permissions", "la la-list", HomeView.class), //
+
+                new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 
         };
     }

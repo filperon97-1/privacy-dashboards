@@ -1,4 +1,4 @@
-package com.privacydashboard.application.views.notifications;
+package com.privacydashboard.application.views.contacts;
 
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -18,14 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.security.PermitAll;
 
-@PageTitle("Notifications")
-@Route(value = "notifications", layout = MainLayout.class)
+@PageTitle("Contacts")
+@Route(value = "contacts", layout = MainLayout.class)
 @PermitAll
-public class NotificationsView extends Div implements AfterNavigationObserver {
+public class ContactsView extends Div implements AfterNavigationObserver {
 
     Grid<Person> grid = new Grid<>();
 
-    public NotificationsView() {
+    public ContactsView() {
         addClassName("notifications-view");
         setSizeFull();
         grid.setHeight("100%");

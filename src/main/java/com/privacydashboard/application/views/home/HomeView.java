@@ -21,7 +21,7 @@ import java.util.List;
 public class HomeView extends VerticalLayout {
 
     public HomeView(UserService userService) {
-        setSpacing(false);
+        /*setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
         img.setWidth("200px");
@@ -33,7 +33,7 @@ public class HomeView extends VerticalLayout {
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
+        getStyle().set("text-align", "center");*/
     }
 
 }

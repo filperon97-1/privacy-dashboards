@@ -1,4 +1,4 @@
-package com.privacydashboard.application.views.notifications;
+package com.privacydashboard.application.views.contacts;
 
 public class Person {
 
