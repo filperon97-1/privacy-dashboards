@@ -11,7 +11,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -29,7 +28,6 @@ import javax.annotation.security.PermitAll;
 @Route(value = "contacts", layout = MainLayout.class)
 @PermitAll
 public class ContactsView extends Div implements AfterNavigationObserver {
-    //Grid<Person> grid = new Grid<>();
     Grid<User> grid = new Grid<>();
 
     private DataBaseService dataBaseService;
@@ -41,7 +39,6 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         setSizeFull();
         grid.setHeight("100%");
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        //grid.addComponentColumn(person -> createCard(person));
         grid.addComponentColumn(user -> createContact(user));
         add(grid);
     }
@@ -60,12 +57,6 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
         avatar.addClassNames("me-xs");
 
-        /*Image image = new Image();
-        try{
-            image.setSrc(user.getProfilePictureUrl());
-        }catch(Exception e){
-            image.setSrc("https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
-        }*/
         VerticalLayout description = new VerticalLayout();
         description.addClassName("description");
         description.setSpacing(false);
@@ -151,62 +142,6 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         return card;
     }*/
 
-    /*@Override
-    public void afterNavigation(AfterNavigationEvent event) {
-
-        // Set some data when this view is displayed.
-        List<Person> persons = Arrays.asList( //
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/42.jpg", "Abagail Libbie", "May 3",
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/24.jpg", "Alberto Raya", "May 3",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/24.jpg", "Emmy Elsner", "Apr 22",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/76.jpg", "Alf Huncoot", "Apr 21",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/76.jpg", "Lidmila Vilensky", "Apr 17",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/94.jpg", "Jarrett Cawsey", "Apr 17",
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/94.jpg", "Tania Perfilyeva", "Mar 8",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/16.jpg", "Ivan Polo", "Mar 5",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/16.jpg", "Emelda Scandroot", "Mar 5",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/67.jpg", "Marcos Sá", "Mar 4",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/women/67.jpg", "Jacqueline Asong", "Mar 2",
-
-                        "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful content (also called greeking).",
-                        "1K", "500", "20")
-
-        );
-
-        grid.setItems(persons);
-    }*/
-
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         List<User> contacts;
@@ -215,28 +150,17 @@ public class ContactsView extends Div implements AfterNavigationObserver {
             return;
         }
         User user= maybeUser.get();
-        if(user.getDataRole().equals(DataRole.SUBJECT)){
-            contacts= getControllersAndDPO(user);
+        contacts=dataBaseService.getAllContactsFromUser(user);
+        /*if(user.getDataRole().equals(DataRole.SUBJECT)){
+            contacts=dataBaseService.getControllersAndDPOContactsFromUser(user);
+            //contacts= getControllersAndDPO(user);
         }
         else{
-            contacts= getAllContacts(user);
-        }
+            contacts=dataBaseService.getAllContactsFromUser(user);
+            //contacts= getAllContacts(user);
+        }*/
         grid.setItems(contacts);
     }
-
-    /*private static Person createPerson(String image, String name, String date, String post, String likes,
-            String comments, String shares) {
-        Person p = new Person();
-        p.setImage(image);
-        p.setName(name);
-        p.setDate(date);
-        p.setPost(post);
-        p.setLikes(likes);
-        p.setComments(comments);
-        p.setShares(shares);
-
-        return p;
-    }*/
 
     //PER ORA E' IMPLEMENTATO PENSANDO CHE LA TABELLA IOTAPP NON ABBIA UN CAMPO CON IL SET DI CONTROLLER ASSOCIATI
     private List<User> getAllContacts(User user){

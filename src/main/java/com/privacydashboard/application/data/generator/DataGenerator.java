@@ -3,12 +3,17 @@ package com.privacydashboard.application.data.generator;
 import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
+import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.entity.UserAppRelation;
 import com.privacydashboard.application.data.service.IoTAppRepository;
+import com.privacydashboard.application.data.service.MessageRepository;
 import com.privacydashboard.application.data.service.UserAppRelationRepository;
 import com.privacydashboard.application.data.service.UserRepository;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
@@ -22,7 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DataGenerator {
 
     @Bean
-    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository) {
+    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository) {
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
             if (userRepository.count() != 0L) {
@@ -89,7 +94,7 @@ public class DataGenerator {
             userAppRelation2.setConsenses(Set.of("consenso1", "consenso2"));
             userAppRelationRepository.save(userAppRelation2);
 
-            //AGGIUNGIAMO UN BEL PO'  DI ROBE
+            //AGGIUNTA SUBJECTS, CONTROLLER, DPO, APP
             User[] subjects, controller, DPO;
             IoTApp[] apps;
             subjects= new User[50];
@@ -129,6 +134,8 @@ public class DataGenerator {
 
             }
 
+            //AGGIUNTA USERAPPRELATION
+
             for(int i=0;i<50;i++){
                 //SUBJECT I CON LE APP [I-5, I]
                 for(int j=i-5;j<=i;j++){
@@ -152,7 +159,7 @@ public class DataGenerator {
                     }
                 }
 
-                //DPO I CON LE APP [I-2,I+3]
+                //DPO I CON LE APP [I,I+5]
                 for(int j=i;j<=i+5;j++){
                     if(j<50 && j>=0){
                         UserAppRelation userAppRelation=new UserAppRelation();
@@ -163,6 +170,28 @@ public class DataGenerator {
                     }
                 }
             }
+
+            // AGGIUNTA MESSAGGI, PER ORA SOLO ID USERS, MESSAGGIO E DATA, SOLO PER SUBJECT0
+            for(int i=0;i<10;i++){
+                for(int j=0;j<10;j++){
+                    Message message=new Message();
+                    if(j%2==0){
+                        message.setSenderId(subjects[0].getId());
+                        message.setReceiverId(subjects[i+10].getId());
+                    }else{
+                        message.setReceiverId(subjects[0].getId());
+                        message.setSenderId(subjects[i+10].getId());
+                    }
+                    message.setMessage("questo è il " + String.valueOf(10-j) + " messaggio");
+                    message.setTime(LocalDateTime.of(2022, 4, 10, 22, 11-j, 30));
+                    messageRepository.save(message);
+                }
+            }
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime notNow=LocalDateTime.of(2020, 4, 13, 22, 11, 30);
+            logger.info(dtf.format(notNow));
 
 
             //FINE AGGIUNTA

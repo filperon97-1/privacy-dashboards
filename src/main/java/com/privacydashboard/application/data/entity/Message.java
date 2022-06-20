@@ -4,6 +4,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +17,7 @@ public class Message extends AbstractEntity{
     private String message;
     private Boolean read;
     private Boolean handled;
+    private LocalDateTime time;
 
     public UUID getSenderId() {
         return senderId;
@@ -46,5 +48,12 @@ public class Message extends AbstractEntity{
     }
     public void setHandled(Boolean handled) {
         this.handled = handled;
+
+    }
+    public LocalDateTime getTime() {
+        return time;
+    }
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 }
