@@ -6,6 +6,7 @@ import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
+import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -32,6 +33,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import java.util.Optional;
+import java.util.UUID;
 
 public class MainLayout extends AppLayout {
     public static class MenuItemInfo extends ListItem {
@@ -138,7 +140,7 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("Messages", "la la-list", MessagesView.class), //
 
-                new MenuItemInfo("Consenses", "la la-list", HomeView.class), //
+                new MenuItemInfo("Consenses", "la la-list", HomeView.class),
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 

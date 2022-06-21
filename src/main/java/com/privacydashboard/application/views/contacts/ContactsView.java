@@ -151,43 +151,7 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         }
         User user= maybeUser.get();
         contacts=dataBaseService.getAllContactsFromUser(user);
-        /*if(user.getDataRole().equals(DataRole.SUBJECT)){
-            contacts=dataBaseService.getControllersAndDPOContactsFromUser(user);
-            //contacts= getControllersAndDPO(user);
-        }
-        else{
-            contacts=dataBaseService.getAllContactsFromUser(user);
-            //contacts= getAllContacts(user);
-        }*/
         grid.setItems(contacts);
     }
 
-    //PER ORA E' IMPLEMENTATO PENSANDO CHE LA TABELLA IOTAPP NON ABBIA UN CAMPO CON IL SET DI CONTROLLER ASSOCIATI
-    private List<User> getAllContacts(User user){
-       List<User> userList= new LinkedList<>();
-       List<IoTApp> appList=dataBaseService.getUserApps(user);
-       for(IoTApp app : appList){
-           List<User> partialUserList=dataBaseService.getUsersFromApp(app);
-           for(User u : partialUserList){
-               if(!u.getId().equals(user.getId()) && !userList.contains(u)){
-                   userList.add(u);
-               }
-           }
-       }
-       return userList;
-    }
-
-    private List<User> getControllersAndDPO(User user){
-        List<User> userList= new LinkedList<>();
-        List<IoTApp> appList=dataBaseService.getUserApps(user);
-        for(IoTApp app : appList){
-            List<User> partialUserList=dataBaseService.getUsersFromApp(app);
-            for(User u : partialUserList){
-                if(!u.getDataRole().equals(DataRole.SUBJECT) && !userList.contains(u)){
-                    userList.add(u);
-                }
-            }
-        }
-        return userList;
-    }
 }

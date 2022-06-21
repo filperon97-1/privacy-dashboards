@@ -45,38 +45,12 @@ public class DataBaseService {
         return messageRepository.getConversationFromUsersId(user1.getId(), user2.getId());
     }
 
+
     public List<User> getUserConversationFromUser(User user){
         return messageRepository.getUserConversationFromUserId(user.getId());
     }
 
-    /*public List<User> getAllContactsFromUser(User user){
-        List<User> userList= new LinkedList<>();
-        List<IoTApp> appList=getUserApps(user);
-        for(IoTApp app : appList){
-            List<User> partialUserList=getUsersFromApp(app);
-            for(User u : partialUserList){
-                if(!u.getId().equals(user.getId()) && !userList.contains(u)){
-                    userList.add(u);
-                }
-            }
-        }
-        return userList;
-    }
-
-    public List<User> getControllersAndDPOContactsFromUser(User user){
-        List<User> userList= new LinkedList<>();
-        List<IoTApp> appList=getUserApps(user);
-        for(IoTApp app : appList){
-            List<User> partialUserList=getUsersFromApp(app);
-            for(User u : partialUserList){
-                if(!u.getId().equals(user.getId()) && !u.getDataRole().equals(DataRole.SUBJECT) && !userList.contains(u)){
-                    userList.add(u);
-                }
-            }
-        }
-        return userList;
-    }*/
-
+    //PER ORA E' IMPLEMENTATO PENSANDO CHE LA TABELLA IOTAPP NON ABBIA UN CAMPO CON IL SET DI CONTROLLER ASSOCIATI
     public List<User> getAllContactsFromUser(User user){
         List<User> userList= new LinkedList<>();
         List<IoTApp> appList=getUserApps(user);

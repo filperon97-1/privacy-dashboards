@@ -5,24 +5,28 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.messages.MessageList;
+import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.richtexteditor.RichTextEditor;
-import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
 
 import javax.annotation.security.PermitAll;
+import java.time.ZoneOffset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +54,10 @@ public class MessagesView extends VerticalLayout {
         user= maybeUser.get();
         contacts=dataBaseService.getAllContactsFromUser(user);
         initializeNewDialog();
+
+        TextField searchConversationText=new TextField();
+        searchConversationText.setPlaceholder("search conversation");
+        add(searchConversationText);
 
         newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newMessageButton.setDisableOnClick(true);   //impedisce di fare la stessa cosa se si preme più volte consecutive ravvicinate
@@ -126,6 +134,7 @@ public class MessagesView extends VerticalLayout {
     private void displayConversations(){
         conversations= getConversations();
         for(List<Message> conversation : conversations){
+            /*
             Message m= conversation.get(0);
             User contact;
             if (m.getReceiverId().equals(user.getId())){
@@ -134,10 +143,31 @@ public class MessagesView extends VerticalLayout {
             else{
                 contact=dataBaseService.getUser(m.getReceiverId()).get();
             }
-            add(new H1(contact.getName()));
+            List<MessageListItem> messageListItems=new LinkedList<>();
             for(Message message : conversation){
-                add(new H2(message.getMessage()));
+                User u=message.getSenderId().equals(user.getId()) ? user : contact;
+                MessageListItem messageItem=new MessageListItem(message.getMessage(),message.getTime().toInstant(ZoneOffset.UTC), u.getName());
+                messageListItems.add(messageItem);
             }
+            MessageList messageList=new MessageList();
+            messageList.setItems(messageListItems);
+            add(new H1(contact.getName()));
+            add(messageList);*/
+
+            //PROVA
+            Message m= conversation.get(0);
+            User contact;
+            if (m.getReceiverId().equals(user.getId())){
+                contact=dataBaseService.getUser(m.getSenderId()).get();
+            }
+            else{
+                contact=dataBaseService.getUser(m.getReceiverId()).get();
+            }
+            Div menu = new Div();
+            menu.add(new RouterLink(contact.getName(),
+                    SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString())));
+            add(menu);
+            //FINE PROVA
         }
     }
 
