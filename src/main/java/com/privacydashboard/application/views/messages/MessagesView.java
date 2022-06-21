@@ -6,15 +6,19 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -163,10 +167,21 @@ public class MessagesView extends VerticalLayout {
             else{
                 contact=dataBaseService.getUser(m.getReceiverId()).get();
             }
-            Div menu = new Div();
-            menu.add(new RouterLink(contact.getName(),
+
+            HorizontalLayout card = new HorizontalLayout();
+            card.addClassName("card");
+            card.setSpacing(false);
+            card.getThemeList().add("spacing-s");
+            Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
+            avatar.addClassNames("me-xs");
+
+            card.add(avatar, new RouterLink(contact.getName(),
                     SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString())));
-            add(menu);
+            Div div=new Div();
+            /*Div menu = new Div();
+            menu.add(new RouterLink(contact.getName(),
+                    SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString())));*/
+            add(card);
             //FINE PROVA
         }
     }

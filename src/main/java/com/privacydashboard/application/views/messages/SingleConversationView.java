@@ -11,8 +11,6 @@ import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import java.time.ZoneOffset;
@@ -29,7 +27,6 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     private AuthenticatedUser authenticatedUser;
     private User user;
     private User contact;
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -44,9 +41,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
                 event.rerouteTo(NoContactView.class);
             }
             contact = maybeOtherUser.get();
-            //if(!isInContact(contact)){
             if(!dataBaseService.getAllContactsFromUser(user).contains(contact)){
-                logger.info("USER PROBLEMS?????");
                 event.rerouteTo(NoContactView.class);
             }
         }catch(IllegalArgumentException e){

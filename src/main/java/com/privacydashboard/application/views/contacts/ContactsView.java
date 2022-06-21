@@ -1,12 +1,10 @@
 package com.privacydashboard.application.views.contacts;
-
-import com.privacydashboard.application.data.DataRole;
-import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -14,6 +12,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.AfterNavigationEvent;
@@ -43,13 +42,8 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         add(grid);
     }
 
-    private HorizontalLayout createName(User user){
-        HorizontalLayout card = new HorizontalLayout();
-        card.add(new H2(user.getUsername() + " " + user.getName() + " " + user.getDataRole()));
-        return card;
-    }
-    private HorizontalLayout createContact(User user){
-        HorizontalLayout card = new HorizontalLayout();
+    private VerticalLayout createContact(User user){
+        VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
         card.setSpacing(false);
         card.getThemeList().add("spacing-s");
@@ -57,37 +51,32 @@ public class ContactsView extends Div implements AfterNavigationObserver {
         Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
         avatar.addClassNames("me-xs");
 
-        VerticalLayout description = new VerticalLayout();
-        description.addClassName("description");
-        description.setSpacing(false);
-        description.setPadding(false);
-
-        HorizontalLayout header = new HorizontalLayout();
-        header.addClassName("header");
-        header.setSpacing(false);
-        header.getThemeList().add("spacing-s");
-
         Span name = new Span(user.getName());
         name.addClassName("name");
-        Span dataRole = new Span(user.getDataRole().toString());
-        dataRole.addClassName("dataRole");
-        header.add(name, dataRole);
 
-        HorizontalLayout actions = new HorizontalLayout();
-        actions.addClassName("actions");
-        actions.setSpacing(false);
-        actions.getThemeList().add("spacing-s");
+        HorizontalLayout profile=new HorizontalLayout(avatar , name);
+        profile.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
+        VerticalLayout content=generateContactInformations(user);
+        Details details = new Details("More", content);
 
-        Icon commentIcon = VaadinIcon.COMMENT.create();
-        commentIcon.addClassName("icon");
-
-
-        actions.add(commentIcon);
-
-        description.add(header, actions);
-        card.add(avatar, description);
+        card.add(profile , details);
+        //card.expand(name);
+        card.setAlignItems(FlexComponent.Alignment.START);
+        card.setHorizontalComponentAlignment(FlexComponent.Alignment.START);
         return card;
+    }
+
+    private VerticalLayout generateContactInformations(User user){
+        Span name = new Span("Name: " + user.getName());
+        Span role = new Span("Role: Data " +user.getDataRole());
+        Span phone = new Span("(501) 555-9128");
+
+        VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
+        Details details= new Details("Apps:" , apps);
+        Icon commentIcon = VaadinIcon.COMMENT.create();
+        return new VerticalLayout(name, role, phone, commentIcon, details);
+
     }
 
     /*private HorizontalLayout createCard(Person person) {
