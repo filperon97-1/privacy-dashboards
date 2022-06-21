@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -42,6 +43,7 @@ public class MessagesView extends VerticalLayout {
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;
     private User user;
+    private Grid<User> grid=new Grid<>();
     private List<List<Message>> conversations;
     private List<User> contacts;
     private Dialog newMessageDialog=new Dialog();
@@ -50,6 +52,7 @@ public class MessagesView extends VerticalLayout {
     public MessagesView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
+        addClassName("notifications-view");
         Optional<User> maybeUser = authenticatedUser.get();
         if (!maybeUser.isPresent()) {
             add(new H2("user not logged in"));
