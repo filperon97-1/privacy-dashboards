@@ -108,6 +108,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
                                                                 sendMessage(contactComboBox.getValue(), messageText.getValue());
                                                                 newMessageButton.setEnabled(true);
                                                                 newMessageDialog.close();
+                                                                updateGrid();
                                                             }
         });
         Button cancel=new Button("Cancel", e-> {
@@ -152,10 +153,14 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         return card;
     }
 
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
+    private void updateGrid(){
         List <User> contacts=dataBaseService.getUserConversationFromUser(user);
         grid.setItems(contacts);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        updateGrid();
     }
 
 }

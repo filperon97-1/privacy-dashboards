@@ -3,6 +3,7 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,10 +16,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import java.util.*;
 import javax.annotation.security.PermitAll;
@@ -74,8 +72,10 @@ public class ContactsView extends Div implements AfterNavigationObserver {
 
         VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
         Details details= new Details("Apps:" , apps);
+        RouterLink routerLink= new RouterLink("send message",
+                SingleConversationView.class, new RouteParameters("contactID", user.getId().toString()));
         Icon commentIcon = VaadinIcon.COMMENT.create();
-        return new VerticalLayout(name, role, phone, commentIcon, details);
+        return new VerticalLayout(name, role, phone, new HorizontalLayout(routerLink, commentIcon), details);
 
     }
 
