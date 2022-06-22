@@ -62,7 +62,7 @@ public class DataBaseService {
                     continue;
                 }
                 //Data Subject cannot have access to other Data Subjects.
-                if(u.getDataRole().equals(DataRole.SUBJECT) && u.getDataRole().equals(DataRole.SUBJECT)){
+                if(u.getDataRole().equals(DataRole.SUBJECT) && user.getDataRole().equals(DataRole.SUBJECT)){
                     continue;
                 }
                 userList.add(u);

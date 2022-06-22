@@ -34,7 +34,7 @@ public class ContactsView extends Div implements AfterNavigationObserver {
     public ContactsView(AuthenticatedUser authenticatedUser, DataBaseService dataBaseService) {
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
-        addClassName("notifications-view");
+        addClassName("grid-views");
         setSizeFull();
         grid.setHeight("100%");
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
