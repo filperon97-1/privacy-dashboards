@@ -2,6 +2,7 @@ package com.privacydashboard.application.views;
 
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.security.AuthenticatedUser;
+import com.privacydashboard.application.views.applyRights.RightsView;
 import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
@@ -140,7 +141,7 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("Messages", "la la-list", MessagesView.class), //
 
-                new MenuItemInfo("Consenses", "la la-list", HomeView.class),
+                new MenuItemInfo("Rights", "la la-list", RightsView.class),
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 

@@ -64,7 +64,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         add(searchConversationText);*/
 
         newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        newMessageButton.setDisableOnClick(true);   //impedisce di fare la stessa cosa se si preme più volte consecutive ravvicinate
+        //newMessageButton.setDisableOnClick(true);   //impedisce di fare la stessa cosa se si preme più volte consecutive ravvicinate
         newMessageButton.addClickListener(e-> newMessageDialog.open());
         add(newMessageButton);
 
@@ -106,13 +106,11 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         Button newMessage=new Button("Send Message", e->{
                                                             if(contactComboBox.getValue()!=null && messageText.getValue()!=null){
                                                                 sendMessage(contactComboBox.getValue(), messageText.getValue());
-                                                                newMessageButton.setEnabled(true);
                                                                 newMessageDialog.close();
                                                                 updateGrid();
                                                             }
         });
         Button cancel=new Button("Cancel", e-> {
-                                                newMessageButton.setEnabled(true);
                                                 newMessageDialog.close();});
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
