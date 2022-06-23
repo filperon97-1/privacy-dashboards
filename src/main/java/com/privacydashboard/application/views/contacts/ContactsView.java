@@ -1,12 +1,10 @@
 package com.privacydashboard.application.views.contacts;
-import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.apps.AppsView;
-import com.privacydashboard.application.views.messages.NoContactView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
@@ -15,7 +13,6 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -103,7 +100,6 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         Span role = new Span("Role: Data " +contact.getDataRole());
         Span phone = new Span("(501) 555-9128");
         VerticalLayout apps=getApps(contact);
-        //VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
         Details details= new Details("Apps:" , apps);
         RouterLink routerLink=new RouterLink();
         routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
@@ -115,26 +111,18 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         VerticalLayout layout=new VerticalLayout();
         List<IoTApp> appList=dataBaseService.getAppsFrom2Users(user, contact);
         for(IoTApp i : appList) {
-            layout.add(new RouterLink(i.getName(), AppsView.class));
+            layout.add(new RouterLink(i.getName(), AppsView.class , new RouteParameters("appID", i.getId().toString())));
         }
         return layout;
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        // se c'è un priorityUser mettilo come primo elemento
-        // FA SCHIFO, DA MIGLIORARE
+        // se esiste il contatto selezionato nei parametri, mettilo al primo posto
         if(priorityUserID!=null ){
             Optional<User> maybeU=dataBaseService.getUser(priorityUserID);
             if(maybeU.isPresent() && contacts.contains(maybeU.get())){
-                List<User> newContacts=new LinkedList<>();
-                newContacts.add(maybeU.get());
-                List<User> temporaryContacts=new LinkedList<>();
-                temporaryContacts.addAll(contacts);
-                temporaryContacts.remove(maybeU.get());
-                newContacts.addAll(temporaryContacts);
-                grid.setItems(newContacts);
-                return;
+                Collections.swap(contacts, 0 , contacts.indexOf(maybeU.get()));
             }
             else{
                 priorityUserID=null;

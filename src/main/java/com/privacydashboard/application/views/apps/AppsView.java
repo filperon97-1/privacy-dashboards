@@ -10,35 +10,47 @@ import com.vaadin.flow.component.charts.model.Navigator;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.router.*;
 
 import javax.annotation.security.PermitAll;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @PageTitle("Apps")
-@Route(value = "apps-view", layout = MainLayout.class)
+@Route(value = "apps-view/:appID?", layout = MainLayout.class)
 @PermitAll
-public class AppsView extends VerticalLayout {
+public class AppsView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;
     private List<IoTApp> ioTAppList;
     private List<User> contacts;
     private User user;
-    private Navigator navigator;
+    private UUID priorityAppID;
+    private Div div=new Div();
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event){
+        Optional<String> appID=event.getRouteParameters().get("appID");
+        if(!appID.isPresent()){
+            priorityAppID=null;
+            return;
+        }
+        try{
+            priorityAppID= UUID.fromString(appID.get());
+        }catch (Exception e ){
+            priorityAppID=null;
+            return;
+        }
+    }
+
     public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
-        navigator=new Navigator();
         user=getUser();
         contacts=dataBaseService.getAllContactsFromUser(user);
-        ioTAppList=dataBaseService.getUserApps(user);
-        for(IoTApp i : ioTAppList){
-            add(initializeApp(i));
-        }
+        add(div);
     }
 
     private User getUser(){
@@ -54,7 +66,12 @@ public class AppsView extends VerticalLayout {
         Details dataControllers= new Details("Data Controllers: " , getDataControllers(i));
         Details consenses= new Details("Consenses: " , getConsenses(i));
         VerticalLayout content=new VerticalLayout(description, dataControllers, consenses);
-        return new Details(i.getName(), content);
+        Details details=new Details(i.getName(), content);
+        // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
+        if(i.getId().equals(priorityAppID)){
+            details.setOpened(true);
+        }
+        return details;
     }
 
     private VerticalLayout getDataControllers(IoTApp i){
@@ -73,6 +90,25 @@ public class AppsView extends VerticalLayout {
             layout.add(new Span(consens));
         }
         return layout;
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        div.removeAll();
+        ioTAppList=dataBaseService.getUserApps(user);
+        // se esiste l'app selezionata nei parametri, mettilo al primo posto
+        if(priorityAppID!=null){
+            Optional<IoTApp> maybeApp=dataBaseService.getApp(priorityAppID);
+            if(maybeApp.isPresent() && ioTAppList.contains(maybeApp.get())){
+                Collections.swap(ioTAppList, 0, ioTAppList.indexOf(maybeApp.get()));
+            }
+            else{
+                priorityAppID=null;
+            }
+        }
+        for(IoTApp i : ioTAppList){
+            div.add(initializeApp(i));
+        }
     }
 
 }

@@ -33,10 +33,6 @@ public class RightsView extends VerticalLayout {
         this.authenticatedUser = authenticatedUser;
         createDialog();
         generateAllRightsDetails();
-        /*VerticalLayout content=new VerticalLayout(new Span("you have the right to withdraw consent at any time [GDPR, article 13 2(C)]"),
-                new Button("Withdraw a consent" , e-> startWithdrawConsent()));
-        Details consenses = new Details("Consenses", content);
-        add(consenses);*/
     }
 
     private void generateAllRightsDetails(){
@@ -64,8 +60,8 @@ public class RightsView extends VerticalLayout {
     private Details generateRightDetail(String title, String description, String buttonString , RightAction action){
         VerticalLayout content=new VerticalLayout(new Span(description),
                 new Button(buttonString , e-> action.startAction()));
-        Details consenses = new Details(title, content);
-        return consenses;
+        Details rightDetail = new Details(title, content);
+        return rightDetail;
     }
 
     private void createDialog(){

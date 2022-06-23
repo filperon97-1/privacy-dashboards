@@ -4,9 +4,6 @@ import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
-import com.privacydashboard.application.views.contacts.ContactsView;
-import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +44,12 @@ public class DataBaseService {
     public void addNowMessage(Message message){
         message.setTime(LocalDateTime.now());
         messageRepository.save(message);
+    }
+
+    // IOTAPP REPOSITORY
+
+    public Optional<IoTApp> getApp(UUID id) {
+        return ioTAppRepository.findById(id);
     }
 
     // USERAPPRELATION REPOSITORY
