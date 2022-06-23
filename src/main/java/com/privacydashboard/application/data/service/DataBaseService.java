@@ -4,6 +4,9 @@ import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.views.contacts.ContactsView;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,29 +28,39 @@ public class DataBaseService {
         this.messageRepository = messageRepository;
     }
 
+    // USER REPOSITORY
+
     public Optional<User> getUser(UUID id) {
         return userRepository.findById(id);
     }
 
-    public List<IoTApp> getUserApps(User user){
-        return userAppRelationRepository.getIoTAppFromUserID(user.getId());
-    }
-
-    public Set<String> getConsensesFromUserAndApp(User user, IoTApp app){
-        return userAppRelationRepository.getUserAppRelationFromUserIdAndAppId(user.getId(), app.getId()).getConsenses();
-    }
-
-    public List<User> getUsersFromApp(IoTApp app){
-        return userAppRelationRepository.getUsersFromAppId(app.getId());
-    }
+    // MESSAGE REPOSITORY
 
     public List<Message> getConversationFromUsers(User user1, User user2){
         return messageRepository.getConversationFromUsersId(user1.getId(), user2.getId());
     }
 
-
     public List<User> getUserConversationFromUser(User user){
         return messageRepository.getUserConversationFromUserId(user.getId());
+    }
+
+    public void addNowMessage(Message message){
+        message.setTime(LocalDateTime.now());
+        messageRepository.save(message);
+    }
+
+    // USERAPPRELATION REPOSITORY
+
+    public List<IoTApp> getUserApps(User user){
+        return userAppRelationRepository.getIoTAppFromUserID(user.getId());
+    }
+
+    public List<String> getConsensesFromUserAndApp(User user, IoTApp app){
+        return userAppRelationRepository.getUserAppRelationFromUserIdAndAppId(user.getId(), app.getId()).getConsenses();
+    }
+
+    public List<User> getUsersFromApp(IoTApp app){
+        return userAppRelationRepository.getUsersFromAppId(app.getId());
     }
 
     //PER ORA E' IMPLEMENTATO PENSANDO CHE LA TABELLA IOTAPP NON ABBIA UN CAMPO CON IL SET DI CONTROLLER ASSOCIATI
@@ -71,8 +84,26 @@ public class DataBaseService {
         return userList;
     }
 
-    public void addNowMessage(Message message){
-        message.setTime(LocalDateTime.now());
-        messageRepository.save(message);
+    public List<IoTApp> getAppsFrom2Users(User user1, User user2){
+        List<IoTApp> list1=getUserApps(user1);
+        List<IoTApp> list2=getUserApps(user2);
+        List<IoTApp> appList=new LinkedList<>();
+        for(IoTApp app : list1){
+            if(list2.contains(app)){
+                appList.add(app);
+            }
+        }
+        return appList;
+    }
+
+    public List<User> getControllersFromApp(IoTApp app){
+        List<User> controllers=new LinkedList<>();
+        List<User> userList = getUsersFromApp(app);
+        for(User u : userList){
+            if(u.getDataRole().equals(DataRole.CONTROLLER)){
+                controllers.add(u);
+            }
+        }
+        return controllers;
     }
 }

@@ -18,7 +18,7 @@ public class UserAppRelation extends AbstractEntity{
     @Type(type = "uuid-char")
     private UUID idIOTApp;
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> consenses;
+    private List<String> consenses;
     private DataRole dataRole;
 
     public UUID getIdUser() {
@@ -39,10 +39,10 @@ public class UserAppRelation extends AbstractEntity{
     public void setConsenses(List<String> consenses) {
         this.consenses = consenses;
     }*/
-    public Set<String> getConsenses() {
+    public List<String> getConsenses() {
         return consenses;
     }
-    public void setConsenses(Set<String> consenses) {
+    public void setConsenses(List<String> consenses) {
         this.consenses = consenses;
     }
     public DataRole getDataRole() {

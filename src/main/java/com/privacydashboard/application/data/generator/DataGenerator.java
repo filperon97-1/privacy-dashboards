@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,13 +86,13 @@ public class DataGenerator {
             UserAppRelation userAppRelation1=new UserAppRelation();
             userAppRelation1.setIdUser(user.getId());
             userAppRelation1.setIdIOTApp(ioTApp.getId());
-            userAppRelation1.setConsenses(Set.of("consenso1", "consenso2"));
+            userAppRelation1.setConsenses(List.of("consenso1", "consenso2"));
             userAppRelationRepository.save(userAppRelation1);
 
             UserAppRelation userAppRelation2=new UserAppRelation();
             userAppRelation2.setIdUser(user.getId());
             userAppRelation2.setIdIOTApp(ioTApp2.getId());
-            userAppRelation2.setConsenses(Set.of("consenso1", "consenso2"));
+            userAppRelation2.setConsenses(List.of("consenso1", "consenso2"));
             userAppRelationRepository.save(userAppRelation2);
 
             //AGGIUNTA SUBJECTS, CONTROLLER, DPO, APP
@@ -141,7 +142,7 @@ public class DataGenerator {
                 for(int j=i-5;j<=i;j++){
                     if(j>=0){
                         UserAppRelation userAppRelation=new UserAppRelation();
-                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
                         userAppRelation.setIdUser(subjects[i].getId());
                         userAppRelation.setIdIOTApp(apps[j].getId());
                         userAppRelationRepository.save(userAppRelation);
@@ -152,7 +153,7 @@ public class DataGenerator {
                 for(int j=i;j<=i+5;j++){
                     if(j<50){
                         UserAppRelation userAppRelation=new UserAppRelation();
-                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
                         userAppRelation.setIdUser(controller[i].getId());
                         userAppRelation.setIdIOTApp(apps[j].getId());
                         userAppRelationRepository.save(userAppRelation);
@@ -163,7 +164,7 @@ public class DataGenerator {
                 for(int j=i;j<=i+5;j++){
                     if(j<50 && j>=0){
                         UserAppRelation userAppRelation=new UserAppRelation();
-                        userAppRelation.setConsenses(Set.of("consenso1", "consenso2", "consenso3"));
+                        userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
                         userAppRelation.setIdUser(DPO[i].getId());
                         userAppRelation.setIdIOTApp(apps[j].getId());
                         userAppRelationRepository.save(userAppRelation);

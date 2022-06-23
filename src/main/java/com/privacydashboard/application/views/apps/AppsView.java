@@ -5,21 +5,19 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.charts.model.Navigation;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.vaadin.flow.component.charts.model.Navigator;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import jdk.jfr.Name;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @PageTitle("Apps")
 @Route(value = "apps-view", layout = MainLayout.class)
@@ -28,6 +26,7 @@ public class AppsView extends VerticalLayout {
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;
     private List<IoTApp> ioTAppList;
+    private List<User> contacts;
     private User user;
     private Navigator navigator;
     public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
@@ -35,24 +34,11 @@ public class AppsView extends VerticalLayout {
         this.authenticatedUser=authenticatedUser;
         navigator=new Navigator();
         user=getUser();
+        contacts=dataBaseService.getAllContactsFromUser(user);
         ioTAppList=dataBaseService.getUserApps(user);
-
-        // DA ELIMINARE
-        for(int i=0; i<100; i++){
-            Span span=new Span("span numero" + String.valueOf(i));
-            span.setId(String.valueOf(i));
-            add(span);
-        }
         for(IoTApp i : ioTAppList){
-            Span description= new Span("description: " + i.getDescription());
-            Span dataController= new Span("Data Controller: ");
-            Span consenses=new Span("Consenses");
-            VerticalLayout content=new VerticalLayout(description, dataController, consenses);
-            Details app = new Details(i.getName(), content);
-            add(app);
+            add(initializeApp(i));
         }
-        Button button=new Button("clicca", e -> UI.getCurrent().navigate("contacts/3"));
-        add(button);
     }
 
     private User getUser(){
@@ -61,6 +47,32 @@ public class AppsView extends VerticalLayout {
             return null;
         }
         return maybeUser.get();
+    }
+
+    private Details initializeApp(IoTApp i){
+        Span description= new Span("description: " + i.getDescription());
+        Details dataControllers= new Details("Data Controllers: " , getDataControllers(i));
+        Details consenses= new Details("Consenses: " , getConsenses(i));
+        VerticalLayout content=new VerticalLayout(description, dataControllers, consenses);
+        return new Details(i.getName(), content);
+    }
+
+    private VerticalLayout getDataControllers(IoTApp i){
+        VerticalLayout layout=new VerticalLayout();
+        List<User> controllers = dataBaseService.getControllersFromApp(i);
+        for(User u : controllers){
+            layout.add(new RouterLink(u.getName() , ContactsView.class,  new RouteParameters("contactID", u.getId().toString())));
+        }
+        return layout;
+    }
+
+    private VerticalLayout getConsenses(IoTApp i){
+        VerticalLayout layout=new VerticalLayout();
+        List<String> consenses=dataBaseService.getConsensesFromUserAndApp(user, i);
+        for(String consens :  consenses){
+            layout.add(new Span(consens));
+        }
+        return layout;
     }
 
 }

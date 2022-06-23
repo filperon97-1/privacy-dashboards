@@ -1,8 +1,12 @@
 package com.privacydashboard.application.views.contacts;
+import com.privacydashboard.application.data.DataRole;
+import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.apps.AppsView;
+import com.privacydashboard.application.views.messages.NoContactView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
@@ -22,124 +26,120 @@ import java.util.*;
 import javax.annotation.security.PermitAll;
 
 @PageTitle("Contacts")
-@Route(value = "contacts/:contactId?", layout = MainLayout.class)
+@Route(value = "contacts/:contactID?", layout = MainLayout.class)
 @PermitAll
-public class ContactsView extends Div implements AfterNavigationObserver {
+public class ContactsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
     Grid<User> grid = new Grid<>();
-
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;
+    private User user;
+    private List<User> contacts;
+    private UUID priorityUserID;    //FATTO COSI E' UN PO' UNA MERDA, TROVARE SOLUZIONE MIGLIORE
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event){
+        Optional<String> contactID=event.getRouteParameters().get("contactID");
+        if(!contactID.isPresent()){
+            priorityUserID=null;
+            return;
+        }
+        try{
+            priorityUserID=UUID.fromString(contactID.get());
+        }catch (Exception e ){
+            priorityUserID=null;
+            return;
+        }
+
+    }
+
     public ContactsView(AuthenticatedUser authenticatedUser, DataBaseService dataBaseService) {
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (!maybeUser.isPresent()) {
+            add(new H2("user not logged in"));
+            return;
+        }
+        user= maybeUser.get();
+        contacts=dataBaseService.getAllContactsFromUser(user);
         addClassName("grid-views");
         setSizeFull();
         grid.setHeight("100%");
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(user -> createContact(user));
+        grid.addComponentColumn(contact -> createContact(contact));
         add(grid);
     }
 
-    private VerticalLayout createContact(User user){
+    private VerticalLayout createContact(User contact){
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
         card.setSpacing(false);
         card.getThemeList().add("spacing-s");
 
-        Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
+        Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         avatar.addClassNames("me-xs");
 
-        Span name = new Span(user.getName());
+        Span name = new Span(contact.getName());
         name.addClassName("name");
 
         HorizontalLayout profile=new HorizontalLayout(avatar , name);
         profile.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
-        VerticalLayout content=generateContactInformations(user);
+        VerticalLayout content=generateContactInformations(contact);
         Details details = new Details("More", content);
 
         card.add(profile , details);
-        //card.expand(name);
         card.setAlignItems(FlexComponent.Alignment.START);
         card.setHorizontalComponentAlignment(FlexComponent.Alignment.START);
+        // se c'è un priorityUser apri details
+        if(contact.getId().equals(priorityUserID)){
+            details.setOpened(true);
+        }
         return card;
     }
 
-    private VerticalLayout generateContactInformations(User user){
-        Span name = new Span("Name: " + user.getName());
-        Span role = new Span("Role: Data " +user.getDataRole());
+    private VerticalLayout generateContactInformations(User contact){
+        Span name = new Span("Name: " + contact.getName());
+        Span role = new Span("Role: Data " +contact.getDataRole());
         Span phone = new Span("(501) 555-9128");
-
-        VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
+        VerticalLayout apps=getApps(contact);
+        //VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
         Details details= new Details("Apps:" , apps);
         RouterLink routerLink=new RouterLink();
-        routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", user.getId().toString()));
+        routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
         routerLink.add(new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create()));
         return new VerticalLayout(name, role, phone, routerLink, details);
-
     }
 
-    /*private HorizontalLayout createCard(Person person) {
-        HorizontalLayout card = new HorizontalLayout();
-        card.addClassName("card");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
-
-        Image image = new Image();
-        image.setSrc(person.getImage());
-        VerticalLayout description = new VerticalLayout();
-        description.addClassName("description");
-        description.setSpacing(false);
-        description.setPadding(false);
-
-        HorizontalLayout header = new HorizontalLayout();
-        header.addClassName("header");
-        header.setSpacing(false);
-        header.getThemeList().add("spacing-s");
-
-        Span name = new Span(person.getName());
-        name.addClassName("name");
-        Span date = new Span(person.getDate());
-        date.addClassName("date");
-        header.add(name, date);
-
-        Span post = new Span(person.getPost());
-        post.addClassName("post");
-
-        HorizontalLayout actions = new HorizontalLayout();
-        actions.addClassName("actions");
-        actions.setSpacing(false);
-        actions.getThemeList().add("spacing-s");
-
-        Icon likeIcon = VaadinIcon.HEART.create();
-        likeIcon.addClassName("icon");
-        Span likes = new Span(person.getLikes());
-        likes.addClassName("likes");
-        Icon commentIcon = VaadinIcon.COMMENT.create();
-        commentIcon.addClassName("icon");
-        Span comments = new Span(person.getComments());
-        comments.addClassName("comments");
-        Icon shareIcon = VaadinIcon.CONNECT.create();
-        shareIcon.addClassName("icon");
-        Span shares = new Span(person.getShares());
-        shares.addClassName("shares");
-
-        actions.add(likeIcon, likes, commentIcon, comments, shareIcon, shares);
-
-        description.add(header, post, actions);
-        card.add(image, description);
-        return card;
-    }*/
+    private VerticalLayout getApps(User contact){
+        VerticalLayout layout=new VerticalLayout();
+        List<IoTApp> appList=dataBaseService.getAppsFrom2Users(user, contact);
+        for(IoTApp i : appList) {
+            layout.add(new RouterLink(i.getName(), AppsView.class));
+        }
+        return layout;
+    }
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        List<User> contacts;
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (!maybeUser.isPresent()) {
-            return;
+        // se c'è un priorityUser mettilo come primo elemento
+        // FA SCHIFO, DA MIGLIORARE
+        if(priorityUserID!=null ){
+            Optional<User> maybeU=dataBaseService.getUser(priorityUserID);
+            if(maybeU.isPresent() && contacts.contains(maybeU.get())){
+                List<User> newContacts=new LinkedList<>();
+                newContacts.add(maybeU.get());
+                List<User> temporaryContacts=new LinkedList<>();
+                temporaryContacts.addAll(contacts);
+                temporaryContacts.remove(maybeU.get());
+                newContacts.addAll(temporaryContacts);
+                grid.setItems(newContacts);
+                return;
+            }
+            else{
+                priorityUserID=null;
+            }
         }
-        User user= maybeUser.get();
-        contacts=dataBaseService.getAllContactsFromUser(user);
         grid.setItems(contacts);
     }
 

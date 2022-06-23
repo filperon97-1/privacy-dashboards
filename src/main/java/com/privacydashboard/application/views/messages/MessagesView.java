@@ -30,6 +30,7 @@ import com.vaadin.flow.router.*;
 
 import javax.annotation.security.PermitAll;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -59,12 +60,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         contacts=dataBaseService.getAllContactsFromUser(user);
         initializeNewDialog();
 
-        /*TextField searchConversationText=new TextField();
-        searchConversationText.setPlaceholder("search conversation");
-        add(searchConversationText);*/
-
         newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        //newMessageButton.setDisableOnClick(true);   //impedisce di fare la stessa cosa se si preme più volte consecutive ravvicinate
         newMessageButton.addClickListener(e-> newMessageDialog.open());
         add(newMessageButton);
 
@@ -137,19 +133,6 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         message.setSenderId(user.getId());
         dataBaseService.addNowMessage(message);
     }
-
-    /*private HorizontalLayout showContact(User contact){
-        HorizontalLayout card = new HorizontalLayout();
-        card.addClassName("card");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
-        Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
-        avatar.addClassNames("me-xs");
-
-        card.add(avatar, new RouterLink(contact.getName(),
-                SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString())));
-        return card;
-    }*/
 
     private RouterLink showContact(User contact){
         RouterLink link=new RouterLink();
