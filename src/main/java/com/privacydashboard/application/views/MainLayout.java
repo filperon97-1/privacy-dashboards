@@ -137,11 +137,11 @@ public class MainLayout extends AppLayout {
         return new MenuItemInfo[]{ //
                 new MenuItemInfo("Home", "la la-file", HomeView.class), //
 
-                new MenuItemInfo("Contacts", "la la-list", ContactsView.class), //
+                new MenuItemInfo("Contacts", "las la-address-book", ContactsView.class), //
 
-                new MenuItemInfo("Messages", "la la-list", MessagesView.class), //
+                new MenuItemInfo("Messages", "las la-comments", MessagesView.class), //
 
-                new MenuItemInfo("Rights", "la la-list", RightsView.class),
+                new MenuItemInfo("Rights", "las la-school", RightsView.class),
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 
