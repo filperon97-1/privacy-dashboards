@@ -138,7 +138,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         dataBaseService.addNowMessage(message);
     }
 
-    private HorizontalLayout showContact(User contact){
+    /*private HorizontalLayout showContact(User contact){
         HorizontalLayout card = new HorizontalLayout();
         card.addClassName("card");
         card.setSpacing(false);
@@ -149,6 +149,20 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         card.add(avatar, new RouterLink(contact.getName(),
                 SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString())));
         return card;
+    }*/
+
+    private RouterLink showContact(User contact){
+        RouterLink link=new RouterLink();
+        link.setRoute(SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
+        HorizontalLayout card = new HorizontalLayout();
+        card.addClassName("card");
+        card.setSpacing(false);
+        card.getThemeList().add("spacing-s");
+        Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
+        avatar.addClassNames("me-xs");
+        card.add(avatar, new Span(contact.getName()));
+        link.add(card);
+        return link;
     }
 
     private void updateGrid(){

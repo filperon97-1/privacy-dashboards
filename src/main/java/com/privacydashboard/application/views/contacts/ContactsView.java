@@ -22,7 +22,7 @@ import java.util.*;
 import javax.annotation.security.PermitAll;
 
 @PageTitle("Contacts")
-@Route(value = "contacts", layout = MainLayout.class)
+@Route(value = "contacts/:contactId?", layout = MainLayout.class)
 @PermitAll
 public class ContactsView extends Div implements AfterNavigationObserver {
     Grid<User> grid = new Grid<>();
@@ -72,10 +72,10 @@ public class ContactsView extends Div implements AfterNavigationObserver {
 
         VerticalLayout apps=new VerticalLayout(new Span("app1") , new Span("app2") , new Span("app3") , new Span("app4"));
         Details details= new Details("Apps:" , apps);
-        RouterLink routerLink= new RouterLink("send message",
-                SingleConversationView.class, new RouteParameters("contactID", user.getId().toString()));
-        Icon commentIcon = VaadinIcon.COMMENT.create();
-        return new VerticalLayout(name, role, phone, new HorizontalLayout(routerLink, commentIcon), details);
+        RouterLink routerLink=new RouterLink();
+        routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", user.getId().toString()));
+        routerLink.add(new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create()));
+        return new VerticalLayout(name, role, phone, routerLink, details);
 
     }
 
