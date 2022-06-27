@@ -19,7 +19,7 @@ interface RightAction{
 
 @PageTitle("Rights")
 @Route(value="rights", layout = MainLayout.class)
-@RolesAllowed({"CONTROLLER" , "DPO"})
+@RolesAllowed("SUBJECT")
 public class RightsView extends VerticalLayout {
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;
