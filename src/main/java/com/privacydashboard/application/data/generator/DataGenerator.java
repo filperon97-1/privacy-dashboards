@@ -15,9 +15,7 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -38,62 +36,6 @@ public class DataGenerator {
             int seed = 123;
 
             logger.info("Generating demo data");
-
-            logger.info("... generating 2 User entities...");
-            User user = new User();
-            user.setName("John Normal");
-            user.setUsername("user");
-            user.setHashedPassword(passwordEncoder.encode("user"));
-            user.setProfilePictureUrl(
-                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
-            user.setRoles(Collections.singleton(Role.USER));
-            user.setDataRole(DataRole.SUBJECT);
-            userRepository.save(user);
-            User admin = new User();
-            admin.setName("Emma Powerful");
-            admin.setUsername("admin");
-            admin.setHashedPassword(passwordEncoder.encode("admin"));
-            admin.setProfilePictureUrl(
-                    "https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
-            admin.setRoles(Set.of(Role.USER, Role.ADMIN));
-            admin.setDataRole(DataRole.CONTROLLER);
-            userRepository.save(admin);
-
-            //AGGIUNTA
-            //creazione admin2
-            User admin2 = new User();
-            admin2.setName("Admin2");
-            admin2.setUsername("admin2");
-            admin2.setHashedPassword(passwordEncoder.encode("admin2"));
-            admin2.setRoles(Set.of(Role.USER, Role.ADMIN));
-            admin2.setDataRole(DataRole.CONTROLLER);
-            userRepository.save(admin2);
-
-            //creazione 2 iotApp
-            IoTApp ioTApp=new IoTApp();
-            ioTApp.setDataController(admin);
-            ioTApp.setName("iot app 1");
-            ioTApp.setDescription("descrizione 1");
-            ioTAppRepository.save(ioTApp);
-
-            IoTApp ioTApp2=new IoTApp();
-            ioTApp2.setDataController(admin2);
-            ioTApp2.setName("iot app 2");
-            ioTApp2.setDescription("descrizione 2");
-            ioTAppRepository.save(ioTApp2);
-
-            //creazione 2 userAppRelation
-            UserAppRelation userAppRelation1=new UserAppRelation();
-            userAppRelation1.setIdUser(user.getId());
-            userAppRelation1.setIdIOTApp(ioTApp.getId());
-            userAppRelation1.setConsenses(List.of("consenso1", "consenso2"));
-            userAppRelationRepository.save(userAppRelation1);
-
-            UserAppRelation userAppRelation2=new UserAppRelation();
-            userAppRelation2.setIdUser(user.getId());
-            userAppRelation2.setIdIOTApp(ioTApp2.getId());
-            userAppRelation2.setConsenses(List.of("consenso1", "consenso2"));
-            userAppRelationRepository.save(userAppRelation2);
 
             //AGGIUNTA SUBJECTS, CONTROLLER, DPO, APP
             User[] subjects, controller, DPO;
@@ -138,9 +80,9 @@ public class DataGenerator {
             //AGGIUNTA USERAPPRELATION
 
             for(int i=0;i<50;i++){
-                //SUBJECT I CON LE APP [I-5, I]
-                for(int j=i-5;j<=i;j++){
-                    if(j>=0){
+                //SUBJECT I CON LE APP [I-5, I+5]
+                for(int j=i-5;j<=i+5;j++){
+                    if(j>=0 && j<50){
                         UserAppRelation userAppRelation=new UserAppRelation();
                         userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
                         userAppRelation.setIdUser(subjects[i].getId());
@@ -160,8 +102,8 @@ public class DataGenerator {
                     }
                 }
 
-                //DPO I CON LE APP [I,I+5]
-                for(int j=i;j<=i+5;j++){
+                //DPO I CON LE APP [I-3,I+5]
+                for(int j=i-3;j<=i+5;j++){
                     if(j<50 && j>=0){
                         UserAppRelation userAppRelation=new UserAppRelation();
                         userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
@@ -172,19 +114,28 @@ public class DataGenerator {
                 }
             }
 
-            // AGGIUNTA MESSAGGI, PER ORA SOLO ID USERS, MESSAGGIO E DATA, SOLO PER SUBJECT0
-            for(int i=0;i<10;i++){
-                for(int j=0;j<10;j++){
-                    Message message=new Message();
-                    if(j%2==0){
-                        message.setSenderId(subjects[0].getId());
-                        message.setReceiverId(subjects[i+10].getId());
-                    }else{
-                        message.setReceiverId(subjects[0].getId());
-                        message.setSenderId(subjects[i+10].getId());
+            //AGGIUNTA MESSAGGI
+            for(int i=0;i<50;i++){
+                //SUBJECT I INVIA 2 MESSAGGI A CONTROLLER I, 4 A I+2, e 6 A I+4
+                for(int j=0;j<3;j++){
+                    int k=i+j*2;        // Controller k
+                    if(k>=50){
+                        continue;
                     }
-                    message.setMessage("questo è il " + String.valueOf(10-j) + " messaggio");
-                    message.setTime(LocalDateTime.of(2022, 4, 10, 22, 11-j, 30));
+                    for(int z=0;z<j*2+2;z++){
+                        Message message=new Message();
+                        message.setMessage("questo è il " + String.valueOf(z) +" (non in ordine) messaggio da Subject " + String.valueOf(i) + " verso Controller " +String.valueOf(k));
+                        message.setTime(LocalDateTime.of(2022, 6, 26-z, 22, 11, 30));
+                        message.setSenderId(subjects[i].getId());
+                        message.setReceiverId(controller[k].getId());
+                        messageRepository.save(message);
+                    }
+                    // CONTROLLER RISPONDE CON 1 SOLO MESSAGGIO
+                    Message message=new Message();
+                    message.setMessage(" Sono il Controller " + String.valueOf(k));
+                    message.setTime(LocalDateTime.of(2022, 6, 26-j, 12, 10, 55));
+                    message.setSenderId(controller[k].getId());
+                    message.setReceiverId(subjects[i].getId());
                     messageRepository.save(message);
                 }
             }
