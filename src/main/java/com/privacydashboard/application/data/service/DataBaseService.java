@@ -3,6 +3,7 @@ package com.privacydashboard.application.data.service;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
+import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,15 @@ public class DataBaseService {
     private final UserRepository userRepository;
     private final IoTAppRepository ioTAppRepository;
     private final MessageRepository messageRepository;
+    private final RightRequestRepository rightRequestRepository;
 
     @Autowired
-    public DataBaseService(UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository) {
+    public DataBaseService(UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
         this.userAppRelationRepository = userAppRelationRepository;
         this.userRepository = userRepository;
         this.ioTAppRepository = ioTAppRepository;
         this.messageRepository = messageRepository;
+        this.rightRequestRepository = rightRequestRepository;
     }
 
     // USER REPOSITORY
@@ -108,5 +111,14 @@ public class DataBaseService {
             }
         }
         return controllers;
+    }
+
+    // RIGHT REQUEST REPOSITORY
+    public RightRequest getAllRequestsFromUser(User user){
+        return rightRequestRepository.findByReceiverId(user.getId());
+    }
+
+    public List<RightRequest> getAllRequestsFromReceiver(User user){
+        return rightRequestRepository.findAllByReceiverId(user.getId());
     }
 }

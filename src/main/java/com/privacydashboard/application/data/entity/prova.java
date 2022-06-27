@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="message")
-public class Message extends AbstractEntity{
+@Table(name="prova")
+public class prova extends AbstractEntity{
     @Type(type = "uuid-char")
     private UUID senderId;
     @Type(type = "uuid-char")
@@ -42,3 +42,4 @@ public class Message extends AbstractEntity{
         this.time = time;
     }
 }
+

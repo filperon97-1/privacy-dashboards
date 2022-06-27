@@ -1,14 +1,9 @@
 package com.privacydashboard.application.data.generator;
 
+import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.entity.IoTApp;
-import com.privacydashboard.application.data.entity.Message;
-import com.privacydashboard.application.data.entity.User;
-import com.privacydashboard.application.data.entity.UserAppRelation;
-import com.privacydashboard.application.data.service.IoTAppRepository;
-import com.privacydashboard.application.data.service.MessageRepository;
-import com.privacydashboard.application.data.service.UserAppRelationRepository;
-import com.privacydashboard.application.data.service.UserRepository;
+import com.privacydashboard.application.data.entity.*;
+import com.privacydashboard.application.data.service.*;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import java.time.LocalDateTime;
@@ -25,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DataGenerator {
 
     @Bean
-    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository) {
+    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository, provaRepository provaRepository ,RightRequestRepository rightRequestRepository) {
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
             if (userRepository.count() != 0L) {
@@ -135,6 +130,23 @@ public class DataGenerator {
                     messageRepository.save(message);
                 }
             }
+
+            RightRequest request=new RightRequest();
+            request.setHandled(false);
+            request.setSenderId(subjects[0].getId());
+            request.setSender(subjects[0]);
+            request.setReceiverId(controller[0].getId());
+            request.setTime(LocalDateTime.now());
+            request.setOther("varie informazioni che potrebbero essere utili");
+            request.setRightType(RightType.WITHDRAWCONSENT);
+            rightRequestRepository.save(request);
+
+            prova prova=new prova();
+            prova.setMessage("questo ");
+            prova.setTime(LocalDateTime.of(2022, 6, 26, 22, 11, 30));
+            prova.setSenderId(subjects[8].getId());
+            prova.setReceiverId(controller[8].getId());
+            provaRepository.save(prova);
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
