@@ -8,6 +8,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -28,6 +29,7 @@ public class RightsView extends VerticalLayout {
     public RightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
+        createButtons();
         createDialog();
         generateAllRightsDetails();
     }
@@ -65,6 +67,12 @@ public class RightsView extends VerticalLayout {
         H1 titleText= new H1("Select Contact");
         dialog.add(titleText);
         add(dialog);
+    }
+
+    private void createButtons(){
+        Button pendingRequests=new Button("Pending requests");
+        Button handledRequests=new Button("Handled requests");
+        add(new HorizontalLayout(pendingRequests, handledRequests));
     }
 
     private void startWithdrawConsent(){

@@ -7,6 +7,7 @@ import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
+import com.privacydashboard.application.views.rightRequest.RightRequestsView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -135,7 +136,9 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("Messages", "las la-comments", MessagesView.class), //
 
-                new MenuItemInfo("Rights", "las la-school", RightsView.class),
+                new MenuItemInfo("Rights", "las la-school", RightsView.class),  //ONLY FOR SUBJECTS
+
+                new MenuItemInfo("Rights", "las la-school", RightRequestsView.class),  //ONLY FOR CONTROLLERS AND DPOS
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 
