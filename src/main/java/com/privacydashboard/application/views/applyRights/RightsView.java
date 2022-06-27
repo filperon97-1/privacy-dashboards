@@ -11,10 +11,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
-import javax.annotation.security.PermitAll;
-import java.awt.*;
-import java.lang.reflect.Method;
+import javax.annotation.security.RolesAllowed;
 
 interface RightAction{
     void startAction();
@@ -22,7 +19,7 @@ interface RightAction{
 
 @PageTitle("Rights")
 @Route(value="rights", layout = MainLayout.class)
-@PermitAll
+@RolesAllowed({"CONTROLLER" , "DPO"})
 public class RightsView extends VerticalLayout {
     private DataBaseService dataBaseService;
     private AuthenticatedUser authenticatedUser;

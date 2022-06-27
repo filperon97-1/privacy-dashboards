@@ -1,6 +1,5 @@
 package com.privacydashboard.application.data.generator;
 
-import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
@@ -49,24 +48,21 @@ public class DataGenerator {
                 subjects[i].setUsername("subject" + String.valueOf(i));
                 subjects[i].setName("subject" + String.valueOf(i));
                 subjects[i].setHashedPassword(passwordEncoder.encode("subject" + String.valueOf(i)));
-                subjects[i].setRoles(Collections.singleton(Role.USER));
-                subjects[i].setDataRole(DataRole.SUBJECT);
+                subjects[i].setRole(Role.SUBJECT);
                 userRepository.save(subjects[i]);
 
                 controller[i]= new User();
                 controller[i].setUsername("controller" + String.valueOf(i));
                 controller[i].setName("controller" + String.valueOf(i));
                 controller[i].setHashedPassword(passwordEncoder.encode("controller" + String.valueOf(i)));
-                controller[i].setRoles(Collections.singleton(Role.USER));
-                controller[i].setDataRole(DataRole.CONTROLLER);
+                controller[i].setRole(Role.CONTROLLER);
                 userRepository.save(controller[i]);
 
                 DPO[i]= new User();
                 DPO[i].setUsername("DPO" + String.valueOf(i));
                 DPO[i].setName("DPO" + String.valueOf(i));
                 DPO[i].setHashedPassword(passwordEncoder.encode("DPO" + String.valueOf(i)));
-                DPO[i].setRoles(Collections.singleton(Role.USER));
-                DPO[i].setDataRole(DataRole.DPO);
+                DPO[i].setRole(Role.DPO);
                 userRepository.save(DPO[i]);
 
                 apps[i]= new IoTApp();

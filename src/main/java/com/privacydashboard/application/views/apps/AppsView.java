@@ -6,7 +6,6 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
-import com.vaadin.flow.component.charts.model.Navigator;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -110,5 +109,4 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
             div.add(initializeApp(i));
         }
     }
-
 }

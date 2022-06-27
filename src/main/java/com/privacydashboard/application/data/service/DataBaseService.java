@@ -1,6 +1,6 @@
 package com.privacydashboard.application.data.service;
 
-import com.privacydashboard.application.data.DataRole;
+import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
@@ -78,7 +78,7 @@ public class DataBaseService {
                     continue;
                 }
                 //Data Subject cannot have access to other Data Subjects.
-                if(u.getDataRole().equals(DataRole.SUBJECT) && user.getDataRole().equals(DataRole.SUBJECT)){
+                if(u.getRole().equals(Role.SUBJECT) && user.getRole().equals(Role.SUBJECT)){
                     continue;
                 }
                 userList.add(u);
@@ -103,7 +103,7 @@ public class DataBaseService {
         List<User> controllers=new LinkedList<>();
         List<User> userList = getUsersFromApp(app);
         for(User u : userList){
-            if(u.getDataRole().equals(DataRole.CONTROLLER)){
+            if(u.getRole().equals(Role.CONTROLLER)){
                 controllers.add(u);
             }
         }

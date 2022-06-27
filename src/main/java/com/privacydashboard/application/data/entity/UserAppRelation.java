@@ -1,13 +1,10 @@
 package com.privacydashboard.application.data.entity;
 
-import com.privacydashboard.application.data.DataRole;
 import com.privacydashboard.application.data.Role;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +16,7 @@ public class UserAppRelation extends AbstractEntity{
     private UUID idIOTApp;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> consenses;
-    private DataRole dataRole;
+    private Role role;
 
     public UUID getIdUser() {
         return idUser;
@@ -33,22 +30,16 @@ public class UserAppRelation extends AbstractEntity{
     public void setIdIOTApp(UUID idIOTApp) {
         this.idIOTApp = idIOTApp;
     }
-    /*public List<String> getConsenses() {
-        return consenses;
-    }
-    public void setConsenses(List<String> consenses) {
-        this.consenses = consenses;
-    }*/
     public List<String> getConsenses() {
         return consenses;
     }
     public void setConsenses(List<String> consenses) {
         this.consenses = consenses;
     }
-    public DataRole getDataRole() {
-        return dataRole;
+    public Role getDataRole() {
+        return role;
     }
-    public void setDataRole(DataRole dataRole) {
-        this.dataRole = dataRole;
+    public void setDataRole(Role role) {
+        this.role = role;
     }
 }

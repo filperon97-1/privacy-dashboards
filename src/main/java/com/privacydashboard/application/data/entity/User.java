@@ -2,17 +2,12 @@ package com.privacydashboard.application.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.DataRole;
-
-import java.util.Set;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 @Entity
 @Table(name = "application_user")
@@ -23,10 +18,7 @@ public class User extends AbstractEntity {
     @JsonIgnore
     private String hashedPassword;
     @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles;
-    @Enumerated(EnumType.STRING)
-    private DataRole dataRole;
+    private Role role;
 
     @Lob
     private String profilePictureUrl;
@@ -49,23 +41,17 @@ public class User extends AbstractEntity {
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
-    public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
-    }
-    public DataRole getDataRole() {
-        return dataRole;
-    }
-    public void setDataRole(DataRole dataRole) {
-        this.dataRole = dataRole;
     }
 
 }

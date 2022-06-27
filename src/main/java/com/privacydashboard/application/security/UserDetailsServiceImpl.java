@@ -2,6 +2,9 @@ package com.privacydashboard.application.security;
 
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.UserRepository;
+
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +36,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
-    private static List<GrantedAuthority> getAuthorities(User user) {
+    /*private static List<GrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
+
+    }*/
+
+    // Per com'è fatto, c'è solo un elemento Authority (User può essere solo uno tra Subject, Controller e DPO)
+    // springframework...User però vuole una lista
+    private static List<GrantedAuthority> getAuthorities(User user) {
+        List<GrantedAuthority> list=new LinkedList<>();
+        list.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        return list;
 
     }
 

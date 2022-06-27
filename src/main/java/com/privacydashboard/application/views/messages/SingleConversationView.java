@@ -15,12 +15,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 

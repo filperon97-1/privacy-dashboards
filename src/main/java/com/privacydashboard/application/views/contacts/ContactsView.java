@@ -97,7 +97,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
 
     private VerticalLayout generateContactInformations(User contact){
         Span name = new Span("Name: " + contact.getName());
-        Span role = new Span("Role: Data " +contact.getDataRole());
+        Span role = new Span("Role: Data " +contact.getRole());
         Span phone = new Span("(501) 555-9128");
         VerticalLayout apps=getApps(contact);
         Details details= new Details("Apps:" , apps);
