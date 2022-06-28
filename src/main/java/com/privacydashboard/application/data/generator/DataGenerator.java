@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DataGenerator {
 
     @Bean
-    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository, provaRepository provaRepository ,RightRequestRepository rightRequestRepository) {
+    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
             if (userRepository.count() != 0L) {
@@ -131,28 +131,42 @@ public class DataGenerator {
                 }
             }
 
-            RightRequest request=new RightRequest();
-            request.setHandled(false);
-            request.setSenderId(subjects[0].getId());
-            request.setSender(subjects[0]);
-            request.setReceiverId(controller[0].getId());
-            request.setTime(LocalDateTime.now());
-            request.setOther("varie informazioni che potrebbero essere utili");
-            request.setRightType(RightType.WITHDRAWCONSENT);
-            rightRequestRepository.save(request);
+            //AGGINUTA REQUEST. SUBJECT I INVIA 2 RICHIESTE A CONTROLLER I, UNA HANDLED UNA NON HANDLED
+            for(int i=0;i<50;i++){
+                for(int j=0;j<2;j++){
+                    RightRequest request=new RightRequest();
+                    if(j==0){
+                        request.setHandled(false);
+                    }
+                    else{
+                        request.setHandled(true);
+                    }
+                    request.setSender(subjects[i]);
+                    request.setReceiver(controller[i]);
+                    request.setApp(apps[0]);
+                    request.setTime(LocalDateTime.of(2022, 6-j, 30-(i%20), 12-j, 10, 30));
+                    request.setDetails("varie informazioni che potrebbero essere utili");
+                    int k=i*2+j;
+                    if(k%3==0){
+                        request.setRightType(RightType.WITHDRAWCONSENT);
+                    }
+                    else if(k%2==0){
+                        request.setRightType(RightType.ERASURE);
+                    }
+                    else{
+                        request.setRightType(RightType.COMPLAIN);
+                    }
+                    rightRequestRepository.save(request);
+                }
 
-            prova prova=new prova();
-            prova.setMessage("questo ");
-            prova.setTime(LocalDateTime.of(2022, 6, 26, 22, 11, 30));
-            prova.setSenderId(subjects[8].getId());
-            prova.setReceiverId(controller[8].getId());
-            provaRepository.save(prova);
+            }
+
+
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime notNow=LocalDateTime.of(2020, 4, 13, 22, 11, 30);
             logger.info(dtf.format(notNow));
-
 
             //FINE AGGIUNTA
 

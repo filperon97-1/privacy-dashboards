@@ -61,6 +61,10 @@ public class DataBaseService {
         return userAppRelationRepository.getIoTAppFromUserID(user.getId());
     }
 
+    public List<IoTApp> getUserAppsByName(User user, String name){
+        return userAppRelationRepository.getIoTAppFromUserIDFilterByName(user.getId(), name);
+    }
+
     public List<String> getConsensesFromUserAndApp(User user, IoTApp app){
         return userAppRelationRepository.getUserAppRelationFromUserIdAndAppId(user.getId(), app.getId()).getConsenses();
     }
@@ -114,11 +118,16 @@ public class DataBaseService {
     }
 
     // RIGHT REQUEST REPOSITORY
-    public RightRequest getAllRequestsFromUser(User user){
-        return rightRequestRepository.findByReceiverId(user.getId());
-    }
 
     public List<RightRequest> getAllRequestsFromReceiver(User user){
-        return rightRequestRepository.findAllByReceiverId(user.getId());
+        return rightRequestRepository.findAllByReceiver(user);
+    }
+
+    public List<RightRequest> getPendingRequestsFromSender(User user){
+        return rightRequestRepository.findAllBySenderAndHandled(user, false);
+    }
+
+    public List<RightRequest> getHandledRequestsFromSender(User user){
+        return rightRequestRepository.findAllBySenderAndHandled(user, true);
     }
 }

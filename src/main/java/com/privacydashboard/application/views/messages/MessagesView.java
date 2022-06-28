@@ -61,13 +61,6 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(contact -> showContact(contact));
         add(grid);
-
-
-        /*DIVIDERE IN PARTI:
-        - TUTTI I MESSAGGI
-        - RICHIESTE NON ANCORA PRESE IN CARICO (es: Subject ha fatto richiesta di rimozione, non è ancora stata processata)
-        - RICHIESTE ARCHIVIATE(es: Subject ha fatto richiesta di rimozione e il Controller ha rimosso)
-         */
     }
 
     private void initializeNewDialog(){

@@ -20,4 +20,7 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
 
     @Query("SELECT u FROM User u WHERE u.id in (SELECT idUser FROM UserAppRelation WHERE idIOTApp=:appId)")
     List<User> getUsersFromAppId(@Param("appId") UUID appId);
+
+    @Query("SELECT i from IoTApp i WHERE i.id in (SELECT idIOTApp from UserAppRelation WHERE idUser=:userId) AND i.name like concat('%', :filter, '%') ")
+    List<IoTApp>getIoTAppFromUserIDFilterByName(@Param("userId") UUID userId, @Param("filter") String filter);
 }
