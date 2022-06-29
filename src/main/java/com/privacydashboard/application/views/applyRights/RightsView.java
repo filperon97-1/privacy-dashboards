@@ -159,11 +159,12 @@ public class RightsView extends VerticalLayout {
         right.setVerticalComponentAlignment(Alignment.CENTER);
 
         TextArea premadeMessage=new TextArea();
-        premadeMessage.setValue("\n" +
-                "Stop ai motori endotermici dal 2035, ok da CdM Ambiente Ue\n" +
-                "Motori.\n" +
-                "Il Consiglio dei ministri Ue dell'Ambiente ha annunciato nella notte di aver raggiunto l'intesa sul pacchetto di misure green 'Fit for 55'. Timmermans: 'Il futuro è elettrico, i carburanti sintetici non sembrano una soluzione realistica'");
+        premadeMessage.setValue("Dear " + request.getReceiver().getName() + ", \n" +
+                "I would like to withdraw the consent: " +request.getRightType().toString() + " from the app " + request.getApp().getName() + ",\n" +
+                "Best regards, \n" +
+                request.getSender().getName());
         premadeMessage.setWidthFull();
+        premadeMessage.setReadOnly(true);
         TextArea details=new TextArea();
         details.setPlaceholder("Add additional information");
         details.setWidthFull();
