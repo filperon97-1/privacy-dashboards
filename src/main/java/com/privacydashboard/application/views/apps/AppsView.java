@@ -1,13 +1,19 @@
 package com.privacydashboard.application.views.apps;
 
+import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.IoTApp;
+import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 
@@ -86,9 +92,23 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         VerticalLayout layout=new VerticalLayout();
         List<String> consenses=dataBaseService.getConsensesFromUserAndApp(user, i);
         for(String consens :  consenses){
-            layout.add(new Span(consens));
+            HorizontalLayout l=new HorizontalLayout(new Span(consens) , new Button("Withdraw consent", e -> withdrawConsent(i, consens)));
+            l.setAlignItems(Alignment.CENTER);
+            l.setVerticalComponentAlignment(Alignment.CENTER);
+            layout.add(l);
         }
         return layout;
+    }
+
+    private void withdrawConsent(IoTApp i, String consent){
+        RightRequest request=new RightRequest();
+        request.setSender(user);
+        request.setRightType(RightType.WITHDRAWCONSENT);
+        request.setApp(i);
+        request.setOther(consent);
+        request.setReceiver(dataBaseService.getControllersFromApp(i).get(0));
+        ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
+        UI.getCurrent().navigate("rights");
     }
 
     @Override

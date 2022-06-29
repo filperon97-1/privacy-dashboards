@@ -21,12 +21,10 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
-import com.vaadin.flow.router.RouterLink;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
@@ -39,13 +37,30 @@ interface RightAction{
 @PageTitle("Rights")
 @Route(value="rights", layout = MainLayout.class)
 @RolesAllowed("SUBJECT")
-public class RightsView extends VerticalLayout {
+public class RightsView extends VerticalLayout implements BeforeEnterObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final Dialog dialog=new Dialog();
     private final Dialog confirmDialog=new Dialog();
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
+    // Uso ComponentUtil per passare le informazioni invece dei parametri dell'url. Dopo bisogna resettarlo
+    @Override
+    public void beforeEnter(BeforeEnterEvent event){
+        Object object=ComponentUtil.getData(UI.getCurrent(), "RightRequest");
+        if(object==null){
+            return;
+        }
+        try{
+            RightRequest request=(RightRequest) object;
+            ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
+            confirmRequest(request);
+        }catch(Exception e){
+            ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
+            return;
+        }
+    }
 
     public RightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
         this.dataBaseService = dataBaseService;
@@ -129,6 +144,7 @@ public class RightsView extends VerticalLayout {
                 request.setApp(appComboBox.getValue());
                 request.setReceiver(dataBaseService.getControllersFromApp(appComboBox.getValue()).get(0));
                 request.setSender(getUser());
+                request.setOther(consensComboBox.getValue());
                 request.setRightType(RightType.WITHDRAWCONSENT);
                 request.setHandled(false);
                 /*ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
@@ -160,7 +176,7 @@ public class RightsView extends VerticalLayout {
 
         TextArea premadeMessage=new TextArea();
         premadeMessage.setValue("Dear " + request.getReceiver().getName() + ", \n" +
-                "I would like to withdraw the consent: " +request.getRightType().toString() + " from the app " + request.getApp().getName() + ",\n" +
+                "I would like to withdraw the consent: " +request.getOther() + " from the app " + request.getApp().getName() + ",\n" +
                 "Best regards, \n" +
                 request.getSender().getName());
         premadeMessage.setWidthFull();

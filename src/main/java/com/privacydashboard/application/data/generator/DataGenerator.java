@@ -143,12 +143,13 @@ public class DataGenerator {
                     }
                     request.setSender(subjects[i]);
                     request.setReceiver(controller[i]);
-                    request.setApp(apps[0]);
+                    request.setApp(apps[i]);
                     request.setTime(LocalDateTime.of(2022, 6-j, 30-(i%20), 12-j, 10, 30));
                     request.setDetails("varie informazioni che potrebbero essere utili");
                     int k=i*2+j;
                     if(k%3==0){
                         request.setRightType(RightType.WITHDRAWCONSENT);
+                        request.setOther("consenso1");
                     }
                     else if(k%2==0){
                         request.setRightType(RightType.ERASURE);

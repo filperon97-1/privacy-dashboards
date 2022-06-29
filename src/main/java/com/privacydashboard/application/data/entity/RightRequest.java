@@ -22,6 +22,7 @@ public class RightRequest extends AbstractEntity{
     private Boolean handled;
     @Enumerated(EnumType.STRING)
     private RightType rightType;
+    private String other;
 
     public User getSender(){ return sender;}
     public void setSender(User sender){ this.sender=sender;}
@@ -49,4 +50,6 @@ public class RightRequest extends AbstractEntity{
     }
     public Boolean getHandled(){ return handled;}
     public void setHandled(Boolean handled){ this.handled=handled;}
+    public String getOther(){ return other;}
+    public void setOther(String other){ this.other=other; }
 }
