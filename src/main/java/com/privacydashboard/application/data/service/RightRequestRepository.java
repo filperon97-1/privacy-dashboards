@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface RightRequestRepository extends JpaRepository<RightRequest, UUID> {
     List<RightRequest> findAllByReceiver(User user);
     List<RightRequest> findAllBySenderAndHandled(User user, Boolean handled);
+
 }

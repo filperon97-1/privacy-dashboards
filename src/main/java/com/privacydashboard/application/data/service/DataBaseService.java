@@ -117,6 +117,17 @@ public class DataBaseService {
         return controllers;
     }
 
+    public List<User> getSubjectsFromApp(IoTApp app){
+        List<User> subjects=new LinkedList<>();
+        List<User> userList = getUsersFromApp(app);
+        for(User u : userList){
+            if(u.getRole().equals(Role.SUBJECT)){
+                subjects.add(u);
+            }
+        }
+        return subjects;
+    }
+
     // RIGHT REQUEST REPOSITORY
 
     public List<RightRequest> getAllRequestsFromReceiver(User user){
@@ -133,6 +144,11 @@ public class DataBaseService {
 
     public void addNowRequest(RightRequest request){
         request.setTime(LocalDateTime.now());
+        rightRequestRepository.save(request);
+    }
+
+    public void updateRequest(RightRequest request){
+        rightRequestRepository.deleteById(request.getId());
         rightRequestRepository.save(request);
     }
 }
