@@ -137,8 +137,7 @@ public class RightsView extends VerticalLayout {
                 confirmRequest(request);
             }
         });
-        Button cancel=new Button("Cancel", e-> {
-            dialog.close();});
+        Button cancel=new Button("Cancel", e-> dialog.close());
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
 
@@ -153,15 +152,21 @@ public class RightsView extends VerticalLayout {
         confirmDialog.setWidth("50%");
 
         HorizontalLayout appName=new HorizontalLayout(new H1("APP:  "), new H2(request.getApp().getName()));
+        appName.setAlignItems(Alignment.CENTER);
+        appName.setVerticalComponentAlignment(Alignment.CENTER);
         HorizontalLayout right=new HorizontalLayout(new H1("RIGHT:  "), new H2(request.getRightType().toString()));
+        right.setAlignItems(Alignment.CENTER);
+        right.setVerticalComponentAlignment(Alignment.CENTER);
 
         TextArea premadeMessage=new TextArea();
         premadeMessage.setValue("\n" +
                 "Stop ai motori endotermici dal 2035, ok da CdM Ambiente Ue\n" +
                 "Motori.\n" +
                 "Il Consiglio dei ministri Ue dell'Ambiente ha annunciato nella notte di aver raggiunto l'intesa sul pacchetto di misure green 'Fit for 55'. Timmermans: 'Il futuro è elettrico, i carburanti sintetici non sembrano una soluzione realistica'");
+        premadeMessage.setWidthFull();
         TextArea details=new TextArea();
         details.setPlaceholder("Add additional information");
+        details.setWidthFull();
 
         Button confirm=new Button("Confirm", e->{request.setDetails(details.getValue());
                                                         dataBaseService.addNowRequest(request);

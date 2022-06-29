@@ -5,6 +5,7 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -70,53 +71,18 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         contactComboBox.setItems(contacts);
         contactComboBox.setItemLabelGenerator(User::getName);
 
-        TextField filterText= new TextField();
-        filterText.setPlaceholder("Send to...");
-        filterText.setValueChangeMode(ValueChangeMode.LAZY);    //considera testo cambiato solo quando smette di scrivere
-        filterText.addValueChangeListener(e-> contactComboBox.setItems(filterContactsByName(filterText.getValue())));
-
-        TextArea messageText=new TextArea();
-        messageText.setPlaceholder("Text...");
-        messageText.setWidthFull();
-
-
-        HorizontalLayout filterLayout=new HorizontalLayout(filterText, contactComboBox);
-        filterLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        filterLayout.setAlignItems(Alignment.CENTER);
-
-        Button newMessage=new Button("Send Message", e->{
-                                                            if(contactComboBox.getValue()!=null && messageText.getValue()!=null){
-                                                                sendMessage(contactComboBox.getValue(), messageText.getValue());
-                                                                newMessageDialog.close();
-                                                                updateGrid();
+        Button newMessage=new Button("Continue", e->{if(contactComboBox.getValue()!=null){
+                                                            newMessageDialog.close();
+                                                            UI.getCurrent().navigate("conversation/"+ contactComboBox.getValue().getId().toString());
                                                             }
         });
-        Button cancel=new Button("Cancel", e-> {
-                                                newMessageDialog.close();});
+        Button cancel=new Button("Cancel", e-> newMessageDialog.close());
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
 
-        VerticalLayout layout=new VerticalLayout(titleText, filterLayout, messageText, buttonLayout);
+        VerticalLayout layout=new VerticalLayout(titleText, contactComboBox, buttonLayout);
         layout.setHorizontalComponentAlignment(Alignment.CENTER);
         newMessageDialog.add(layout);
-    }
-
-    private List<User> filterContactsByName(String text){
-        List<User> users=new LinkedList<>();
-        for(User u : contacts){
-            if(u.getName().toLowerCase().contains(text.toLowerCase()) || u.getUsername().toLowerCase().contains(text.toLowerCase())){
-                users.add(u);
-            }
-        }
-        return users;
-    }
-
-    private void sendMessage(User receiver, String text){
-        Message message=new Message();
-        message.setMessage(text);
-        message.setReceiverId(receiver.getId());
-        message.setSenderId(user.getId());
-        dataBaseService.addNowMessage(message);
     }
 
     private RouterLink showContact(User contact){
