@@ -130,4 +130,9 @@ public class DataBaseService {
     public List<RightRequest> getHandledRequestsFromSender(User user){
         return rightRequestRepository.findAllBySenderAndHandled(user, true);
     }
+
+    public void addNowRequest(RightRequest request){
+        request.setTime(LocalDateTime.now());
+        rightRequestRepository.save(request);
+    }
 }

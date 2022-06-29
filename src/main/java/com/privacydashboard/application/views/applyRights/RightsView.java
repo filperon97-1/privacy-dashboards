@@ -16,6 +16,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -42,6 +43,7 @@ public class RightsView extends VerticalLayout {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final Dialog dialog=new Dialog();
+    private final Dialog confirmDialog=new Dialog();
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
@@ -112,28 +114,27 @@ public class RightsView extends VerticalLayout {
         dialog.setWidth("50%");
         H1 titleText= new H1("Select App");
 
+        ComboBox<String> consensComboBox= new ComboBox<>("Consens");
+        consensComboBox.setPlaceholder("Filter by name...");
+
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(getUser()));
         appComboBox.setItemLabelGenerator(IoTApp::getName);
-
-        TextField filterText= new TextField();
-        filterText.setPlaceholder("Filter by name...");
-        filterText.setValueChangeMode(ValueChangeMode.LAZY);    //considera testo cambiato solo quando smette di scrivere
-        filterText.addValueChangeListener(e-> appComboBox.setItems(dataBaseService.getUserAppsByName(getUser(), filterText.getValue())));
-
-        HorizontalLayout filterLayout=new HorizontalLayout(filterText, appComboBox);
-        filterLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        filterLayout.setAlignItems(Alignment.CENTER);
+        appComboBox.setPlaceholder("Filter by name...");
+        appComboBox.addValueChangeListener(e-> consensComboBox.setItems(dataBaseService.getConsensesFromUserAndApp(getUser(),appComboBox.getValue())));
 
         Button newMessage=new Button("Continue", e->{
-            if(appComboBox.getValue()!=null){
+            if(appComboBox.getValue()!=null && consensComboBox.getValue()!=null){
                 RightRequest request=new RightRequest();
                 request.setApp(appComboBox.getValue());
+                request.setReceiver(dataBaseService.getControllersFromApp(appComboBox.getValue()).get(0));
                 request.setSender(getUser());
                 request.setRightType(RightType.WITHDRAWCONSENT);
-                ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
-                UI.getCurrent().navigate("single_right");
+                request.setHandled(false);
+                /*ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
+                UI.getCurrent().navigate("single_right");*/
                 dialog.close();
+                confirmRequest(request);
             }
         });
         Button cancel=new Button("Cancel", e-> {
@@ -141,10 +142,34 @@ public class RightsView extends VerticalLayout {
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
 
-        VerticalLayout layout=new VerticalLayout(titleText, filterLayout, buttonLayout);
+        VerticalLayout layout=new VerticalLayout(titleText, new HorizontalLayout(appComboBox, consensComboBox), buttonLayout);
         layout.setHorizontalComponentAlignment(Alignment.CENTER);
         dialog.add(layout);
         dialog.open();
+    }
+
+    private void confirmRequest(RightRequest request){
+        confirmDialog.removeAll();
+        confirmDialog.setWidth("50%");
+
+        HorizontalLayout appName=new HorizontalLayout(new H1("APP:  "), new H2(request.getApp().getName()));
+        HorizontalLayout right=new HorizontalLayout(new H1("RIGHT:  "), new H2(request.getRightType().toString()));
+
+        TextArea premadeMessage=new TextArea();
+        premadeMessage.setValue("\n" +
+                "Stop ai motori endotermici dal 2035, ok da CdM Ambiente Ue\n" +
+                "Motori.\n" +
+                "Il Consiglio dei ministri Ue dell'Ambiente ha annunciato nella notte di aver raggiunto l'intesa sul pacchetto di misure green 'Fit for 55'. Timmermans: 'Il futuro è elettrico, i carburanti sintetici non sembrano una soluzione realistica'");
+        TextArea details=new TextArea();
+        details.setPlaceholder("Add additional information");
+
+        Button confirm=new Button("Confirm", e->{request.setDetails(details.getValue());
+                                                        dataBaseService.addNowRequest(request);
+                                                        confirmDialog.close();});
+        Button cancel=new Button("Cancel", e-> confirmDialog.close());
+
+        confirmDialog.add(new VerticalLayout(appName, right, premadeMessage, details, new HorizontalLayout(confirm, cancel)));
+        confirmDialog.open();
     }
 
     private User getUser(){
