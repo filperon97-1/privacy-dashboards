@@ -7,7 +7,6 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
-import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -147,8 +146,6 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
                 request.setOther(consensComboBox.getValue());
                 request.setRightType(RightType.WITHDRAWCONSENT);
                 request.setHandled(false);
-                /*ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
-                UI.getCurrent().navigate("single_right");*/
                 dialog.close();
                 confirmRequest(request);
             }

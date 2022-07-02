@@ -5,6 +5,8 @@ import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ public class DataBaseService {
     private final IoTAppRepository ioTAppRepository;
     private final MessageRepository messageRepository;
     private final RightRequestRepository rightRequestRepository;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public DataBaseService(UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {

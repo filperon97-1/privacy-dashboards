@@ -98,13 +98,15 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
     private VerticalLayout generateContactInformations(User contact){
         Span name = new Span("Name: " + contact.getName());
         Span role = new Span("Role: Data " +contact.getRole());
-        Span phone = new Span("(501) 555-9128");
+        //Scegliere se inserire o meno le informazioni sotto
+        Span phone = new Span("Telephone: ");
+        Span mail = new Span("Mail: ");
         VerticalLayout apps=getApps(contact);
         Details details= new Details("Apps:" , apps);
         RouterLink routerLink=new RouterLink();
         routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
         routerLink.add(new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create()));
-        return new VerticalLayout(name, role, phone, routerLink, details);
+        return new VerticalLayout(name, role, phone, mail, routerLink, details);
     }
 
     private VerticalLayout getApps(User contact){

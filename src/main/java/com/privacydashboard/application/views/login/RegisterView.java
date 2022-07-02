@@ -57,9 +57,8 @@ public class RegisterView extends VerticalLayout {
         role.setItems(roleList);
 
         binder.forField(username).withValidator(name -> name.length()>5, "name lenght must be at least 5")
-                .withValidator(name-> name.endsWith("hola"), "name must end with 'hola'")
                 .bind(User::getUsername, User::setUsername);
-        binder.forField(confirmPassword).withValidator(pass-> pass.length()>8, "pass lenght must be at least 8")
+        binder.forField(confirmPassword).withValidator(pass-> pass.length()>=8, "pass lenght must be at least 8")
                 .withValidator(pass -> pass.equals(password.getValue()), "it must be equal to the password")
                 .withConverter(this::encodePassword, this::encodePassword)  //encode password
                 .bind(User::getHashedPassword, User::setHashedPassword);
