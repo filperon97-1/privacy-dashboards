@@ -1,7 +1,10 @@
 # Privacy Dashboard
 
-This project can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+## Log in the app
+
+To enter the application as a Data Subject: user=subject<number_between_0-49> password=subject<same_number> (e.g. user=subject25 password=subject25)
+To enter the application as a Data Controller: user=controller<number_between_0-49> password=controller<same_number> (e.g. user=controller19 password=controller19)
+To enter the application as a DPO: user=DPO<number_between_0-49> password=DPO<same_number> (e.g. user=DPO48 password=DPO48)
 
 ## Running the application
 
