@@ -8,6 +8,7 @@ import com.privacydashboard.application.data.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Service
 public class DataBaseService {
+    private final PasswordEncoder passwordEncoder;
     private final UserAppRelationRepository userAppRelationRepository;
     private final UserRepository userRepository;
     private final IoTAppRepository ioTAppRepository;
@@ -24,7 +26,8 @@ public class DataBaseService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public DataBaseService(UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
+    public DataBaseService(PasswordEncoder passwordEncoder, UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
+        this.passwordEncoder=passwordEncoder;
         this.userAppRelationRepository = userAppRelationRepository;
         this.userRepository = userRepository;
         this.ioTAppRepository = ioTAppRepository;
@@ -36,6 +39,17 @@ public class DataBaseService {
 
     public Optional<User> getUser(UUID id) {
         return userRepository.findById(id);
+    }
+
+    public User getUserByName(String name){ return userRepository.findByUsername(name);}
+
+    public void addUser(User user){
+        userRepository.save(user);
+    }
+
+    public void hashPassAndAddUser(User user){
+        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
+        addUser(user);
     }
 
     // MESSAGE REPOSITORY

@@ -1,8 +1,10 @@
 package com.privacydashboard.application.views.home;
 
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.data.service.UserService;
 import com.privacydashboard.application.views.MainLayout;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
@@ -20,7 +22,7 @@ import java.util.List;
 @PermitAll
 public class HomeView extends VerticalLayout {
 
-    public HomeView(UserService userService) {
+    public HomeView(DataBaseService dataBaseService) {
         /*setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");

@@ -1,6 +1,9 @@
 package com.privacydashboard.application.data.service;
 
 import com.privacydashboard.application.data.entity.User;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

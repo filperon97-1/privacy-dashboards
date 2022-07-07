@@ -2,7 +2,7 @@ package com.privacydashboard.application.views.login;
 
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.User;
-import com.privacydashboard.application.data.service.UserService;
+import com.privacydashboard.application.data.service.DataBaseService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -15,32 +15,23 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.LinkedList;
 import java.util.List;
 
-
-/*
- TO DO:
- - Check della password fatto anche sul primo PasswordField e non solo sul secondo
- - Quando il browser chiede di salvare le credenziali c'è la HashPassword
- */
 @Route("registration")
 @PageTitle("Registration")
 @AnonymousAllowed
 public class RegisterView extends VerticalLayout {
-    private TextField username=new TextField("username");
-    private PasswordField password=new PasswordField("password");
-    private PasswordField confirmPassword=new PasswordField("confirm password");
-    private ComboBox<Role> role= new ComboBox<>("Role");
-    private UserService userService;
-    private PasswordEncoder passwordEncoder;
+    private TextField username=new TextField("USERNAME");
+    private PasswordField password=new PasswordField("PASSWORD");
+    private PasswordField confirmPassword=new PasswordField("CONFIRM PASSWORD");
+    private ComboBox<Role> role= new ComboBox<>("ROLE");
+    private final DataBaseService dataBaseService;
     private Binder<User> binder= new Binder<>(User.class);
 
-    public RegisterView(UserService userService, PasswordEncoder passwordEncoder){
-        this.userService=userService;
-        this.passwordEncoder=passwordEncoder;
+    public RegisterView(DataBaseService dataBaseService){
+        this.dataBaseService=dataBaseService;
         addClassName("registration");
         setAlignItems(Alignment.CENTER);
         implementBinder();
@@ -49,24 +40,33 @@ public class RegisterView extends VerticalLayout {
     }
 
     private void implementBinder(){
-        //implements dataRole ComboBox
+        // implements dataRole ComboBox
         List<Role> roleList=new LinkedList<>();
         roleList.add(Role.CONTROLLER);
         roleList.add(Role.SUBJECT);
         roleList.add(Role.DPO);
         role.setItems(roleList);
 
-        binder.forField(username).withValidator(name -> name.length()>5, "name lenght must be at least 5")
+        // bind User and form
+        password.setMinLength(8);
+        password.setErrorMessage("the password must be at least 8 characters");
+        binder.forField(username).withValidator(name -> name.length()>=5, "name must be at least 5 characters")
+                .withValidator(name-> isUniqueName(name), "username already in use, please use another one")
                 .bind(User::getUsername, User::setUsername);
-        binder.forField(confirmPassword).withValidator(pass-> pass.length()>=8, "pass lenght must be at least 8")
-                .withValidator(pass -> pass.equals(password.getValue()), "it must be equal to the password")
-                .withConverter(this::encodePassword, this::encodePassword)  //encode password
+        binder.forField(confirmPassword).withValidator(pass-> pass.length()>=8, "the password must be at least 8 characters")
+                .withValidator(pass -> pass.equals(password.getValue()), "the two passwords must be equals")
                 .bind(User::getHashedPassword, User::setHashedPassword);
-        binder.bind(role, User::getRole, User::setRole);
+        binder.forField(role).withValidator(value -> value!=null, "please select a role").bind(User::getRole, User::setRole);
+        //binder.bind(role, User::getRole, User::setRole);
     }
 
-    private String encodePassword(String password){
-        return passwordEncoder.encode(password);
+    private boolean isUniqueName(String name){
+        if(dataBaseService.getUserByName(name)==null){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     private void confirm(){
@@ -76,7 +76,7 @@ public class RegisterView extends VerticalLayout {
         } catch (ValidationException e) {
             e.printStackTrace();
         }
-        userService.addUser(user);
+        dataBaseService.hashPassAndAddUser(user);   // create user and hash the password (better do the hash in a different layer(not the one visible to the user)??)
         UI.getCurrent().getPage().setLocation("/"); // reinderizza alla pagina login
     }
 }
