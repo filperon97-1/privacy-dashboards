@@ -14,6 +14,8 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -24,7 +26,7 @@ import java.util.Optional;
 @PageTitle("Rights")
 @Route(value="rights_controller", layout = MainLayout.class)
 @RolesAllowed({"CONTROLLER", "DPO"})
-public class RightRequestsView extends VerticalLayout {
+public class RightRequestsView extends VerticalLayout implements AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final Grid<RightRequest> grid= new Grid<>();
@@ -37,7 +39,6 @@ public class RightRequestsView extends VerticalLayout {
         this.authenticatedUser = authenticatedUser;
         addClassName("grid-views");
         initializeGrid();
-        updateGrid();
     }
 
     private void initializeGrid(){
@@ -78,7 +79,8 @@ public class RightRequestsView extends VerticalLayout {
 
         Button save=new Button("Save" , e->{request.setHandled(checkbox.getValue());
                                                 dataBaseService.updateRequest(request);
-                                                requestDialog.close();});
+                                                requestDialog.close();
+                                                updateGrid();});
         Button cancel=new Button("Cancel", e->requestDialog.close());
         HorizontalLayout buttonLayout=new HorizontalLayout(save,cancel);
         buttonLayout.setAlignItems(Alignment.CENTER);
@@ -95,5 +97,10 @@ public class RightRequestsView extends VerticalLayout {
             return;
         }
         grid.setItems(dataBaseService.getAllRequestsFromReceiver(maybeUser.get()));
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+       updateGrid();
     }
 }

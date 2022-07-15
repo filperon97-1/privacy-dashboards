@@ -75,8 +75,8 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
 
         RightAction askInformation=() -> startWithdrawConsent();
         add(generateRightDetail("Ask information", "you have the right to know some information:\n" +
-                        "the period for which the personal data will be stored\n" +
-                        "the purposes of the processing for which the personal data are intended\n" +
+                        "the period for which the personal data will be stored,\n" +
+                        "the purposes of the processing for which the personal data are intended,\n" +
                         "the recipients or categories of recipients of the personal data",
                 "Ask information", askInformation));
 
