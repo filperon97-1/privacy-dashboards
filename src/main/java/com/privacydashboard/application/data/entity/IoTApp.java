@@ -1,5 +1,4 @@
 package com.privacydashboard.application.data.entity;
-
 import javax.persistence.*;
 
 @Entity
