@@ -63,7 +63,7 @@ public class DataGenerator {
                 apps[i]= new IoTApp();
                 apps[i].setDescription("description" + String.valueOf(i));
                 apps[i].setName("appppp" + String.valueOf(i));
-                apps[i].setDataController(controller[i]);
+                //apps[i].setDataController(controller[i]);
                 ioTAppRepository.save(apps[i]);
 
             }
@@ -76,8 +76,8 @@ public class DataGenerator {
                     if(j>=0 && j<50){
                         UserAppRelation userAppRelation=new UserAppRelation();
                         userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
-                        userAppRelation.setIdUser(subjects[i].getId());
-                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelation.setUser(subjects[i]);
+                        userAppRelation.setApp(apps[j]);
                         userAppRelationRepository.save(userAppRelation);
                     }
                 }
@@ -87,8 +87,8 @@ public class DataGenerator {
                     if(j<50){
                         UserAppRelation userAppRelation=new UserAppRelation();
                         userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
-                        userAppRelation.setIdUser(controller[i].getId());
-                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelation.setUser(controller[i]);
+                        userAppRelation.setApp(apps[j]);
                         userAppRelationRepository.save(userAppRelation);
                     }
                 }
@@ -98,8 +98,8 @@ public class DataGenerator {
                     if(j<50 && j>=0){
                         UserAppRelation userAppRelation=new UserAppRelation();
                         userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
-                        userAppRelation.setIdUser(DPO[i].getId());
-                        userAppRelation.setIdIOTApp(apps[j].getId());
+                        userAppRelation.setUser(DPO[i]);
+                        userAppRelation.setApp(apps[j]);
                         userAppRelationRepository.save(userAppRelation);
                     }
                 }
@@ -117,16 +117,16 @@ public class DataGenerator {
                         Message message=new Message();
                         message.setMessage("questo è il " + String.valueOf(z) +" (non in ordine) messaggio da Subject " + String.valueOf(i) + " verso Controller " +String.valueOf(k));
                         message.setTime(LocalDateTime.of(2022, 6, 26-z, 22, 11, 30));
-                        message.setSenderId(subjects[i].getId());
-                        message.setReceiverId(controller[k].getId());
+                        message.setSender(subjects[i]);
+                        message.setReceiver(controller[k]);
                         messageRepository.save(message);
                     }
                     // CONTROLLER RISPONDE CON 1 SOLO MESSAGGIO
                     Message message=new Message();
                     message.setMessage(" Sono il Controller " + String.valueOf(k));
                     message.setTime(LocalDateTime.of(2022, 6, 26-j, 12, 10, 55));
-                    message.setSenderId(controller[k].getId());
-                    message.setReceiverId(subjects[i].getId());
+                    message.setSender(controller[k]);
+                    message.setReceiver(subjects[i]);
                     messageRepository.save(message);
                 }
             }

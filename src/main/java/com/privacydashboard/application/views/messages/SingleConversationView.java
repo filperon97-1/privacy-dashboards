@@ -94,7 +94,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         List<Message> conversation=dataBaseService.getConversationFromUsers(user, contact);
         List<MessageListItem> messageListItems=new LinkedList<>();
         for(Message message : conversation){
-            User u=message.getSenderId().equals(user.getId()) ? user : contact;
+            User u=message.getSender().getId().equals(user.getId()) ? user : contact;
             MessageListItem messageItem=new MessageListItem(message.getMessage(),message.getTime().toInstant(ZoneOffset.UTC), u.getName());
             messageListItems.add(messageItem);
         }
@@ -104,8 +104,8 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     private void sendMessage(String text){
         Message message=new Message();
         message.setMessage(text);
-        message.setReceiverId(contact.getId());
-        message.setSenderId(user.getId());
+        message.setReceiver(contact);
+        message.setSender(user);
         dataBaseService.addNowMessage(message);
     }
 

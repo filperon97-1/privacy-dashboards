@@ -1,5 +1,6 @@
 package com.privacydashboard.application.data.service;
 
+import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.entity.UserAppRelation;
@@ -11,16 +12,32 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserAppRelationRepository extends JpaRepository<UserAppRelation, UUID> {
+    Role subject=Role.SUBJECT;
+    Role controller=Role.CONTROLLER;
+    Role dpo=Role.DPO;
 
-    @Query("SELECT i from IoTApp i WHERE i.id in (SELECT idIOTApp from UserAppRelation WHERE idUser=:userId) ")
-    List<IoTApp> getIoTAppFromUserID(@Param("userId") UUID userId);
+    @Query("SELECT uar.app from UserAppRelation uar WHERE uar.user=:user")
+    List<IoTApp> getIoTAppsFromUser(@Param("user") User user);
 
-    @Query("SELECT u FROM UserAppRelation u WHERE u.idUser=:userId AND u.idIOTApp=:appId")
-    UserAppRelation getUserAppRelationFromUserIdAndAppId(@Param("userId") UUID userId, @Param("appId") UUID appId);
+    @Query("SELECT i from IoTApp i WHERE i in (SELECT uar.app from UserAppRelation uar WHERE uar.user=:user) AND i.name like concat('%', :filter, '%') ")
+    List<IoTApp>getIoTAppsFromUserFilterByName(@Param("user") User user, @Param("filter") String filter);
 
-    @Query("SELECT u FROM User u WHERE u.id in (SELECT idUser FROM UserAppRelation WHERE idIOTApp=:appId)")
-    List<User> getUsersFromAppId(@Param("appId") UUID appId);
+    UserAppRelation findByUserAndApp(User user, IoTApp app);
 
-    @Query("SELECT i from IoTApp i WHERE i.id in (SELECT idIOTApp from UserAppRelation WHERE idUser=:userId) AND i.name like concat('%', :filter, '%') ")
-    List<IoTApp>getIoTAppFromUserIDFilterByName(@Param("userId") UUID userId, @Param("filter") String filter);
+    @Query("SELECT uar.user from UserAppRelation uar WHERE uar.app=:app")
+    List<User> getUsersFromApp(@Param("app") IoTApp app);
+
+    // Prende i contatti per i Data Subject (gli altri data subject sono esclusi)
+    @Query("SELECT DISTINCT uar.user from UserAppRelation uar WHERE " +
+            "(uar.app in (SELECT app from UserAppRelation WHERE user=:user)) AND " +
+            "(uar.role=:role1 OR uar.role=:role2) " +
+            "ORDER BY uar.user.name")
+    List<User> getAllContactsFilterBy2Roles(@Param("user") User user, @Param("role1") Role role1, @Param("role2") Role role2);
+
+    // Prende i contatti per i Data Controller e DPO
+    @Query("SELECT DISTINCT uar.user from UserAppRelation uar WHERE " +
+            "(uar.app in (SELECT app from UserAppRelation WHERE user=:user)) AND (uar.user<>:user) " +
+            "ORDER BY uar.user.name")
+    List<User> getAllDPOOrControllerContacts(@Param("user") User user);
+
 }

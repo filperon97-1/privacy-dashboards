@@ -20,6 +20,7 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // da cambiare, salvare nel DB le immagini??
     @Lob
     private String profilePictureUrl;
 

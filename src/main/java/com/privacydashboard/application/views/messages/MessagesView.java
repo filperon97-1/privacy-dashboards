@@ -1,6 +1,5 @@
 package com.privacydashboard.application.views.messages;
 
-import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
@@ -18,13 +17,9 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
 
 import javax.annotation.security.PermitAll;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 

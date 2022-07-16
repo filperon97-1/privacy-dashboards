@@ -7,14 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface MessageRepository  extends JpaRepository<Message, UUID> {
-    @Query("SELECT m FROM Message m WHERE (senderId=:user1Id AND receiverId=:user2Id) OR (senderId=:user2Id AND receiverId=:user1Id)" +
+    @Query("SELECT m FROM Message m " +
+            "WHERE (sender=:user1 AND receiver=:user2) OR (sender=:user2 AND receiver=:user1)" +
             "ORDER BY time")
-    List<Message> getConversationFromUsersId(@Param("user1Id") UUID user1Id, @Param("user2Id") UUID user2Id);
+    List<Message> getConversationFromUsers(@Param("user1") User user1, @Param("user2") User user2);
 
-    @Query("SELECT u FROM User u WHERE (u.id in (SELECT senderId FROM Message WHERE receiverId=:userId) ) OR " +
-            "(u.id in (SELECT receiverId FROM Message WHERE senderId=:userId))")
-    List<User> getUserConversationFromUserId(@Param("userId") UUID userId);
+    @Query("SELECT DISTINCT u FROM User u WHERE u in " +
+            "(SELECT m.receiver FROM Message m WHERE m.sender=:user) OR u in " +
+            "(SELECT m.sender FROM Message m WHERE m.receiver=:user)")
+    List<User> getUserConversationFromUser(@Param("user") User user);
 }

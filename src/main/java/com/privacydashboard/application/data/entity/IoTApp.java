@@ -1,14 +1,17 @@
 package com.privacydashboard.application.data.entity;
+
 import javax.persistence.*;
+//import java.util.Set;
 
 @Entity
 @Table(name= "iot_app")
 public class IoTApp extends AbstractEntity{
     private String name;
     private String description;
-    @ManyToOne
+    /*@ManyToMany
     @JoinColumn(name = "controller_id")
-    private User dataController;
+    private Set<User> dataControllers;
+    private Set<User> DPOs;*/
 
     public String getName() {
         return name;
@@ -22,12 +25,16 @@ public class IoTApp extends AbstractEntity{
     public void setDescription(String description) {
         this.description = description;
     }
-    public User getDataController() {
-        return dataController;
+    /*public Set<User> getDataControllers() {
+        return dataControllers;
     }
-    public void setDataController(User dataController) {
-        this.dataController = dataController;
+    public void setDataControllers(Set<User> dataControllers) {
+        this.dataControllers = dataControllers;
     }
-
-
+    public Set<User> getDPOs() {
+        return DPOs;
+    }
+    public void setDPOs(Set<User> DPOs) {
+        this.DPOs = DPOs;
+    }*/
 }

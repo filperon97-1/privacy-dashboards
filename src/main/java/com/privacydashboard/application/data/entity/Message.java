@@ -1,33 +1,31 @@
 package com.privacydashboard.application.data.entity;
 
-import org.hibernate.annotations.Type;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name="message")
 public class Message extends AbstractEntity{
-    @Type(type = "uuid-char")
-    private UUID senderId;
-    @Type(type = "uuid-char")
-    private UUID receiverId;
+    @ManyToOne
+    @JoinColumn(name = "senderId")
+    private User sender;
+    @ManyToOne
+    @JoinColumn(name = "receiverId")
+    private User receiver;
     private String message;
     private LocalDateTime time;
 
-    public UUID getSenderId() {
-        return senderId;
+    public User getSender() {
+        return sender;
     }
-    public void setSenderId(UUID senderId) {
-        this.senderId = senderId;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
-    public UUID getReceiverId() {
-        return receiverId;
+    public User getReceiver() {
+        return receiver;
     }
-    public void setReceiverId(UUID receiverId) {
-        this.receiverId = receiverId;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
     public String getMessage() {
         return message;
