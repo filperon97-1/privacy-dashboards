@@ -55,7 +55,6 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         this.authenticatedUser=authenticatedUser;
         addClassName("grid-views2");
         initializeGrid();
-        //add(appDiv);
     }
 
     private void initializeGrid(){

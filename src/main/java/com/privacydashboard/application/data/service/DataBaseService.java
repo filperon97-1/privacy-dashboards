@@ -101,15 +101,7 @@ public class DataBaseService {
     }
 
     public List<IoTApp> getAppsFrom2Users(User user1, User user2){
-        List<IoTApp> list1=getUserApps(user1);
-        List<IoTApp> list2=getUserApps(user2);
-        List<IoTApp> appList=new LinkedList<>();
-        for(IoTApp app : list1){
-            if(list2.contains(app)){
-                appList.add(app);
-            }
-        }
-        return appList;
+        return userAppRelationRepository.getAppsFrom2Users(user1, user2);
     }
 
     public List<User> getControllersFromApp(IoTApp app){

@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserAppRelationRepository extends JpaRepository<UserAppRelation, UUID> {
-    Role subject=Role.SUBJECT;
-    Role controller=Role.CONTROLLER;
-    Role dpo=Role.DPO;
 
     @Query("SELECT uar.app from UserAppRelation uar WHERE uar.user=:user")
     List<IoTApp> getIoTAppsFromUser(@Param("user") User user);
@@ -29,6 +26,11 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
 
     @Query("SELECT uar.user from UserAppRelation uar WHERE uar.app=:app")
     List<User> getUsersFromApp(@Param("app") IoTApp app);
+
+    @Query("SELECT DISTINCT i from IoTApp i WHERE " +
+            "i in (SELECT app from UserAppRelation WHERE user=:user1) AND " +
+            "i in (SELECT app from UserAppRelation WHERE user=:user2)")
+    List<IoTApp> getAppsFrom2Users(@Param("user1") User user1, @Param("user2") User user2);
 
     // Prende i contatti per i Data Subject (gli altri data subject sono esclusi)
     @Query("SELECT DISTINCT uar.user from UserAppRelation uar WHERE " +
