@@ -13,6 +13,8 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -30,10 +32,9 @@ import java.util.UUID;
 public class AppsView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final Grid<IoTApp> grid= new Grid<>();
     private List<IoTApp> ioTAppList;
-    private User user;
     private UUID priorityAppID;
-    private Div appDiv=new Div();
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -52,8 +53,15 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
     public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
-        user=getUser();
-        add(appDiv);
+        addClassName("grid-views2");
+        initializeGrid();
+        //add(appDiv);
+    }
+
+    private void initializeGrid(){
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addComponentColumn(app -> initializeApp(app));
+        add(grid);
     }
 
     private User getUser(){
@@ -65,18 +73,20 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
     }
 
     private Details initializeApp(IoTApp i){
-        Span description= new Span("description: " + i.getDescription());
-        Details appUsers;
         VerticalLayout content;
-        if(user.getRole().equals(Role.SUBJECT)){
-            appUsers= new Details("Data Controllers: " , getDataControllers(i));
-            Details consenses= new Details("Consenses: " , getConsenses(i));
-            content=new VerticalLayout(description, appUsers, consenses);
+        Span description= new Span("description: " + i.getDescription());
+        Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
+        Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
+
+        if(getUser().getRole().equals(Role.SUBJECT)){
+            Details consensesDetails= new Details("Consenses: " , getConsenses(i));
+            content= new VerticalLayout(description, controllerDetails, DPODetails, consensesDetails);
         }
         else{
-            appUsers=new Details("Data Subjects: " , getDataSubjects(i));
-            content=new VerticalLayout(description, appUsers);
+            Details subjectDetails=new Details("Data Subjects: " , getUsers(i, Role.SUBJECT));
+            content= new VerticalLayout(description, controllerDetails, DPODetails, subjectDetails);
         }
+
         Details details=new Details(i.getName(), content);
         // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
         if(i.getId().equals(priorityAppID)){
@@ -85,19 +95,24 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         return details;
     }
 
-    private VerticalLayout getDataControllers(IoTApp i){
+    private VerticalLayout getUsers(IoTApp i, Role role){
         VerticalLayout layout=new VerticalLayout();
-        List<User> controllers = dataBaseService.getControllersFromApp(i);
-        for(User u : controllers){
-            layout.add(new RouterLink(u.getName() , ContactsView.class,  new RouteParameters("contactID", u.getId().toString())));
+        List<User> users;
+        switch(role) {
+            case SUBJECT:
+                users = dataBaseService.getSubjectsFromApp(i);
+                break;
+            case CONTROLLER:
+                users = dataBaseService.getControllersFromApp(i);
+                break;
+            case DPO:
+                users = dataBaseService.getDPOsFromApp(i);
+                break;
+            default:
+                return null;
         }
-        return layout;
-    }
 
-    private VerticalLayout getDataSubjects(IoTApp i){
-        VerticalLayout layout=new VerticalLayout();
-        List<User> subjects = dataBaseService.getSubjectsFromApp(i);
-        for(User u : subjects){
+        for(User u : users){
             layout.add(new RouterLink(u.getName() , ContactsView.class,  new RouteParameters("contactID", u.getId().toString())));
         }
         return layout;
@@ -105,7 +120,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     private VerticalLayout getConsenses(IoTApp i){
         VerticalLayout layout=new VerticalLayout();
-        List<String> consenses=dataBaseService.getConsensesFromUserAndApp(user, i);
+        List<String> consenses=dataBaseService.getConsensesFromUserAndApp(getUser(), i);
         for(String consens :  consenses){
             HorizontalLayout l=new HorizontalLayout(new Span(consens), new Button("Withdraw consent", e -> withdrawConsent(i, consens)));
             l.setAlignItems(Alignment.CENTER);
@@ -117,7 +132,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     private void withdrawConsent(IoTApp i, String consent){
         RightRequest request=new RightRequest();
-        request.setSender(user);
+        request.setSender(getUser());
         request.setRightType(RightType.WITHDRAWCONSENT);
         request.setApp(i);
         request.setOther(consent);
@@ -129,8 +144,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        appDiv.removeAll();
-        ioTAppList=dataBaseService.getUserApps(user);
+        ioTAppList=dataBaseService.getUserApps(getUser());
         // se esiste l'app selezionata nei parametri, mettilo al primo posto
         if(priorityAppID!=null){
             Optional<IoTApp> maybeApp=dataBaseService.getApp(priorityAppID);
@@ -141,8 +155,6 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
                 priorityAppID=null;
             }
         }
-        for(IoTApp i : ioTAppList){
-            appDiv.add(initializeApp(i));
-        }
+        grid.setItems(ioTAppList);
     }
 }

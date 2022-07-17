@@ -8,7 +8,6 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

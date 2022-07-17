@@ -24,6 +24,9 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
 
     UserAppRelation findByUserAndApp(User user, IoTApp app);
 
+    @Query("SELECT uar.user from UserAppRelation uar WHERE uar.app=:app AND uar.role=:role")
+    List<User> getUsersFromAppFilterByRole(@Param("app") IoTApp app, @Param("role") Role role);
+
     @Query("SELECT uar.user from UserAppRelation uar WHERE uar.app=:app")
     List<User> getUsersFromApp(@Param("app") IoTApp app);
 

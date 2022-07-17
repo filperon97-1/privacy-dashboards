@@ -39,7 +39,8 @@ interface RightAction{
 public class RightsView extends VerticalLayout implements BeforeEnterObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
-    private final Dialog dialog=new Dialog();
+    private final Dialog rightList=new Dialog();
+    private final Dialog requestRight=new Dialog();
     private final Dialog confirmDialog=new Dialog();
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -104,7 +105,7 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
     }
 
     private void showRequests(Boolean handled){
-        dialog.removeAll();
+        rightList.removeAll();
         Grid<RightRequest> grid=new Grid();
         grid.addColumn(request -> request.getReceiver().getName()).setHeader("NAME");
         grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE");
@@ -118,14 +119,14 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
         else{
             grid.setItems(dataBaseService.getPendingRequestsFromSender(getUser()));
         }
-        dialog.add(grid);
-        dialog.setWidthFull();
-        dialog.open();
+        rightList.add(grid);
+        rightList.setWidthFull();
+        rightList.open();
     }
 
     private void startWithdrawConsent(){
-        dialog.removeAll();
-        dialog.setWidth("50%");
+        requestRight.removeAll();
+        requestRight.setWidth("50%");
         H1 titleText= new H1("Select App");
 
         ComboBox<String> consensComboBox= new ComboBox<>("Consens");
@@ -146,18 +147,18 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
                 request.setOther(consensComboBox.getValue());
                 request.setRightType(RightType.WITHDRAWCONSENT);
                 request.setHandled(false);
-                dialog.close();
+                requestRight.close();
                 confirmRequest(request);
             }
         });
-        Button cancel=new Button("Cancel", e-> dialog.close());
+        Button cancel=new Button("Cancel", e-> requestRight.close());
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
 
         VerticalLayout layout=new VerticalLayout(titleText, new HorizontalLayout(appComboBox, consensComboBox), buttonLayout);
         layout.setHorizontalComponentAlignment(Alignment.CENTER);
-        dialog.add(layout);
-        dialog.open();
+        requestRight.add(layout);
+        requestRight.open();
     }
 
     private void confirmRequest(RightRequest request){

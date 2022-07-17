@@ -113,25 +113,15 @@ public class DataBaseService {
     }
 
     public List<User> getControllersFromApp(IoTApp app){
-        List<User> controllers=new LinkedList<>();
-        List<User> userList = getUsersFromApp(app);
-        for(User u : userList){
-            if(u.getRole().equals(Role.CONTROLLER)){
-                controllers.add(u);
-            }
-        }
-        return controllers;
+        return userAppRelationRepository.getUsersFromAppFilterByRole(app, Role.CONTROLLER);
+    }
+
+    public List<User> getDPOsFromApp(IoTApp app){
+        return userAppRelationRepository.getUsersFromAppFilterByRole(app, Role.DPO);
     }
 
     public List<User> getSubjectsFromApp(IoTApp app){
-        List<User> subjects=new LinkedList<>();
-        List<User> userList = getUsersFromApp(app);
-        for(User u : userList){
-            if(u.getRole().equals(Role.SUBJECT)){
-                subjects.add(u);
-            }
-        }
-        return subjects;
+        return userAppRelationRepository.getUsersFromAppFilterByRole(app, Role.SUBJECT);
     }
 
     // RIGHT REQUEST REPOSITORY
