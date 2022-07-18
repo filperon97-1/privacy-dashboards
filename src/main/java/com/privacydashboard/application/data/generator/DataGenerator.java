@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DataGenerator {
 
     @Bean
-    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
+    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository, IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository, NotificationRepository notificationRepository) {
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
             if (userRepository.count() != 0L) {
@@ -160,6 +160,20 @@ public class DataGenerator {
                 }
 
             }
+
+            // AGGIUNTA NOTIFICATION, DA TOGLIERE
+            /*for(int i=0;i<10;i++){
+                Notification notification=new Notification();
+                notification.setDescription("controller " + String.valueOf(i) + " sent you a message");
+                if(i%2==0){
+                    notification.setRead(false);
+                }
+                else{
+                    notification.setRead(true);
+                }
+                notification.setReceiver(subjects[0]);
+                notificationRepository.save(notification);
+            }*/
 
 
 

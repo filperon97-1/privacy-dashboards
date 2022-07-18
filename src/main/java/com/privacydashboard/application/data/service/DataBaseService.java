@@ -1,10 +1,7 @@
 package com.privacydashboard.application.data.service;
 
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.entity.IoTApp;
-import com.privacydashboard.application.data.entity.Message;
-import com.privacydashboard.application.data.entity.RightRequest;
-import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +14,26 @@ import java.util.*;
 @Service
 public class DataBaseService {
     private final PasswordEncoder passwordEncoder;
-    private final UserAppRelationRepository userAppRelationRepository;
     private final UserRepository userRepository;
-    private final IoTAppRepository ioTAppRepository;
     private final MessageRepository messageRepository;
+    private final IoTAppRepository ioTAppRepository;
+    private final UserAppRelationRepository userAppRelationRepository;
     private final RightRequestRepository rightRequestRepository;
+    private final NotificationRepository notificationRepository;
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public DataBaseService(PasswordEncoder passwordEncoder, UserAppRelationRepository userAppRelationRepository, UserRepository userRepository, IoTAppRepository ioTAppRepository, MessageRepository messageRepository, RightRequestRepository rightRequestRepository) {
+    public DataBaseService(PasswordEncoder passwordEncoder, UserRepository userRepository , MessageRepository messageRepository,
+                           IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository,
+                           RightRequestRepository rightRequestRepository, NotificationRepository notificationRepository) {
         this.passwordEncoder=passwordEncoder;
-        this.userAppRelationRepository = userAppRelationRepository;
         this.userRepository = userRepository;
-        this.ioTAppRepository = ioTAppRepository;
         this.messageRepository = messageRepository;
+        this.ioTAppRepository = ioTAppRepository;
+        this.userAppRelationRepository = userAppRelationRepository;
         this.rightRequestRepository = rightRequestRepository;
+        this.notificationRepository= notificationRepository;
     }
 
     // USER REPOSITORY
@@ -65,6 +66,7 @@ public class DataBaseService {
     public void addNowMessage(Message message){
         message.setTime(LocalDateTime.now());
         messageRepository.save(message);
+        addNewMessageNotification(message);
     }
 
     // IOTAPP REPOSITORY
@@ -133,10 +135,60 @@ public class DataBaseService {
     public void addNowRequest(RightRequest request){
         request.setTime(LocalDateTime.now());
         rightRequestRepository.save(request);
+        addNewRequestNotification(request);
     }
 
     public void updateRequest(RightRequest request){
         rightRequestRepository.deleteById(request.getId());
         rightRequestRepository.save(request);
+        addUpdatedRequestNotification(request);
+    }
+
+    // NOTIFICATION REPOSITORY
+
+    public void addNowNotification(Notification notification){
+        notification.setTime(LocalDateTime.now());
+        notificationRepository.save(notification);
+    }
+
+    public List<Notification> getNotificationsFromUser(User user){
+        return notificationRepository.findAllByReceiver(user);
+    }
+
+    public List<Notification> getNewNotificationsFromUser(User user){
+        return notificationRepository.findAllByReceiverAndIsRead(user, false);
+    }
+
+    private void addNewMessageNotification(Message message){
+       Notification notification=new Notification();
+       notification.setReceiver(message.getReceiver());
+       notification.setSender(message.getSender());
+       notification.setDescription(message.getSender().getName() + " sent you a message");
+       notification.setRead(false);
+       notification.setMessage(message);
+       notification.setRequest(null);
+       addNowNotification(notification);
+    }
+
+    private void addNewRequestNotification(RightRequest request){
+        Notification notification=new Notification();
+        notification.setReceiver(request.getReceiver());
+        notification.setSender(request.getSender());
+        notification.setDescription(request.getSender().getName() + " sent you a right request");
+        notification.setRead(false);
+        notification.setMessage(null);
+        notification.setRequest(request);
+        addNowNotification(notification);
+    }
+
+    private void addUpdatedRequestNotification(RightRequest request){
+        Notification notification=new Notification();
+        notification.setReceiver(request.getReceiver());
+        notification.setSender(request.getSender());
+        notification.setDescription(request.getSender().getName() + " changed the status of a request");
+        notification.setRead(false);
+        notification.setMessage(null);
+        notification.setRequest(request);
+        addNowNotification(notification);
     }
 }

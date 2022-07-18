@@ -1,6 +1,8 @@
 package com.privacydashboard.application.views;
 
+import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.applyRights.RightsView;
 import com.privacydashboard.application.views.apps.AppsView;
@@ -12,9 +14,12 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
@@ -26,9 +31,13 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
+
+import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 
 public class MainLayout extends AppLayout {
@@ -73,10 +82,13 @@ public class MainLayout extends AppLayout {
 
     private AuthenticatedUser authenticatedUser;
     private AccessAnnotationChecker accessChecker;
+    private DataBaseService dataBaseService;
+    private Dialog notificationDialog= new Dialog();
 
-    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
+    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService) {
         this.authenticatedUser = authenticatedUser;
         this.accessChecker = accessChecker;
+        this.dataBaseService= dataBaseService;
 
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
@@ -93,6 +105,7 @@ public class MainLayout extends AppLayout {
         viewTitle.addClassNames("view-title");
         Icon bellIcon= new Icon(VaadinIcon.BELL_O);
         bellIcon.addClassNames("bell-icon");
+        bellIcon.addClickListener(e -> showNotifications());
 
         Header header = new Header(toggle, viewTitle, bellIcon);
         header.addClassNames("view-header");
@@ -172,6 +185,21 @@ public class MainLayout extends AppLayout {
         }
 
         return layout;
+    }
+
+    private void showNotifications(){
+        VerticalLayout layout=new VerticalLayout();
+        Optional<User> maybeUser = authenticatedUser.get();
+        if(maybeUser.isEmpty()){
+            return;
+        }
+        List<Notification> notifications=dataBaseService.getNewNotificationsFromUser(maybeUser.get());
+        for(Notification n  : notifications){
+            layout.add(new Span(n.getDescription()));
+        }
+        notificationDialog.removeAll();
+        notificationDialog.add(layout);
+        notificationDialog.open();
     }
 
     @Override
