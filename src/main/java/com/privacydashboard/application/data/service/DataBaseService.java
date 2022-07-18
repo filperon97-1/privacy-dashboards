@@ -159,6 +159,10 @@ public class DataBaseService {
         return notificationRepository.findAllByReceiverAndIsRead(user, false);
     }
 
+    public void changeIsReadNotification(Notification notification, boolean isRead){
+
+    }
+
     private void addNewMessageNotification(Message message){
        Notification notification=new Notification();
        notification.setReceiver(message.getReceiver());

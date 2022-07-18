@@ -53,7 +53,6 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
     public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
-        addClassName("grid-views2");
         initializeGrid();
     }
 
@@ -61,14 +60,6 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(app -> initializeApp(app));
         add(grid);
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
     }
 
     private Details initializeApp(IoTApp i){
@@ -139,6 +130,14 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         request.setHandled(false);
         ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
         UI.getCurrent().navigate("rights");
+    }
+
+    private User getUser(){
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (maybeUser.isEmpty()) {
+            return null;
+        }
+        return maybeUser.get();
     }
 
     @Override

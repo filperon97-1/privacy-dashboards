@@ -9,16 +9,16 @@ import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
+import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.privacydashboard.application.views.rightRequest.RightRequestsView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Footer;
@@ -33,10 +33,10 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -194,12 +194,24 @@ public class MainLayout extends AppLayout {
             return;
         }
         List<Notification> notifications=dataBaseService.getNewNotificationsFromUser(maybeUser.get());
-        for(Notification n  : notifications){
-            layout.add(new Span(n.getDescription()));
+        for(Notification notification  : notifications){
+            Span span=new Span(notification.getDescription());
+            span.addClickListener(e-> goToNotification(notification));
+            layout.add(span);
         }
         notificationDialog.removeAll();
         notificationDialog.add(layout);
         notificationDialog.open();
+    }
+
+    // DA IMPLEMENTARE: IN CASO NOTIFICATION SIA PER RIGHT REQUEST
+    private void goToNotification(Notification notification){
+        // Message notification
+        if(notification.getMessage()!=null && notification.getRequest()==null){
+            dataBaseService.changeIsReadNotification(notification, true);
+            notificationDialog.close();
+            UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
+        }
     }
 
     @Override

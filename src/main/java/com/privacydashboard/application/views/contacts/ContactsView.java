@@ -11,7 +11,6 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -26,11 +25,9 @@ import javax.annotation.security.PermitAll;
 @Route(value = "contacts/:contactID?", layout = MainLayout.class)
 @PermitAll
 public class ContactsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
-    Grid<User> grid = new Grid<>();
-    private DataBaseService dataBaseService;
-    private AuthenticatedUser authenticatedUser;
-    private User user;
-    private List<User> contacts;
+    private final Grid<User> grid = new Grid<>();
+    private final DataBaseService dataBaseService;
+    private final AuthenticatedUser authenticatedUser;
     private UUID priorityUserID;    //FATTO COSI E' UN PO' UNA MERDA, TROVARE SOLUZIONE MIGLIORE
 
     @Override
@@ -46,22 +43,16 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
             priorityUserID=null;
             return;
         }
-
     }
 
     public ContactsView(AuthenticatedUser authenticatedUser, DataBaseService dataBaseService) {
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (!maybeUser.isPresent()) {
-            add(new H2("user not logged in"));
-            return;
-        }
-        user= maybeUser.get();
-        contacts=dataBaseService.getAllContactsFromUser(user);
-        addClassName("grid-views");
-        setSizeFull();
-        grid.setHeight("100%");
+        addClassName("contacts-view");
+        initializeGrid();
+    }
+
+    private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(contact -> createContact(contact));
         add(grid);
@@ -70,8 +61,8 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
     private VerticalLayout createContact(User contact){
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
-        card.setSpacing(false);
-        card.getThemeList().add("spacing-s");
+        //card.setSpacing(false);
+        //card.getThemeList().add("spacing-s");
 
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         avatar.addClassNames("me-xs");
@@ -80,14 +71,11 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         name.addClassName("name");
 
         HorizontalLayout profile=new HorizontalLayout(avatar , name);
-        profile.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
 
         VerticalLayout content=generateContactInformations(contact);
         Details details = new Details("More", content);
 
         card.add(profile , details);
-        card.setAlignItems(FlexComponent.Alignment.START);
-        card.setHorizontalComponentAlignment(FlexComponent.Alignment.START);
         // se c'è un priorityUser apri details
         if(contact.getId().equals(priorityUserID)){
             details.setOpened(true);
@@ -111,15 +99,24 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
 
     private VerticalLayout getApps(User contact){
         VerticalLayout layout=new VerticalLayout();
-        List<IoTApp> appList=dataBaseService.getAppsFrom2Users(user, contact);
+        List<IoTApp> appList=dataBaseService.getAppsFrom2Users(getUser(), contact);
         for(IoTApp i : appList) {
             layout.add(new RouterLink(i.getName(), AppsView.class , new RouteParameters("appID", i.getId().toString())));
         }
         return layout;
     }
 
+    private User getUser(){
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (maybeUser.isEmpty()) {
+            return null;
+        }
+        return maybeUser.get();
+    }
+
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        List<User> contacts=dataBaseService.getAllContactsFromUser(getUser());
         // se esiste il contatto selezionato nei parametri, mettilo al primo posto
         if(priorityUserID!=null ){
             Optional<User> maybeU=dataBaseService.getUser(priorityUserID);
