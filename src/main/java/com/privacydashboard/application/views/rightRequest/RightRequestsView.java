@@ -39,15 +39,11 @@ public class RightRequestsView extends VerticalLayout implements AfterNavigation
     public RightRequestsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
-        addClassName("grid-views");
         initializeGrid();
     }
 
     private void initializeGrid(){
-        grid.setSizeFull();
-        grid.setHeight("100%");
-        grid.setWidth("100%");
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addColumn(request -> request.getSender().getName()).setHeader("NAME");
         grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE");
         grid.addColumn(request -> request.getApp().getName()).setHeader("APP");
@@ -55,17 +51,16 @@ public class RightRequestsView extends VerticalLayout implements AfterNavigation
         grid.addColumn(RightRequest::getDetails).setHeader("DETAILS");
         grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
         add(grid);
         // quando si seleziona una riga, si apre il dialog
-        grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
+
     }
 
     private void showRequest(RightRequest request){
         if(request==null){
             return;
         }
-        Logger logger = LoggerFactory.getLogger(getClass());
-        logger.info(request.getId().toString());
         requestDialog.removeAll();
         HorizontalLayout sender=new HorizontalLayout(new Span("Sender User: "), new Span(request.getSender().getName()));
         HorizontalLayout rightType=new HorizontalLayout(new Span("Right: "), new Span(request.getRightType().toString()));
