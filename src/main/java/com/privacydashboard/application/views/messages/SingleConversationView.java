@@ -5,16 +5,17 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import java.time.ZoneOffset;
@@ -24,12 +25,12 @@ import java.util.*;
 @Route(value="conversation/:contactID", layout = MainLayout.class)
 @PermitAll
 public class SingleConversationView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver{// implements HasUrlParameter<UUID> {
-    private DataBaseService dataBaseService;
-    private AuthenticatedUser authenticatedUser;
-    private User user;
+    private final DataBaseService dataBaseService;
+    private final AuthenticatedUser authenticatedUser;
     private User contact;
-    private MessageList messageList= new MessageList();
-    private Page page=new Page(UI.getCurrent());
+    private final Span title=new Span();
+    private final MessageList messageList= new MessageList();
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -44,38 +45,25 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
                 event.rerouteTo(NoContactView.class);
             }
             contact = maybeOtherUser.get();
-            if(!dataBaseService.getAllContactsFromUser(user).contains(contact)){
+            if(!dataBaseService.getAllContactsFromUser(getUser()).contains(contact)){
                 event.rerouteTo(NoContactView.class);
             }
-            page.setTitle(contact.getName());
+            title.removeAll();
+            title.add(new H2(contact.getName()));
         }catch(IllegalArgumentException e){
             event.rerouteTo(NoContactView.class);
         }
     }
 
     public SingleConversationView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
-        addClassNames("single-conversation-view");
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
-        Optional<User> maybeUser= authenticatedUser.get();
-        if(!maybeUser.isPresent()){
-            add(new H1("NOT LOGGED IN"));
-            return;
-        }
-        user=maybeUser.get();
-    }
-
-    @Override
-    public void afterNavigation(AfterNavigationEvent event){
-        add(new H1(contact.getName()));
-        displayConversation();
-    }
-
-    //DA SISTEMARE LA TIME ZONE
-    private void displayConversation(){
-        messageList.setItems(getMessages());
+        add(title);
         add(messageList);
+        initializeSendMessageLayout();
+    }
 
+    private void initializeSendMessageLayout(){
         TextArea messageText=new TextArea();
         messageText.setPlaceholder("Text...");
         messageText.setWidth("700px");
@@ -90,11 +78,12 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         add(new HorizontalLayout(messageText , sendMessageButton));
     }
 
+    //DA SISTEMARE LA TIME ZONE
     private List<MessageListItem> getMessages(){
-        List<Message> conversation=dataBaseService.getConversationFromUsers(user, contact);
+        List<Message> conversation=dataBaseService.getConversationFromUsers(getUser(), contact);
         List<MessageListItem> messageListItems=new LinkedList<>();
         for(Message message : conversation){
-            User u=message.getSender().getId().equals(user.getId()) ? user : contact;
+            User u=message.getSender();
             MessageListItem messageItem=new MessageListItem(message.getMessage(),message.getTime().toInstant(ZoneOffset.UTC), u.getName());
             messageListItems.add(messageItem);
         }
@@ -105,11 +94,24 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         Message message=new Message();
         message.setMessage(text);
         message.setReceiver(contact);
-        message.setSender(user);
+        message.setSender(getUser());
         dataBaseService.addNowMessage(message);
     }
 
     private void updateConversation(){
         messageList.setItems(getMessages());
+    }
+
+    private User getUser(){
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (maybeUser.isEmpty()) {
+            return null;
+        }
+        return maybeUser.get();
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event){
+        updateConversation();
     }
 }
