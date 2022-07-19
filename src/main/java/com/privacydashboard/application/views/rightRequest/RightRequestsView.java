@@ -18,6 +18,8 @@ import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
@@ -62,6 +64,8 @@ public class RightRequestsView extends VerticalLayout implements AfterNavigation
         if(request==null){
             return;
         }
+        Logger logger = LoggerFactory.getLogger(getClass());
+        logger.info(request.getId().toString());
         requestDialog.removeAll();
         HorizontalLayout sender=new HorizontalLayout(new Span("Sender User: "), new Span(request.getSender().getName()));
         HorizontalLayout rightType=new HorizontalLayout(new Span("Right: "), new Span(request.getRightType().toString()));

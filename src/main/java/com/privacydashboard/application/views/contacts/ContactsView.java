@@ -59,23 +59,16 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
     }
 
     private VerticalLayout createContact(User contact){
-        VerticalLayout card = new VerticalLayout();
-        card.addClassName("card");
-        //card.setSpacing(false);
-        //card.getThemeList().add("spacing-s");
-
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
-        avatar.addClassNames("me-xs");
-
         Span name = new Span(contact.getName());
         name.addClassName("name");
-
-        HorizontalLayout profile=new HorizontalLayout(avatar , name);
-
         VerticalLayout content=generateContactInformations(contact);
         Details details = new Details("More", content);
+        VerticalLayout card = new VerticalLayout();
+        card.addClassName("card");
+        card.setSpacing(false);
+        card.add(new HorizontalLayout(avatar , name) , details);
 
-        card.add(profile , details);
         // se c'è un priorityUser apri details
         if(contact.getId().equals(priorityUserID)){
             details.setOpened(true);
