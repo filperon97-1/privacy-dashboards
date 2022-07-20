@@ -5,6 +5,7 @@ import com.privacydashboard.application.data.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,6 +117,33 @@ public class DataBaseService {
 
     public List<User> getSubjectsFromApp(IoTApp app){
         return userAppRelationRepository.getUsersFromAppFilterByRole(app, Role.SUBJECT);
+    }
+
+    public void addUserApp(User user, IoTApp app){
+        UserAppRelation userAppRelation=new UserAppRelation();
+        userAppRelation.setApp(app);
+        userAppRelation.setUser(user);
+        userAppRelationRepository.save(userAppRelation);
+    }
+
+    public boolean userHasApp(User user, IoTApp app){
+        if(userAppRelationRepository.findByUserAndApp(user, app)==null){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    public boolean deleteAppFromUser(User user, IoTApp app){
+        UserAppRelation userAppRelation=userAppRelationRepository.findByUserAndApp(user, app);
+        if(userAppRelation==null){
+            return false;
+        }
+        else{
+            userAppRelationRepository.delete(userAppRelation);
+            return true;
+        }
     }
 
     // RIGHT REQUEST REPOSITORY
