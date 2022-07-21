@@ -223,4 +223,10 @@ public class DataBaseService {
         notification.setRequest(request);
         addNowNotification(notification);
     }
+
+    // REMOVE EVERYTHING
+
+    public void removeEverythingFromUser(User user){
+
+    }
 }

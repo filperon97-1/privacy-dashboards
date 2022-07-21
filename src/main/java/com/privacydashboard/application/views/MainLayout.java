@@ -10,6 +10,7 @@ import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
+import com.privacydashboard.application.views.profile.ProfileView;
 import com.privacydashboard.application.views.rightRequest.RightRequestsView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -206,9 +207,8 @@ public class MainLayout extends AppLayout {
 
             ContextMenu userMenu = new ContextMenu(avatar);
             userMenu.setOpenOnClick(true);
-            userMenu.addItem("Logout", e -> {
-                authenticatedUser.logout();
-            });
+            ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService);
+            userMenu.add(profileView);
 
             Span name = new Span(user.getName());
             name.addClassNames("font-medium", "text-s", "text-secondary");
@@ -221,8 +221,6 @@ public class MainLayout extends AppLayout {
 
         return layout;
     }
-
-
 
     @Override
     protected void afterNavigation() {
