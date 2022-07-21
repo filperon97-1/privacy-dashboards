@@ -1,5 +1,6 @@
 package com.privacydashboard.application.data.service;
 
+import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
 import org.slf4j.Logger;
@@ -227,6 +228,15 @@ public class DataBaseService {
     // REMOVE EVERYTHING
 
     public void removeEverythingFromUser(User user){
-
+        List<IoTApp> apps=getUserApps(user);
+        for(IoTApp app : apps){
+            RightRequest request=new RightRequest();
+            request.setHandled(false);
+            request.setRightType(RightType.DELTEEVERYTHING);
+            request.setReceiver(getControllersFromApp(app).get(0));
+            request.setSender(user);
+            request.setApp(app);
+            addNowRequest(request);
+        }
     }
 }

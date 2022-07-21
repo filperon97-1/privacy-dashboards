@@ -1,5 +1,5 @@
 package com.privacydashboard.application.data;
 
 public enum RightType {
-    WITHDRAWCONSENT, COMPLAIN, ERASURE;
+    WITHDRAWCONSENT, COMPLAIN, ERASURE, DELTEEVERYTHING;
 }
