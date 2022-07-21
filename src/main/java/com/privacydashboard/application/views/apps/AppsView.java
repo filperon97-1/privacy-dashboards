@@ -11,6 +11,7 @@ import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
@@ -76,8 +77,22 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
             Details subjectDetails=new Details("Data Subjects: " , getUsers(i, Role.SUBJECT));
             content= new VerticalLayout(description, controllerDetails, DPODetails, subjectDetails);
         }
-
         Details details=new Details(i.getName(), content);
+
+        // SECONDO METODO (ACCORDION)
+        /*
+        Accordion accordion= new Accordion();
+        accordion.add("Data Controllers: ", getUsers(i, Role.CONTROLLER));
+        accordion.add("Data Protection Officer: ", getUsers(i, Role.DPO));
+        if(getUser().getRole().equals(Role.SUBJECT)) {
+            accordion.add("Consenses: ", getConsenses(i));
+        }
+        else{
+            accordion.add("Data Subjects: " , getUsers(i, Role.SUBJECT));
+        }
+        Details details= new Details(i.getName(), new VerticalLayout(description, accordion));
+         */
+
         // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
         if(i.getId().equals(priorityAppID)){
             details.setOpened(true);

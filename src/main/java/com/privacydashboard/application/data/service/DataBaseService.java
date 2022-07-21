@@ -188,7 +188,7 @@ public class DataBaseService {
     }
 
     public void changeIsReadNotification(Notification notification, boolean isRead){
-
+        notificationRepository.changeIsReadNotificationById(notification.getId(), isRead);
     }
 
     private void addNewMessageNotification(Message message){

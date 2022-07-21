@@ -19,6 +19,7 @@ public class User extends AbstractEntity {
     private String hashedPassword;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private String mail;
 
     // da cambiare, salvare nel DB le immagini??
     @Lob
@@ -54,5 +55,10 @@ public class User extends AbstractEntity {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
-
+    public String getMail() {
+        return mail;
+    }
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
 }

@@ -13,7 +13,6 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
@@ -80,14 +79,13 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         Span name = new Span("Name: " + contact.getName());
         Span role = new Span("Role: Data " +contact.getRole());
         //Scegliere se inserire o meno le informazioni sotto
-        Span phone = new Span("Telephone: ");
-        Span mail = new Span("Mail: ");
+        Span mail = new Span("Mail: "+ (contact.getMail()==null ? "" : contact.getMail()));
         VerticalLayout apps=getApps(contact);
         Details details= new Details("Apps:" , apps);
         RouterLink routerLink=new RouterLink();
         routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
         routerLink.add(new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create()));
-        return new VerticalLayout(name, role, phone, mail, routerLink, details);
+        return new VerticalLayout(name, role, mail, routerLink, details);
     }
 
     private VerticalLayout getApps(User contact){

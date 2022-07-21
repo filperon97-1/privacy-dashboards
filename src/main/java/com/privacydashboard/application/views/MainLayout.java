@@ -18,6 +18,7 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
@@ -36,6 +37,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +86,7 @@ public class MainLayout extends AppLayout {
     private AuthenticatedUser authenticatedUser;
     private AccessAnnotationChecker accessChecker;
     private DataBaseService dataBaseService;
-    private Dialog notificationDialog= new Dialog();
+    private ContextMenu menuNotifications;
 
     public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService) {
         this.authenticatedUser = authenticatedUser;
@@ -103,13 +106,45 @@ public class MainLayout extends AppLayout {
 
         viewTitle = new H1();
         viewTitle.addClassNames("view-title");
-        Icon bellIcon= new Icon(VaadinIcon.BELL_O);
-        bellIcon.addClassNames("bell-icon");
-        bellIcon.addClickListener(e -> showNotifications());
+        Icon bellIcon= initializeNotifications();
 
         Header header = new Header(toggle, viewTitle, bellIcon);
         header.addClassNames("view-header");
         return header;
+    }
+
+    private Icon initializeNotifications(){
+        Icon bellIcon= new Icon(VaadinIcon.BELL_O);
+        bellIcon.addClassNames("bell-icon");
+        menuNotifications=new ContextMenu(bellIcon);
+        menuNotifications.setOpenOnClick(true);
+        updateNotifications();
+        //menuNotifications.addOpenedChangeListener(e-> showNotifications());
+
+        //menu.addItem(showNotifications());
+        return bellIcon;
+    }
+
+    private void updateNotifications(){
+        menuNotifications.removeAll();
+        Optional<User> maybeUser = authenticatedUser.get();
+        if(maybeUser.isEmpty()){
+            return;
+        }
+        List<Notification> notifications=dataBaseService.getNewNotificationsFromUser(maybeUser.get());
+        for(Notification notification  : notifications){
+            menuNotifications.addItem(notification.getDescription(), e-> goToNotification(notification));
+        }
+    }
+
+    // DA IMPLEMENTARE: IN CASO NOTIFICATION SIA PER RIGHT REQUEST
+    private void goToNotification(Notification notification){
+        // Message notification
+        if(notification.getMessage()!=null && notification.getRequest()==null){
+            dataBaseService.changeIsReadNotification(notification, true);
+            updateNotifications();
+            UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
+        }
     }
 
     private Component createDrawerContent() {
@@ -187,32 +222,7 @@ public class MainLayout extends AppLayout {
         return layout;
     }
 
-    private void showNotifications(){
-        VerticalLayout layout=new VerticalLayout();
-        Optional<User> maybeUser = authenticatedUser.get();
-        if(maybeUser.isEmpty()){
-            return;
-        }
-        List<Notification> notifications=dataBaseService.getNewNotificationsFromUser(maybeUser.get());
-        for(Notification notification  : notifications){
-            Span span=new Span(notification.getDescription());
-            span.addClickListener(e-> goToNotification(notification));
-            layout.add(span);
-        }
-        notificationDialog.removeAll();
-        notificationDialog.add(layout);
-        notificationDialog.open();
-    }
 
-    // DA IMPLEMENTARE: IN CASO NOTIFICATION SIA PER RIGHT REQUEST
-    private void goToNotification(Notification notification){
-        // Message notification
-        if(notification.getMessage()!=null && notification.getRequest()==null){
-            dataBaseService.changeIsReadNotification(notification, true);
-            notificationDialog.close();
-            UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
-        }
-    }
 
     @Override
     protected void afterNavigation() {
