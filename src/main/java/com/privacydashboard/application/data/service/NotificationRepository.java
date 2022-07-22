@@ -1,6 +1,5 @@
 package com.privacydashboard.application.data.service;
 
-import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

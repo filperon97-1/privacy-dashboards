@@ -11,7 +11,6 @@ import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;

@@ -1,4 +1,4 @@
-package com.privacydashboard.application.views.profile;
+package com.privacydashboard.application.views.mainLayout;
 
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;

@@ -1,7 +1,5 @@
 package com.privacydashboard.application.views;
 
-import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
@@ -10,20 +8,16 @@ import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
-import com.privacydashboard.application.views.messages.SingleConversationView;
-import com.privacydashboard.application.views.profile.ProfileView;
+import com.privacydashboard.application.views.mainLayout.NotificationView;
+import com.privacydashboard.application.views.mainLayout.ProfileView;
 import com.privacydashboard.application.views.rightRequest.RightRequestsView;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
@@ -35,15 +29,10 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Optional;
 
 public class MainLayout extends AppLayout {
@@ -117,48 +106,12 @@ public class MainLayout extends AppLayout {
     }
 
     private Icon initializeNotifications(){
+        NotificationView notificationView=new NotificationView(getUser(), dataBaseService);
+        ContextMenu notificationMenu=notificationView.getContextMenu();
         Icon bellIcon= new Icon(VaadinIcon.BELL_O);
         bellIcon.addClassNames("bell-icon");
-        menuNotifications=new ContextMenu(bellIcon);
-        menuNotifications.setOpenOnClick(true);
-        updateNotifications();
-        //menuNotifications.addOpenedChangeListener(e-> showNotifications());
-
-        //menu.addItem(showNotifications());
+        notificationMenu.setTarget(bellIcon);
         return bellIcon;
-    }
-
-    private void updateNotifications(){
-        menuNotifications.removeAll();
-        Optional<User> maybeUser = authenticatedUser.get();
-        if(maybeUser.isEmpty()){
-            return;
-        }
-        List<Notification> notifications=dataBaseService.getNewNotificationsFromUser(maybeUser.get());
-        for(Notification notification  : notifications){
-            menuNotifications.addItem(notification.getDescription(), e-> goToNotification(notification));
-        }
-    }
-
-    // DA IMPLEMENTARE: IN CASO NOTIFICATION SIA PER RIGHT REQUEST
-    private void goToNotification(Notification notification){
-        // Message notification
-        if(notification.getMessage()!=null && notification.getRequest()==null){
-            dataBaseService.changeIsReadNotification(notification, true);
-            updateNotifications();
-            UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
-        }
-        if(notification.getRequest()!=null && notification.getMessage()==null){
-            dataBaseService.changeIsReadNotification(notification, true);
-            updateNotifications();
-            ComponentUtil.setData(UI.getCurrent(), "RightNotification", notification);
-            if(notification.getReceiver().getRole().equals(Role.SUBJECT)){
-                UI.getCurrent().navigate(RightsView.class);
-            }
-            else{
-                UI.getCurrent().navigate(RightRequestsView.class);
-            }
-        }
     }
 
     private Component createDrawerContent() {
@@ -211,10 +164,8 @@ public class MainLayout extends AppLayout {
         Footer layout = new Footer();
         layout.addClassNames("footer");
 
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isPresent()) {
-            User user = maybeUser.get();
-
+        User user=getUser();
+        if (user!=null) {
             Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
             avatar.addClassNames("me-xs");
 
@@ -233,6 +184,17 @@ public class MainLayout extends AppLayout {
         }
 
         return layout;
+    }
+
+    private User getUser(){
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
+            return user;
+        }
+        else{
+            return null;
+        }
     }
 
     @Override
