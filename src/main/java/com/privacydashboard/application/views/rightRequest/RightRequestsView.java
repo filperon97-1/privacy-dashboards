@@ -94,10 +94,8 @@ public class RightRequestsView extends VerticalLayout implements BeforeEnterObse
         checkbox.setValue(request.getHandled());
         checkbox.setLabel("Handled");
 
-        Button save=new Button("Save" , e->{request.setHandled(checkbox.getValue());
-                                                dataBaseService.updateRequest(request);
-                                                requestDialog.close();
-                                                updateGrid();});
+        Button save=new Button("Save" , e->{changeStatusRequest(request, checkbox.getValue());
+                                                requestDialog.close();});
         Button cancel=new Button("Cancel", e->requestDialog.close());
         HorizontalLayout buttonLayout=new HorizontalLayout(save,cancel);
         buttonLayout.setAlignItems(Alignment.CENTER);
@@ -106,6 +104,13 @@ public class RightRequestsView extends VerticalLayout implements BeforeEnterObse
         VerticalLayout layout= new VerticalLayout(sender, rightType, app, time, details, other, checkbox, buttonLayout);
         requestDialog.add(layout);
         requestDialog.open();
+    }
+
+    private void changeStatusRequest(RightRequest request, Boolean newHandled){
+        if(newHandled!=request.getHandled()){
+            dataBaseService.changeHandledRequest(request, newHandled);
+            updateGrid();
+        }
     }
 
     private void updateGrid(){
