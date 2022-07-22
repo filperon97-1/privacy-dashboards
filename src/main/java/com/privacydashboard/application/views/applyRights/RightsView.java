@@ -2,6 +2,7 @@ package com.privacydashboard.application.views.applyRights;
 
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.IoTApp;
+import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
@@ -27,6 +28,8 @@ import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 interface RightAction{
@@ -39,27 +42,53 @@ interface RightAction{
 public class RightsView extends VerticalLayout implements BeforeEnterObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
-    private final Dialog rightList=new Dialog();
+    private final Grid<RightRequest> grid= new Grid<>();
     private final Dialog requestRight=new Dialog();
     private final Dialog confirmDialog=new Dialog();
+    private RightRequest priorityRight=null;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     // Uso ComponentUtil per passare le informazioni invece dei parametri dell'url. Dopo bisogna resettarlo
     @Override
     public void beforeEnter(BeforeEnterEvent event){
+        // apply right
         Object object=ComponentUtil.getData(UI.getCurrent(), "RightRequest");
-        if(object==null){
-            return;
+        if(object!=null){
+            try{
+                RightRequest request=(RightRequest) object;
+                ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
+                confirmRequest(request);
+                return;
+            }catch(Exception e){
+                ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
+                return;
+            }
         }
-        try{
-            RightRequest request=(RightRequest) object;
-            ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
-            confirmRequest(request);
-        }catch(Exception e){
-            ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
-            return;
+
+        // show notification
+        object=ComponentUtil.getData(UI.getCurrent(), "RightNotification");
+        if(object!=null){
+            try{
+                Notification notification=(Notification) object;
+                ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+                priorityRight=notification.getRequest();
+                if(priorityRight!=null){
+                    if(priorityRight.getHandled()){
+                        showRequests(true);
+                    }
+                    else{
+                        showRequests(false);
+                    }
+                }
+                return;
+            }
+            catch(Exception e){
+                ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+                return;
+            }
         }
+
     }
 
     public RightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
@@ -67,6 +96,13 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
         this.authenticatedUser = authenticatedUser;
         createButtons();
         generateAllRightsDetails();
+        initializeGrid();
+    }
+
+    private void createButtons(){
+        Button pendingRequests=new Button("Pending requests", event -> showRequests(false));
+        Button handledRequests=new Button("Handled requests", event -> showRequests(true));
+        add(new HorizontalLayout(pendingRequests, handledRequests));
     }
 
     private void generateAllRightsDetails(){
@@ -91,6 +127,15 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
 
     }
 
+    private void initializeGrid(){
+        grid.addColumn(request -> request.getReceiver().getName()).setHeader("NAME");
+        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE");
+        grid.addColumn(request -> request.getApp().getName()).setHeader("APP");
+        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME");
+        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS");
+        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
+    }
+
     private Details generateRightDetail(String title, String description, String buttonString , RightAction action){
         VerticalLayout content=new VerticalLayout(new Span(description),
                 new Button(buttonString , e-> action.startAction()));
@@ -98,27 +143,20 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
         return rightDetail;
     }
 
-    private void createButtons(){
-        Button pendingRequests=new Button("Pending requests", event -> showRequests(false));
-        Button handledRequests=new Button("Handled requests", event -> showRequests(true));
-        add(new HorizontalLayout(pendingRequests, handledRequests));
-    }
-
     private void showRequests(Boolean handled){
-        rightList.removeAll();
-        Grid<RightRequest> grid=new Grid();
-        grid.addColumn(request -> request.getReceiver().getName()).setHeader("NAME");
-        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE");
-        grid.addColumn(request -> request.getApp().getName()).setHeader("APP");
-        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME");
-        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS");
-        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
-        if(handled){
-            grid.setItems(dataBaseService.getHandledRequestsFromSender(getUser()));
+        Dialog rightList=new Dialog();
+        List<RightRequest> rightRequests;
+        if(handled) {
+            rightRequests = dataBaseService.getHandledRequestsFromSender(getUser());
         }
         else{
-            grid.setItems(dataBaseService.getPendingRequestsFromSender(getUser()));
+            rightRequests = dataBaseService.getPendingRequestsFromSender(getUser());
         }
+        if(priorityRight!=null && rightRequests.contains(priorityRight)){
+            Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
+        }
+        grid.setItems(rightRequests);
+        grid.select(priorityRight);
         rightList.add(grid);
         rightList.setWidthFull();
         rightList.open();

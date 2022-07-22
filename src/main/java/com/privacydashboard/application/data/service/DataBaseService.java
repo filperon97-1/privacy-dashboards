@@ -216,9 +216,9 @@ public class DataBaseService {
 
     private void addUpdatedRequestNotification(RightRequest request){
         Notification notification=new Notification();
-        notification.setReceiver(request.getReceiver());
-        notification.setSender(request.getSender());
-        notification.setDescription(request.getSender().getName() + " changed the status of a request");
+        notification.setReceiver(request.getSender());
+        notification.setSender(request.getReceiver());
+        notification.setDescription(request.getReceiver().getName() + " changed the status of a request");
         notification.setRead(false);
         notification.setMessage(null);
         notification.setRequest(request);

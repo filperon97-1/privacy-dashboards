@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views;
 
+import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
@@ -13,6 +14,7 @@ import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.privacydashboard.application.views.profile.ProfileView;
 import com.privacydashboard.application.views.rightRequest.RightRequestsView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -145,6 +147,17 @@ public class MainLayout extends AppLayout {
             dataBaseService.changeIsReadNotification(notification, true);
             updateNotifications();
             UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
+        }
+        if(notification.getRequest()!=null && notification.getMessage()==null){
+            dataBaseService.changeIsReadNotification(notification, true);
+            updateNotifications();
+            ComponentUtil.setData(UI.getCurrent(), "RightNotification", notification);
+            if(notification.getReceiver().getRole().equals(Role.SUBJECT)){
+                UI.getCurrent().navigate(RightsView.class);
+            }
+            else{
+                UI.getCurrent().navigate(RightRequestsView.class);
+            }
         }
     }
 

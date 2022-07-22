@@ -1,11 +1,14 @@
 package com.privacydashboard.application.views.rightRequest;
 
 import com.privacydashboard.application.data.RightType;
+import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -14,27 +17,42 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @PageTitle("Rights")
 @Route(value="rights_controller", layout = MainLayout.class)
 @RolesAllowed({"CONTROLLER", "DPO"})
-public class RightRequestsView extends VerticalLayout implements AfterNavigationObserver {
+public class RightRequestsView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final Grid<RightRequest> grid= new Grid<>();
     private final Dialog requestDialog=new Dialog();
+    private RightRequest priorityRight=null;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event){
+        Object object=ComponentUtil.getData(UI.getCurrent(), "RightNotification");
+        if(object==null){
+            return;
+        }
+        try{
+            Notification notification=(Notification) object;
+            ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+            priorityRight=notification.getRequest();
+        }
+        catch(Exception e){
+            ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+            return;
+        }
+    }
 
     public RightRequestsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
         this.dataBaseService = dataBaseService;
@@ -95,7 +113,12 @@ public class RightRequestsView extends VerticalLayout implements AfterNavigation
         if(maybeUser.isEmpty()){
             return;
         }
-        grid.setItems(dataBaseService.getAllRequestsFromReceiver(maybeUser.get()));
+        List<RightRequest> rightRequests=dataBaseService.getAllRequestsFromReceiver(maybeUser.get());
+        if(priorityRight!=null && rightRequests.contains(priorityRight)){
+            Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
+        }
+        grid.setItems(rightRequests);
+        grid.select(priorityRight);
     }
 
     @Override
