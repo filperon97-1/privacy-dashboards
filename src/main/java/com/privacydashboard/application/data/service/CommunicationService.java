@@ -47,7 +47,7 @@ public class CommunicationService {
         return request;
     }
 
-    public void setRightRequest(){
-
+    public void setRightRequest(RightRequest request){
+        ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
     }
 }

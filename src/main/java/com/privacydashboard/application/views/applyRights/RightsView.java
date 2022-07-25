@@ -68,9 +68,7 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
         Notification notification=communicationService.getRightNotification();
         if(notification!=null){
             priorityRight=notification.getRequest();
-            //logger.info("notification");
             if(priorityRight!=null){
-                //logger.info("not null");
                 if(priorityRight.getHandled()){
                     showRequests(true);
                 }

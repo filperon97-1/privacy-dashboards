@@ -4,6 +4,7 @@ import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
@@ -31,6 +32,7 @@ import java.util.Optional;
 public class RightRequestsView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
     private final Grid<RightRequest> grid= new Grid<>();
     private final Dialog requestDialog=new Dialog();
     private RightRequest priorityRight=null;
@@ -39,24 +41,16 @@ public class RightRequestsView extends VerticalLayout implements BeforeEnterObse
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
-        Object object=ComponentUtil.getData(UI.getCurrent(), "RightNotification");
-        if(object==null){
-            return;
-        }
-        try{
-            Notification notification=(Notification) object;
-            ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+        Notification notification=communicationService.getRightNotification();
+        if(notification!=null){
             priorityRight=notification.getRequest();
-        }
-        catch(Exception e){
-            ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
-            return;
         }
     }
 
-    public RightRequestsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
+    public RightRequestsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
+        this.communicationService= communicationService;
         initializeGrid();
     }
 

@@ -5,6 +5,7 @@ import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
@@ -32,6 +33,7 @@ import java.util.UUID;
 public class AppsView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
     private final Grid<IoTApp> grid= new Grid<>();
     private List<IoTApp> ioTAppList;
     private UUID priorityAppID;
@@ -50,9 +52,10 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         }
     }
 
-    public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
+    public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
+        this.communicationService=communicationService;
         initializeGrid();
     }
 
@@ -142,7 +145,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         request.setOther(consent);
         request.setReceiver(dataBaseService.getControllersFromApp(i).get(0));
         request.setHandled(false);
-        ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
+        communicationService.setRightRequest(request);
         UI.getCurrent().navigate("rights");
     }
 
