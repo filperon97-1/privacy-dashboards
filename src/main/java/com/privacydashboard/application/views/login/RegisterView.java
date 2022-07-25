@@ -23,12 +23,12 @@ import java.util.List;
 @PageTitle("Registration")
 @AnonymousAllowed
 public class RegisterView extends VerticalLayout {
-    private TextField username=new TextField("USERNAME");
-    private PasswordField password=new PasswordField("PASSWORD");
-    private PasswordField confirmPassword=new PasswordField("CONFIRM PASSWORD");
-    private ComboBox<Role> role= new ComboBox<>("ROLE");
+    private final TextField username=new TextField("USERNAME");
+    private final PasswordField password=new PasswordField("PASSWORD");
+    private final PasswordField confirmPassword=new PasswordField("CONFIRM PASSWORD");
+    private final ComboBox<Role> role= new ComboBox<>("ROLE");
     private final DataBaseService dataBaseService;
-    private Binder<User> binder= new Binder<>(User.class);
+    private final Binder<User> binder= new Binder<>(User.class);
 
     public RegisterView(DataBaseService dataBaseService){
         this.dataBaseService=dataBaseService;
@@ -61,12 +61,7 @@ public class RegisterView extends VerticalLayout {
     }
 
     private boolean isUniqueName(String name){
-        if(dataBaseService.getUserByName(name)==null){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return dataBaseService.getUserByName(name)==null;
     }
 
     private void confirm(){

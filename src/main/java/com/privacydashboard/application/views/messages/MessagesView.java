@@ -1,6 +1,7 @@
 package com.privacydashboard.application.views.messages;
 
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
@@ -27,13 +28,15 @@ import java.util.Optional;
 public class MessagesView extends VerticalLayout implements AfterNavigationObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
     private final Grid<User> grid=new Grid<>();
     private final Dialog newMessageDialog=new Dialog();
     private final Button newMessageButton=new Button("New Message");
 
-    public MessagesView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
+    public MessagesView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
+        this.communicationService=communicationService;
         addClassName("contacts-view");
         initializeButton();
         initializeGrid();
@@ -61,10 +64,8 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
 
         Button newMessage=new Button("Continue", e->{if(contactComboBox.getValue()!=null){
                                                             newMessageDialog.close();
-                                                            UI.getCurrent().navigate(SingleConversationView.class,
-                                                                    new RouteParameters("contactID", contactComboBox.getValue().getId().toString()));
-                                                            }
-        });
+                                                            goToConversation(contactComboBox.getValue());
+                                                            }});
         Button cancel=new Button("Cancel", e-> newMessageDialog.close());
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
 
@@ -72,16 +73,20 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         newMessageDialog.add(layout);
     }
 
-    private RouterLink showContact(User contact){
+    private HorizontalLayout showContact(User contact){
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         Span name= new Span(contact.getName());
         name.addClassName("name");
+        name.addClassName("link");
         HorizontalLayout card = new HorizontalLayout(avatar, name);
         card.addClassName("card");
-        RouterLink link=new RouterLink();
-        link.setRoute(SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
-        link.add(card);
-        return link;
+        card.addClickListener(e-> goToConversation(contact));
+        return card;
+    }
+
+    private void goToConversation(User contact){
+        communicationService.setContact(contact);
+        UI.getCurrent().navigate(SingleConversationView.class);
     }
 
     private void updateGrid(){

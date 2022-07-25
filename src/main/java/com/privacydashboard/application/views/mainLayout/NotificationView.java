@@ -8,12 +8,8 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.views.applyRights.RightsView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
 import com.privacydashboard.application.views.rightRequest.RightRequestsView;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.router.RouteParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,7 +17,7 @@ public class NotificationView {
     private final User user;
     private final DataBaseService dataBaseService;
     private final CommunicationService communicationService;
-    private ContextMenu menuNotifications=new ContextMenu();
+    private final ContextMenu menuNotifications=new ContextMenu();
 
     public NotificationView(User user, DataBaseService dataBaseService, CommunicationService communicationService){
         this.dataBaseService=dataBaseService;
@@ -48,7 +44,8 @@ public class NotificationView {
         if(notification.getMessage()!=null && notification.getRequest()==null){
             dataBaseService.changeIsReadNotification(notification, true);
             updateNotifications();
-            UI.getCurrent().navigate(SingleConversationView.class, new RouteParameters("contactID", notification.getSender().getId().toString()));
+            communicationService.setContact(notification.getSender());
+            UI.getCurrent().navigate(SingleConversationView.class);
         }
         if(notification.getRequest()!=null && notification.getMessage()==null){
             dataBaseService.changeIsReadNotification(notification, true);

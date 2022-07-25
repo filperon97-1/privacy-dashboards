@@ -1,13 +1,14 @@
 package com.privacydashboard.application.data.service;
 
+import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
+import com.privacydashboard.application.data.entity.User;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+// classe usata per passare vari oggetti tra le Views senza dover usare parametri nell'URL
 @Service
 public class CommunicationService {
     public CommunicationService(){
@@ -49,5 +50,43 @@ public class CommunicationService {
 
     public void setRightRequest(RightRequest request){
         ComponentUtil.setData(UI.getCurrent(), "RightRequest", request);
+    }
+
+    public IoTApp getApp(){
+        IoTApp app=null;
+        Object object=ComponentUtil.getData(UI.getCurrent(), "App");
+        try {
+            if (object != null) {
+                app = (IoTApp) object;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ComponentUtil.setData(UI.getCurrent(), "App", null);
+        }
+        return app;
+    }
+
+    public void setApp(IoTApp app){
+        ComponentUtil.setData(UI.getCurrent(), "App", app);
+    }
+
+    public User getContact(){
+        User contact=null;
+        Object object=ComponentUtil.getData(UI.getCurrent(), "Contact");
+        try {
+            if (object != null) {
+                contact = (User) object;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ComponentUtil.setData(UI.getCurrent(), "Contact", null);
+        }
+        return contact;
+    }
+
+    public void setContact(User contact){
+        ComponentUtil.setData(UI.getCurrent(), "Contact", contact);
     }
 }

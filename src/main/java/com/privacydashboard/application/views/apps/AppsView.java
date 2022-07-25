@@ -10,7 +10,6 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
-import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
@@ -25,31 +24,20 @@ import javax.annotation.security.PermitAll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @PageTitle("Apps")
-@Route(value = "apps-view/:appID?", layout = MainLayout.class)
+@Route(value = "apps-view", layout = MainLayout.class)
 @PermitAll
 public class AppsView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private final Grid<IoTApp> grid= new Grid<>();
-    private List<IoTApp> ioTAppList;
-    private UUID priorityAppID;
+    private IoTApp priorityApp;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
-        Optional<String> appID=event.getRouteParameters().get("appID");
-        if(appID.isEmpty()){
-            priorityAppID=null;
-            return;
-        }
-        try{
-            priorityAppID= UUID.fromString(appID.get());
-        }catch (Exception e ){
-            priorityAppID=null;
-        }
+        priorityApp=communicationService.getApp();
     }
 
     public AppsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
@@ -96,7 +84,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
          */
 
         // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
-        if(i.getId().equals(priorityAppID)){
+        if(i.equals(priorityApp)){
             details.setOpened(true);
         }
         return details;
@@ -120,7 +108,11 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         }
 
         for(User u : users){
-            layout.add(new RouterLink(u.getName() , ContactsView.class,  new RouteParameters("contactID", u.getId().toString())));
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            layout.add(contactLink);
         }
         return layout;
     }
@@ -159,15 +151,11 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        ioTAppList=dataBaseService.getUserApps(getUser());
+        List<IoTApp> ioTAppList=dataBaseService.getUserApps(getUser());
         // se esiste l'app selezionata nei parametri, mettilo al primo posto
-        if(priorityAppID!=null){
-            Optional<IoTApp> maybeApp=dataBaseService.getApp(priorityAppID);
-            if(maybeApp.isPresent() && ioTAppList.contains(maybeApp.get())){
-                Collections.swap(ioTAppList, 0, ioTAppList.indexOf(maybeApp.get()));
-            }
-            else{
-                priorityAppID=null;
+        if(priorityApp!=null){
+            if(ioTAppList.contains(priorityApp)){
+                Collections.swap(ioTAppList, 0, ioTAppList.indexOf(priorityApp));
             }
         }
         grid.setItems(ioTAppList);

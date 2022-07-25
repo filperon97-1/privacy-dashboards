@@ -190,13 +190,10 @@ public class MainLayout extends AppLayout {
 
     private User getUser(){
         Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isPresent()) {
-            User user = maybeUser.get();
-            return user;
-        }
-        else{
+        if (maybeUser.isEmpty()) {
             return null;
         }
+        return maybeUser.get();
     }
 
     @Override

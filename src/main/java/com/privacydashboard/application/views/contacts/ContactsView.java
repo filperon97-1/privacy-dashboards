@@ -1,11 +1,13 @@
 package com.privacydashboard.application.views.contacts;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,32 +23,24 @@ import java.util.*;
 import javax.annotation.security.PermitAll;
 
 @PageTitle("Contacts")
-@Route(value = "contacts/:contactID?", layout = MainLayout.class)
+@Route(value = "contacts", layout = MainLayout.class)
 @PermitAll
 public class ContactsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
     private final Grid<User> grid = new Grid<>();
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
-    private UUID priorityUserID;    //FATTO COSI E' UN PO' UNA MERDA, TROVARE SOLUZIONE MIGLIORE
+    private final CommunicationService communicationService;
+    private User priorityUser;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
-        Optional<String> contactID=event.getRouteParameters().get("contactID");
-        if(!contactID.isPresent()){
-            priorityUserID=null;
-            return;
-        }
-        try{
-            priorityUserID=UUID.fromString(contactID.get());
-        }catch (Exception e ){
-            priorityUserID=null;
-            return;
-        }
+        priorityUser=communicationService.getContact();
     }
 
-    public ContactsView(AuthenticatedUser authenticatedUser, DataBaseService dataBaseService) {
+    public ContactsView(AuthenticatedUser authenticatedUser, DataBaseService dataBaseService, CommunicationService communicationService) {
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
+        this.communicationService=communicationService;
         addClassName("contacts-view");
         initializeGrid();
     }
@@ -69,30 +63,33 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         card.add(new HorizontalLayout(avatar , name) , details);
 
         // se c'è un priorityUser apri details
-        if(contact.getId().equals(priorityUserID)){
+        if(contact.equals(priorityUser)){
             details.setOpened(true);
         }
         return card;
     }
 
     private VerticalLayout generateContactInformations(User contact){
-        Span name = new Span("Name: " + contact.getName());
-        Span role = new Span("Role: Data " +contact.getRole());
-        //Scegliere se inserire o meno le informazioni sotto
-        Span mail = new Span("Mail: "+ (contact.getMail()==null ? "" : contact.getMail()));
-        VerticalLayout apps=getApps(contact);
-        Details details= new Details("Apps:" , apps);
-        RouterLink routerLink=new RouterLink();
-        routerLink.setRoute( SingleConversationView.class, new RouteParameters("contactID", contact.getId().toString()));
-        routerLink.add(new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create()));
-        return new VerticalLayout(name, role, mail, routerLink, details);
+        HorizontalLayout messageLink=new HorizontalLayout(new Span("send message"), VaadinIcon.COMMENT.create());
+        messageLink.addClassName("link");
+        messageLink.addClickListener(e->communicationService.setContact(contact));
+        messageLink.addClickListener(e->UI.getCurrent().navigate(SingleConversationView.class));
+        return new VerticalLayout(new Span("Name: " + contact.getName()),
+                                  new Span("Role: Data " +contact.getRole()),
+                                  new Span("Mail: "+ (contact.getMail()==null ? "" : contact.getMail())),
+                                  messageLink,
+                                  new Details("Apps:" , getApps(contact)));
     }
 
     private VerticalLayout getApps(User contact){
         VerticalLayout layout=new VerticalLayout();
         List<IoTApp> appList=dataBaseService.getAppsFrom2Users(getUser(), contact);
         for(IoTApp i : appList) {
-            layout.add(new RouterLink(i.getName(), AppsView.class , new RouteParameters("appID", i.getId().toString())));
+            Span appSpan= new Span(i.getName());
+            appSpan.addClassName("link");
+            appSpan.addClickListener(e-> communicationService.setApp(i));
+            appSpan.addClickListener(e-> UI.getCurrent().navigate(AppsView.class));
+            layout.add(appSpan);
         }
         return layout;
     }
@@ -108,14 +105,9 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         List<User> contacts=dataBaseService.getAllContactsFromUser(getUser());
-        // se esiste il contatto selezionato nei parametri, mettilo al primo posto
-        if(priorityUserID!=null ){
-            Optional<User> maybeU=dataBaseService.getUser(priorityUserID);
-            if(maybeU.isPresent() && contacts.contains(maybeU.get())){
-                Collections.swap(contacts, 0 , contacts.indexOf(maybeU.get()));
-            }
-            else{
-                priorityUserID=null;
+        if(priorityUser!=null){
+            if(contacts.contains(priorityUser)){
+                Collections.swap(contacts, 0 , contacts.indexOf(priorityUser));
             }
         }
         grid.setItems(contacts);
