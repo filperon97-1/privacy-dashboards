@@ -5,6 +5,7 @@ import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
@@ -25,6 +26,8 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +45,7 @@ interface RightAction{
 public class RightsView extends VerticalLayout implements BeforeEnterObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
     private final Grid<RightRequest> grid= new Grid<>();
     private final Dialog requestRight=new Dialog();
     private final Dialog confirmDialog=new Dialog();
@@ -49,51 +53,39 @@ public class RightsView extends VerticalLayout implements BeforeEnterObserver{
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     // Uso ComponentUtil per passare le informazioni invece dei parametri dell'url. Dopo bisogna resettarlo
     @Override
     public void beforeEnter(BeforeEnterEvent event){
         // apply right
-        Object object=ComponentUtil.getData(UI.getCurrent(), "RightRequest");
-        if(object!=null){
-            try{
-                RightRequest request=(RightRequest) object;
-                ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
-                confirmRequest(request);
-                return;
-            }catch(Exception e){
-                ComponentUtil.setData(UI.getCurrent(), "RightRequest", null);
-                return;
-            }
+        RightRequest request= communicationService.getRightRequest();
+        if(request!=null){
+            confirmRequest(request);
+            return;
         }
-
         // show notification
-        object=ComponentUtil.getData(UI.getCurrent(), "RightNotification");
-        if(object!=null){
-            try{
-                Notification notification=(Notification) object;
-                ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
-                priorityRight=notification.getRequest();
-                if(priorityRight!=null){
-                    if(priorityRight.getHandled()){
-                        showRequests(true);
-                    }
-                    else{
-                        showRequests(false);
-                    }
+        Notification notification=communicationService.getRightNotification();
+        if(notification!=null){
+            priorityRight=notification.getRequest();
+            //logger.info("notification");
+            if(priorityRight!=null){
+                //logger.info("not null");
+                if(priorityRight.getHandled()){
+                    showRequests(true);
                 }
-                return;
+                else{
+                    showRequests(false);
+                }
             }
-            catch(Exception e){
-                ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
-                return;
-            }
+            return;
         }
-
     }
 
-    public RightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser) {
+    public RightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
+        this.communicationService=communicationService;
         createButtons();
         generateAllRightsDetails();
         initializeGrid();

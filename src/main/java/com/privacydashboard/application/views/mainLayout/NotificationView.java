@@ -3,6 +3,7 @@ package com.privacydashboard.application.views.mainLayout;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.views.applyRights.RightsView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
@@ -11,16 +12,21 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.router.RouteParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class NotificationView {
     private final User user;
     private final DataBaseService dataBaseService;
+    private final CommunicationService communicationService;
     private ContextMenu menuNotifications=new ContextMenu();
-    public NotificationView(User user, DataBaseService dataBaseService){
+
+    public NotificationView(User user, DataBaseService dataBaseService, CommunicationService communicationService){
         this.dataBaseService=dataBaseService;
         this.user=user;
+        this.communicationService=communicationService;
     }
 
     public ContextMenu getContextMenu(){
@@ -47,8 +53,8 @@ public class NotificationView {
         if(notification.getRequest()!=null && notification.getMessage()==null){
             dataBaseService.changeIsReadNotification(notification, true);
             updateNotifications();
-            ComponentUtil.setData(UI.getCurrent(), "RightNotification", notification);
-            if(notification.getReceiver().getRole().equals(Role.SUBJECT)){
+            communicationService.setRightNotification(notification);
+            if(user.getRole().equals(Role.SUBJECT)){
                 UI.getCurrent().navigate(RightsView.class);
             }
             else{

@@ -1,6 +1,7 @@
 package com.privacydashboard.application.views;
 
 import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.applyRights.RightsView;
@@ -75,15 +76,16 @@ public class MainLayout extends AppLayout {
     // the text will change based on the current page(afterNavigation())
     private H1 viewTitle;
 
-    private AuthenticatedUser authenticatedUser;
-    private AccessAnnotationChecker accessChecker;
-    private DataBaseService dataBaseService;
-    private ContextMenu menuNotifications;
+    private final AuthenticatedUser authenticatedUser;
+    private final AccessAnnotationChecker accessChecker;
+    private final DataBaseService dataBaseService;
+    private final CommunicationService communicationService;
 
-    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService) {
+    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService, CommunicationService communicationService) {
         this.authenticatedUser = authenticatedUser;
         this.accessChecker = accessChecker;
         this.dataBaseService= dataBaseService;
+        this.communicationService=communicationService;
 
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
@@ -106,7 +108,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Icon initializeNotifications(){
-        NotificationView notificationView=new NotificationView(getUser(), dataBaseService);
+        NotificationView notificationView=new NotificationView(getUser(), dataBaseService, communicationService);
         ContextMenu notificationMenu=notificationView.getContextMenu();
         Icon bellIcon= new Icon(VaadinIcon.BELL_O);
         bellIcon.addClassNames("bell-icon");
