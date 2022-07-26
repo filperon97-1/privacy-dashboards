@@ -1,4 +1,4 @@
-package com.privacydashboard.application.views.rightRequest;
+package com.privacydashboard.application.views.rights;
 
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.Notification;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @PageTitle("Rights")
 @Route(value="rights_controller", layout = MainLayout.class)
 @RolesAllowed({"CONTROLLER", "DPO"})
-public class RightRequestsView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
+public class ControllerDPORightsView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
@@ -47,7 +47,7 @@ public class RightRequestsView extends VerticalLayout implements BeforeEnterObse
         }
     }
 
-    public RightRequestsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
+    public ControllerDPORightsView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
         this.communicationService= communicationService;

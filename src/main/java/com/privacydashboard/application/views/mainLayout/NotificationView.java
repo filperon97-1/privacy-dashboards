@@ -5,9 +5,9 @@ import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
-import com.privacydashboard.application.views.applyRights.RightsView;
 import com.privacydashboard.application.views.messages.SingleConversationView;
-import com.privacydashboard.application.views.rightRequest.RightRequestsView;
+import com.privacydashboard.application.views.rights.ControllerDPORightsView;
+import com.privacydashboard.application.views.rights.SubjectRightsView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 
@@ -52,10 +52,10 @@ public class NotificationView {
             updateNotifications();
             communicationService.setRightNotification(notification);
             if(user.getRole().equals(Role.SUBJECT)){
-                UI.getCurrent().navigate(RightsView.class);
+                UI.getCurrent().navigate(SubjectRightsView.class);
             }
             else{
-                UI.getCurrent().navigate(RightRequestsView.class);
+                UI.getCurrent().navigate(ControllerDPORightsView.class);
             }
         }
     }
