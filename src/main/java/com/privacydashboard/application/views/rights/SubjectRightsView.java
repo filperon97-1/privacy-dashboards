@@ -19,8 +19,6 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +37,6 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     private RightRequest priorityRight=null;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     // Uso ComponentUtil per passare le informazioni invece dei parametri dell'url. Dopo bisogna resettarlo
     @Override
@@ -47,8 +44,8 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         // apply right
         RightRequest request= communicationService.getRightRequest();
         if(request!=null){
-            DialogRight dialogRight= new DialogRight(request, getUser(), dataBaseService);
-            dialogRight.showConfirmRequest();
+            DialogRight dialogRight=new DialogRight(dataBaseService, authenticatedUser);
+            dialogRight.showDialogConfirm(request);
             return;
         }
         // show notification
@@ -128,8 +125,8 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     }
 
     private void startRequest(RightType rightType){
-        DialogRight dialogRight=new DialogRight(rightType, getUser(), dataBaseService);
-        dialogRight.showRequestDialog();
+        DialogRight dialogRight=new DialogRight(dataBaseService, authenticatedUser);
+        dialogRight.showDialogRequest(rightType);
     }
 
     private User getUser(){
