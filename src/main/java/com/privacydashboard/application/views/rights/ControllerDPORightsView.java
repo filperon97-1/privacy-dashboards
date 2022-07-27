@@ -8,8 +8,6 @@ import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -34,7 +32,6 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private final Grid<RightRequest> grid= new Grid<>();
-    private final Dialog requestDialog=new Dialog();
     private RightRequest priorityRight=null;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -65,15 +62,13 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
         add(grid);
-        // quando si seleziona una riga, si apre il dialog
-
     }
 
     private void showRequest(RightRequest request){
         if(request==null){
             return;
         }
-        requestDialog.removeAll();
+        Dialog requestDialog= new Dialog();
         HorizontalLayout sender=new HorizontalLayout(new Span("Sender User: "), new Span(request.getSender().getName()));
         HorizontalLayout rightType=new HorizontalLayout(new Span("Right: "), new Span(request.getRightType().toString()));
         HorizontalLayout app=new HorizontalLayout(new Span("App: "), new Span(request.getApp().getName()));
@@ -82,6 +77,15 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         String otherString="";
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
             otherString="Consent to withdraw: ";
+        }
+        if(request.getRightType().equals(RightType.COMPLAIN)){
+            otherString="Complain: ";
+        }
+        if(request.getRightType().equals(RightType.INFO)){
+            otherString="Info: ";
+        }
+        if(request.getRightType().equals(RightType.ERASURE)){
+            otherString="What to erase: ";
         }
         HorizontalLayout other=new HorizontalLayout(new Span(otherString), new Span(request.getOther()));
         Checkbox checkbox=new Checkbox();

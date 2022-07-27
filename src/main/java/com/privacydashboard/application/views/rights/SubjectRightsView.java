@@ -74,6 +74,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME");
         grid.addColumn(RightRequest::getDetails).setHeader("DETAILS");
         grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
+        //grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
     }
 
     private void createButtons(){

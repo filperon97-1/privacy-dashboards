@@ -161,19 +161,8 @@ public class DataGenerator {
 
             }
 
-            // AGGIUNTA NOTIFICATION, DA TOGLIERE
-            /*for(int i=0;i<10;i++){
-                Notification notification=new Notification();
-                notification.setDescription("controller " + String.valueOf(i) + " sent you a message");
-                if(i%2==0){
-                    notification.setRead(false);
-                }
-                else{
-                    notification.setRead(true);
-                }
-                notification.setReceiver(subjects[0]);
-                notificationRepository.save(notification);
-            }*/
+
+
 
 
 
