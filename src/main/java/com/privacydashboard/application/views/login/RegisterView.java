@@ -2,7 +2,7 @@ package com.privacydashboard.application.views.login;
 
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.User;
-import com.privacydashboard.application.data.service.DataBaseService;
+import com.privacydashboard.application.security.UserDetailsServiceImpl;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -27,11 +27,11 @@ public class RegisterView extends VerticalLayout {
     private final PasswordField password=new PasswordField("PASSWORD");
     private final PasswordField confirmPassword=new PasswordField("CONFIRM PASSWORD");
     private final ComboBox<Role> role= new ComboBox<>("ROLE");
-    private final DataBaseService dataBaseService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final Binder<User> binder= new Binder<>(User.class);
 
-    public RegisterView(DataBaseService dataBaseService){
-        this.dataBaseService=dataBaseService;
+    public RegisterView(UserDetailsServiceImpl userDetailsServiceImpl){
+        this.userDetailsServiceImpl=userDetailsServiceImpl;
         addClassName("registration");
         setAlignItems(Alignment.CENTER);
         implementBinder();
@@ -57,11 +57,10 @@ public class RegisterView extends VerticalLayout {
                 .withValidator(pass -> pass.equals(password.getValue()), "the two passwords must be equals")
                 .bind(User::getHashedPassword, User::setHashedPassword);
         binder.forField(role).withValidator(value -> value!=null, "please select a role").bind(User::getRole, User::setRole);
-        //binder.bind(role, User::getRole, User::setRole);
     }
 
     private boolean isUniqueName(String name){
-        return dataBaseService.getUserByName(name)==null;
+        return !userDetailsServiceImpl.isAlreadyPresent(name);
     }
 
     private void confirm(){
@@ -71,7 +70,7 @@ public class RegisterView extends VerticalLayout {
         } catch (ValidationException e) {
             e.printStackTrace();
         }
-        dataBaseService.hashPassAndAddUser(user);   // create user and hash the password (better do the hash in a different layer(not the one visible to the user)??)
+        userDetailsServiceImpl.hashPassAndAddUser(user);   // create user and hash the password (better do the hash in a different layer(not the one visible to the user)??)
         UI.getCurrent().getPage().setLocation("/"); // reinderizza alla pagina login
     }
 }

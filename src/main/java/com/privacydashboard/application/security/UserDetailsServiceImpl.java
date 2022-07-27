@@ -3,26 +3,27 @@ package com.privacydashboard.application.security;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.UserRepository;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder=passwordEncoder;
     }
 
     @Override
@@ -54,6 +55,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public boolean registerUser(User user){
         userRepository.save(user);
         return true;
+    }
+
+    public void hashPassAndAddUser(User user){
+        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
+        registerUser(user);
+    }
+
+    public String hashPass(String pass){
+        return passwordEncoder.encode(pass);
+    }
+
+    public boolean isAlreadyPresent(String name){
+        return userRepository.findByUsername(name)!=null;
+    }
+
+    public void changeUserPassword(User user, String password){
+        userRepository.changePasswordByUserID(user.getId(), passwordEncoder.encode(password));
     }
 
 }

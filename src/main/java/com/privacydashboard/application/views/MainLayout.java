@@ -4,6 +4,7 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
+import com.privacydashboard.application.security.UserDetailsServiceImpl;
 import com.privacydashboard.application.views.apps.AppsView;
 import com.privacydashboard.application.views.home.HomeView;
 import com.privacydashboard.application.views.contacts.ContactsView;
@@ -78,12 +79,14 @@ public class MainLayout extends AppLayout {
     private final AccessAnnotationChecker accessChecker;
     private final DataBaseService dataBaseService;
     private final CommunicationService communicationService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService, CommunicationService communicationService) {
+    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker, DataBaseService dataBaseService, CommunicationService communicationService, UserDetailsServiceImpl userDetailsService) {
         this.authenticatedUser = authenticatedUser;
         this.accessChecker = accessChecker;
         this.dataBaseService= dataBaseService;
         this.communicationService=communicationService;
+        this.userDetailsService=userDetailsService;
 
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
@@ -171,7 +174,7 @@ public class MainLayout extends AppLayout {
 
             ContextMenu userMenu = new ContextMenu(avatar);
             userMenu.setOpenOnClick(true);
-            ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService);
+            ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService, userDetailsService);
             userMenu.add(profileView);
 
             Span name = new Span(user.getName());

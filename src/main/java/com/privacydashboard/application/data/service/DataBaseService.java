@@ -43,17 +43,6 @@ public class DataBaseService {
         return userRepository.findById(id);
     }
 
-    public User getUserByName(String name){ return userRepository.findByUsername(name);}
-
-    public void addUser(User user){
-        userRepository.save(user);
-    }
-
-    public void hashPassAndAddUser(User user){
-        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
-        addUser(user);
-    }
-
     // MESSAGE REPOSITORY
 
     public List<Message> getConversationFromUsers(User user1, User user2){
