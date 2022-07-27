@@ -23,7 +23,6 @@ import com.vaadin.flow.router.*;
 import javax.annotation.security.PermitAll;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @PageTitle("Apps")
 @Route(value = "apps-view", layout = MainLayout.class)
@@ -59,7 +58,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
         Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
 
-        if(getUser().getRole().equals(Role.SUBJECT)){
+        if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
             Details consensesDetails= new Details("Consenses: " , getConsenses(i));
             content= new VerticalLayout(description, controllerDetails, DPODetails, consensesDetails);
         }
@@ -119,7 +118,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     private VerticalLayout getConsenses(IoTApp i){
         VerticalLayout layout=new VerticalLayout();
-        List<String> consenses=dataBaseService.getConsensesFromUserAndApp(getUser(), i);
+        List<String> consenses=dataBaseService.getConsensesFromUserAndApp(authenticatedUser.getUser(), i);
         for(String consens :  consenses){
             HorizontalLayout l=new HorizontalLayout(new Span(consens), new Button("Withdraw consent", e -> withdrawConsent(i, consens)));
             l.setAlignItems(Alignment.CENTER);
@@ -131,7 +130,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
 
     private void withdrawConsent(IoTApp i, String consent){
         RightRequest request=new RightRequest();
-        request.setSender(getUser());
+        request.setSender(authenticatedUser.getUser());
         request.setRightType(RightType.WITHDRAWCONSENT);
         request.setApp(i);
         request.setOther(consent);
@@ -141,17 +140,9 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         UI.getCurrent().navigate("rights");
     }
 
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
-    }
-
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        List<IoTApp> ioTAppList=dataBaseService.getUserApps(getUser());
+        List<IoTApp> ioTAppList=dataBaseService.getUserApps(authenticatedUser.getUser());
         // se esiste l'app selezionata nei parametri, mettilo al primo posto
         if(priorityApp!=null){
             if(ioTAppList.contains(priorityApp)){

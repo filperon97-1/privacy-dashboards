@@ -36,7 +36,7 @@ public class DialogRight{
     }
 
     public void showDialogRequest(RightType rightType){
-        User user=getUser();
+        User user=authenticatedUser.getUser();
         if(user==null){
             return;
         }
@@ -182,7 +182,7 @@ public class DialogRight{
             return;
         }
         // Sender of the request and authenticated user must be the same person
-        if(!request.getSender().equals(getUser())){
+        if(!request.getSender().equals(authenticatedUser.getUser())){
             return;
         }
         Dialog confirmDialog=new Dialog();
@@ -236,13 +236,5 @@ public class DialogRight{
                     request.getSender().getName());
         }
         return null;
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser=this.authenticatedUser.get();
-        if(maybeUser.isEmpty()){
-            return null;
-        }
-        return maybeUser.get();
     }
 }

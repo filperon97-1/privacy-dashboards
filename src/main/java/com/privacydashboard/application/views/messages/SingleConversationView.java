@@ -34,7 +34,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     @Override
     public void beforeEnter(BeforeEnterEvent event){
         contact=communicationService.getContact();
-        if(contact==null || !dataBaseService.getAllContactsFromUser(getUser()).contains(contact)){
+        if(contact==null || !dataBaseService.getAllContactsFromUser(authenticatedUser.getUser()).contains(contact)){
             event.rerouteTo(NoContactView.class);
         }
         title.removeAll();
@@ -67,7 +67,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
 
     //DA SISTEMARE LA TIME ZONE
     private List<MessageListItem> getMessages(){
-        List<Message> conversation=dataBaseService.getConversationFromUsers(getUser(), contact);
+        List<Message> conversation=dataBaseService.getConversationFromUsers(authenticatedUser.getUser(), contact);
         List<MessageListItem> messageListItems=new LinkedList<>();
         for(Message message : conversation){
             User u=message.getSender();
@@ -81,20 +81,12 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         Message message=new Message();
         message.setMessage(text);
         message.setReceiver(contact);
-        message.setSender(getUser());
+        message.setSender(authenticatedUser.getUser());
         dataBaseService.addNowMessage(message);
     }
 
     private void updateConversation(){
         messageList.setItems(getMessages());
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
     }
 
     @Override

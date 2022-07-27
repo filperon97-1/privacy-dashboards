@@ -34,8 +34,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 
-import java.util.Optional;
-
 public class MainLayout extends AppLayout {
     public static class MenuItemInfo extends ListItem {
 
@@ -108,7 +106,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Icon initializeNotifications(){
-        NotificationView notificationView=new NotificationView(getUser(), dataBaseService, communicationService);
+        NotificationView notificationView=new NotificationView(authenticatedUser.getUser(), dataBaseService, communicationService);
         ContextMenu notificationMenu=notificationView.getContextMenu();
         Icon bellIcon= new Icon(VaadinIcon.BELL_O);
         bellIcon.addClassNames("bell-icon");
@@ -166,7 +164,7 @@ public class MainLayout extends AppLayout {
         Footer layout = new Footer();
         layout.addClassNames("footer");
 
-        User user=getUser();
+        User user=authenticatedUser.getUser();
         if (user!=null) {
             Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
             avatar.addClassNames("me-xs");
@@ -186,14 +184,6 @@ public class MainLayout extends AppLayout {
         }
 
         return layout;
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
     }
 
     @Override

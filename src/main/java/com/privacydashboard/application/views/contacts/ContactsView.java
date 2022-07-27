@@ -83,7 +83,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
 
     private VerticalLayout getApps(User contact){
         VerticalLayout layout=new VerticalLayout();
-        List<IoTApp> appList=dataBaseService.getAppsFrom2Users(getUser(), contact);
+        List<IoTApp> appList=dataBaseService.getAppsFrom2Users(authenticatedUser.getUser(), contact);
         for(IoTApp i : appList) {
             Span appSpan= new Span(i.getName());
             appSpan.addClassName("link");
@@ -94,17 +94,9 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         return layout;
     }
 
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
-    }
-
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        List<User> contacts=dataBaseService.getAllContactsFromUser(getUser());
+        List<User> contacts=dataBaseService.getAllContactsFromUser(authenticatedUser.getUser());
         if(priorityUser!=null){
             if(contacts.contains(priorityUser)){
                 Collections.swap(contacts, 0 , contacts.indexOf(priorityUser));

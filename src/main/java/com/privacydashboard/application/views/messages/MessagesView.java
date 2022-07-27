@@ -20,7 +20,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 
 import javax.annotation.security.PermitAll;
-import java.util.Optional;
 
 @PageTitle("Messages")
 @Route(value="messages", layout = MainLayout.class)
@@ -59,7 +58,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
         H1 titleText= new H1("Select Contact");
 
         ComboBox<User> contactComboBox= new ComboBox<>("Contacts");
-        contactComboBox.setItems(dataBaseService.getAllContactsFromUser(getUser()));
+        contactComboBox.setItems(dataBaseService.getAllContactsFromUser(authenticatedUser.getUser()));
         contactComboBox.setItemLabelGenerator(User::getName);
 
         Button newMessage=new Button("Continue", e->{if(contactComboBox.getValue()!=null){
@@ -90,15 +89,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
     }
 
     private void updateGrid(){
-        grid.setItems(dataBaseService.getUserConversationFromUser(getUser()));
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser = authenticatedUser.get();
-        if (maybeUser.isEmpty()) {
-            return null;
-        }
-        return maybeUser.get();
+        grid.setItems(dataBaseService.getUserConversationFromUser(authenticatedUser.getUser()));
     }
 
     @Override

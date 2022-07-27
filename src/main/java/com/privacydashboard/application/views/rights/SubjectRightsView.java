@@ -3,7 +3,6 @@ package com.privacydashboard.application.views.rights;
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
-import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
@@ -24,7 +23,6 @@ import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @PageTitle("Rights")
 @Route(value="rights", layout = MainLayout.class)
@@ -87,10 +85,10 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         Dialog rightList=new Dialog();
         List<RightRequest> rightRequests;
         if(handled) {
-            rightRequests = dataBaseService.getHandledRequestsFromSender(getUser());
+            rightRequests = dataBaseService.getHandledRequestsFromSender(authenticatedUser.getUser());
         }
         else{
-            rightRequests = dataBaseService.getPendingRequestsFromSender(getUser());
+            rightRequests = dataBaseService.getPendingRequestsFromSender(authenticatedUser.getUser());
         }
         if(priorityRight!=null && rightRequests.contains(priorityRight)){
             Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
@@ -128,13 +126,5 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     private void startRequest(RightType rightType){
         DialogRight dialogRight=new DialogRight(dataBaseService, authenticatedUser);
         dialogRight.showDialogRequest(rightType);
-    }
-
-    private User getUser(){
-        Optional<User> maybeUser=this.authenticatedUser.get();
-        if(maybeUser.isEmpty()){
-            return null;
-        }
-        return maybeUser.get();
     }
 }
