@@ -10,11 +10,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vaadin.flow.component.textfield.TextArea;
 
 public class ProfileView extends VerticalLayout {
     private final User user;
@@ -26,12 +29,11 @@ public class ProfileView extends VerticalLayout {
     private Span name;
     private Span role;
     private Span mail;
+    private Span newMail;
     private Details changePasswordDetails;
     private PasswordField actualPassword;
     private PasswordField newPassword;
     private PasswordField confirmPassword;
-
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     public ProfileView(User user, AuthenticatedUser authenticatedUser, DataBaseService dataBaseService, UserDetailsServiceImpl userDetailsService){
         this.user=user;
@@ -54,13 +56,24 @@ public class ProfileView extends VerticalLayout {
 
         name=new Span("Name: " + user.getName());
         role=new Span("Role: " + user.getRole());
-        mail=new Span("Mail: " + (user.getMail()==null ? "" : user.getMail()));
+        Icon icon=new Icon(VaadinIcon.PENCIL);
+        icon.setSize("12px");
+        icon.addClickListener(e-> changeMail());
+        mail=new Span("Mail: " + (user.getMail()==null ? "   " : user.getMail()));
+        mail.add(icon);
+        newMail= new Span("New mail: ");
+        newMail.add(new TextArea());
+        newMail.setVisible(false);
         changePasswordDetails= new Details("Change password", changePassword());
-        add(image, name, mail, role, changePasswordDetails);
+        add(image, name, role, mail, newMail, changePasswordDetails);
     }
 
     private void changeImage(){
 
+    }
+
+    private void changeMail(){
+        newMail.setVisible(true);
     }
 
     private VerticalLayout changePassword(){
@@ -84,7 +97,7 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void checkActualPassword() {
-        if (user.getHashedPassword().equals(userDetailsService.hashPass(actualPassword.getValue()))) {
+        if (userDetailsService.isSamePassword(actualPassword.getValue(), user.getHashedPassword())) {
             actualPassword.setInvalid(false);
         } else {
             actualPassword.setInvalid(true);
@@ -101,8 +114,6 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void savePassword(){
-        logger.info(user.getHashedPassword());
-        logger.info(userDetailsService.hashPass(actualPassword.getValue()));
         checkActualPassword();
         checkConfirmPassword();
         if(newPassword.getValue().length()<8){
@@ -116,6 +127,8 @@ public class ProfileView extends VerticalLayout {
         newPassword.setValue("");
         confirmPassword.setValue("");
         changePasswordDetails.setOpened(false);
+        Notification notification = Notification.show("Password correctly changed!");
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void initializeRemoveEverything(){
@@ -129,6 +142,8 @@ public class ProfileView extends VerticalLayout {
         Dialog dialog=new Dialog();
         Span text=new Span("Are you sure you want to remove all your personal information from every app you have?");
         Button confirm=new Button("Confirm", e-> {dataBaseService.removeEverythingFromUser(user);
+                                                        Notification notification = Notification.show("The request has been sent to the Data Controllers!");
+                                                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                                                         dialog.close();});
         Button cancel=new Button("Cancel", e-> dialog.close());
 

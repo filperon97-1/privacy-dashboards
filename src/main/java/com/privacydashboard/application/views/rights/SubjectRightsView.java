@@ -98,6 +98,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         rightList.add(grid);
         rightList.setWidthFull();
         rightList.open();
+        priorityRight=null;
     }
 
     private void generateAllRightsDetails(){

@@ -116,6 +116,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         }
         grid.setItems(rightRequests);
         grid.select(priorityRight);
+        priorityRight=null;
     }
 
     @Override

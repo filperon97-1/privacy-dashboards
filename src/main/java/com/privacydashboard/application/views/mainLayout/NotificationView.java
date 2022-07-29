@@ -10,25 +10,38 @@ import com.privacydashboard.application.views.rights.ControllerDPORightsView;
 import com.privacydashboard.application.views.rights.SubjectRightsView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.html.Span;
 
 import java.util.List;
 
-public class NotificationView {
+@NpmPackage(value = "line-awesome", version = "1.3.0")
+public class NotificationView extends Span{
     private final User user;
     private final DataBaseService dataBaseService;
     private final CommunicationService communicationService;
+
     private final ContextMenu menuNotifications=new ContextMenu();
+    private final Span badge=new Span();
 
     public NotificationView(User user, DataBaseService dataBaseService, CommunicationService communicationService){
         this.dataBaseService=dataBaseService;
         this.user=user;
         this.communicationService=communicationService;
+        initializeIcons();
+        initializeMenuNotifications();
     }
 
-    public ContextMenu getContextMenu(){
+    private void initializeIcons(){
+        this.addClassNames("la la-bell la-2x bell-icon");
+        badge.addClassNames("badge");
+        add(badge);
+    }
+
+    private void initializeMenuNotifications(){
         menuNotifications.setOpenOnClick(true);
+        menuNotifications.setTarget(this);
         updateNotifications();
-        return menuNotifications;
     }
 
     private void updateNotifications(){
@@ -37,19 +50,25 @@ public class NotificationView {
         for(Notification notification  : notifications){
             menuNotifications.addItem(notification.getDescription(), e-> goToNotification(notification));
         }
+
+        if(notifications.size()==0){
+            badge.setVisible(false);
+        }
+        else{
+            badge.setText(String.valueOf(notifications.size()));
+        }
     }
 
     private void goToNotification(Notification notification){
         // Message notification
         if(notification.getMessage()!=null && notification.getRequest()==null){
             dataBaseService.changeIsReadNotification(notification, true);
-            updateNotifications();
             communicationService.setContact(notification.getSender());
             UI.getCurrent().navigate(SingleConversationView.class);
         }
+        // Right Request notification
         if(notification.getRequest()!=null && notification.getMessage()==null){
             dataBaseService.changeIsReadNotification(notification, true);
-            updateNotifications();
             communicationService.setRightNotification(notification);
             if(user.getRole().equals(Role.SUBJECT)){
                 UI.getCurrent().navigate(SubjectRightsView.class);
@@ -58,5 +77,6 @@ public class NotificationView {
                 UI.getCurrent().navigate(ControllerDPORightsView.class);
             }
         }
+        updateNotifications();
     }
 }

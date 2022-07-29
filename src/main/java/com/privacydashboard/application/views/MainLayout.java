@@ -29,13 +29,12 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 
 public class MainLayout extends AppLayout {
+
     public static class MenuItemInfo extends ListItem {
 
         private final Class<? extends Component> view;
@@ -56,6 +55,7 @@ public class MainLayout extends AppLayout {
         public Class<?> getView() {
             return view;
         }
+
         /**
          * Simple wrapper to create icons using LineAwesome iconset. See
          * https://icons8.com/line-awesome
@@ -69,7 +69,6 @@ public class MainLayout extends AppLayout {
                 }
             }
         }
-
     }
 
     // the text will change based on the current page(afterNavigation())
@@ -101,20 +100,12 @@ public class MainLayout extends AppLayout {
 
         viewTitle = new H1();
         viewTitle.addClassNames("view-title");
-        Icon bellIcon= initializeNotifications();
 
-        Header header = new Header(toggle, viewTitle, bellIcon);
+        NotificationView notificationView=new NotificationView(authenticatedUser.getUser(), dataBaseService, communicationService);
+
+        Header header = new Header(toggle, viewTitle, notificationView);
         header.addClassNames("view-header");
         return header;
-    }
-
-    private Icon initializeNotifications(){
-        NotificationView notificationView=new NotificationView(authenticatedUser.getUser(), dataBaseService, communicationService);
-        ContextMenu notificationMenu=notificationView.getContextMenu();
-        Icon bellIcon= new Icon(VaadinIcon.BELL_O);
-        bellIcon.addClassNames("bell-icon");
-        notificationMenu.setTarget(bellIcon);
-        return bellIcon;
     }
 
     private Component createDrawerContent() {
