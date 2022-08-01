@@ -18,6 +18,7 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
 import javax.annotation.security.RolesAllowed;
 import java.time.format.DateTimeFormatter;
@@ -77,7 +78,9 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
 
     private void createButtons(){
         Button pendingRequests=new Button("Pending requests", event -> showRequests(false));
+        pendingRequests.addClassNames("button");
         Button handledRequests=new Button("Handled requests", event -> showRequests(true));
+        handledRequests.addClassNames("button");
         add(new HorizontalLayout(pendingRequests, handledRequests));
     }
 
@@ -120,8 +123,9 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     }
 
     private Details generateRightDetail(String title, String description, String buttonString , RightType rightType){
-        return new Details(title, new VerticalLayout(new Span(description),
-                                                    new Button(buttonString, e-> startRequest(rightType))));
+        Button button=new Button(buttonString, e-> startRequest(rightType));
+        button.addClassNames("button");
+        return new Details(title, new VerticalLayout(new Span(description), button));
     }
 
     private void startRequest(RightType rightType){

@@ -18,7 +18,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 
 import java.util.LinkedList;
-import java.util.Optional;
 
 public class DialogRight{
     private final DataBaseService dataBaseService;

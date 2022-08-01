@@ -120,7 +120,10 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         VerticalLayout layout=new VerticalLayout();
         List<String> consenses=dataBaseService.getConsensesFromUserAndApp(authenticatedUser.getUser(), i);
         for(String consens :  consenses){
-            HorizontalLayout l=new HorizontalLayout(new Span(consens), new Button("Withdraw consent", e -> withdrawConsent(i, consens)));
+            Span consensSpan=new Span(consens);
+            Button button=new Button("Withdraw consent", e -> withdrawConsent(i, consens));
+            button.addClassNames("button");
+            HorizontalLayout l=new HorizontalLayout(consensSpan, button);
             l.setAlignItems(Alignment.CENTER);
             l.setVerticalComponentAlignment(Alignment.CENTER);
             layout.add(l);

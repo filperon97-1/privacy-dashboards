@@ -62,6 +62,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
                 updateConversation();
             }
         });
+        sendMessageButton.addClassNames("button");
         add(new HorizontalLayout(messageText , sendMessageButton));
     }
 
