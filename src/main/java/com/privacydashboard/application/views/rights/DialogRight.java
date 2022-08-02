@@ -9,16 +9,12 @@ import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
@@ -28,12 +24,6 @@ public class DialogRight{
 
     private final MyDialog requestDialog= new MyDialog();
     private final Button continueButton=new Button("Continue");
-    /*private final Dialog requestDialog= new Dialog();
-    private final Header title=new Header();
-    private final HorizontalLayout content=new HorizontalLayout();
-    private final Button cancelButton=new Button("Cancel", e-> requestDialog.close());
-    private final Button continueButton=new Button("Continue");*/
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     public DialogRight(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
@@ -46,7 +36,6 @@ public class DialogRight{
             return;
         }
         RightRequest request=initializeRequest(user, rightType);
-        //initializeDialogLayout();
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
             withdrawConsent(user, request);
         }
@@ -62,13 +51,6 @@ public class DialogRight{
         requestDialog.open();
     }
 
-    /*private void initializeDialogLayout(){
-        HorizontalLayout buttonLayout= new HorizontalLayout(continueButton, cancelButton);
-        VerticalLayout layout=new VerticalLayout(title, content, buttonLayout);
-        requestDialog.add(layout);
-        //requestDialog.setWidth("70%");
-    }*/
-
     private RightRequest initializeRequest(User user, RightType rightType){
         RightRequest request= new RightRequest();
         request.setSender(user);
@@ -79,7 +61,6 @@ public class DialogRight{
 
     private void withdrawConsent(User user, RightRequest request){
         requestDialog.setTitle("Withdraw consent");
-        //title.setText("Select App");
 
         ComboBox<String> consensComboBox= new ComboBox<>("Consens");
         consensComboBox.setPlaceholder("Filter by name...");
@@ -89,9 +70,9 @@ public class DialogRight{
         appComboBox.setItemLabelGenerator(IoTApp::getName);
         appComboBox.setPlaceholder("Filter by name...");
         appComboBox.addValueChangeListener(e-> consensComboBox.setItems(dataBaseService.getConsensesFromUserAndApp(user,appComboBox.getValue())));
+        requestDialog.setContent(new HorizontalLayout(appComboBox, consensComboBox));
 
         continueButton.addClickListener( e->{
-            logger.info("button");
             if(appComboBox.getValue()!=null && consensComboBox.getValue()!=null){
                 request.setApp(appComboBox.getValue());
                 request.setReceiver(dataBaseService.getControllersFromApp(appComboBox.getValue()).get(0));
@@ -99,13 +80,11 @@ public class DialogRight{
                 requestDialog.close();
                 showDialogConfirm(request);
             }});
-        requestDialog.setContent(new HorizontalLayout(appComboBox, consensComboBox));
         requestDialog.setContinueButton(continueButton);
-        //content.add(appComboBox, consensComboBox);
     }
 
     private void erasure(User user, RightRequest request){
-        /*title.setText("Select App");
+        requestDialog.setTitle("Erase content");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -115,6 +94,7 @@ public class DialogRight{
         TextArea textArea=new TextArea("What to erase");
         textArea.setPlaceholder("Descrive what you want to erase");
         textArea.setWidthFull();
+        requestDialog.setContent(new HorizontalLayout(appComboBox, textArea));
 
         continueButton.addClickListener(e->{
             if(appComboBox.getValue()!=null && textArea.getValue()!=null){
@@ -125,11 +105,11 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(appComboBox, textArea);*/
+        requestDialog.setContinueButton(continueButton);
     }
 
     private void info(User user, RightRequest request){
-        /*title.setText("Select App");
+        requestDialog.setTitle("Get information");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -146,6 +126,7 @@ public class DialogRight{
         infos.add("Sapere se i dati vanno a paesi terzi");
         infos.add("Altro");
         infoComboBox.setItems(infos);
+        requestDialog.setContent(new VerticalLayout(appComboBox, infoComboBox));
 
         continueButton.addClickListener(e->{
             if(appComboBox.getValue()!=null && infoComboBox.getValue()!=null){
@@ -156,11 +137,11 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(appComboBox, infoComboBox);*/
+        requestDialog.setContinueButton(continueButton);
     }
 
     private void complain(User user, RightRequest request){
-        /*title.setText("Select App");
+        requestDialog.setTitle("Compile a complain");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -170,6 +151,7 @@ public class DialogRight{
         TextArea textArea=new TextArea("Complain");
         textArea.setPlaceholder("Write your complain");
         textArea.setWidthFull();
+        requestDialog.setContent(new VerticalLayout(appComboBox, textArea));
 
         continueButton.addClickListener(e->{
             if(appComboBox.getValue()!=null && textArea.getValue()!=null){
@@ -180,7 +162,7 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(new VerticalLayout(appComboBox, textArea));*/
+        requestDialog.setContinueButton(continueButton);
     }
 
     public void showDialogConfirm(RightRequest request){
@@ -194,12 +176,12 @@ public class DialogRight{
         if(!request.getSender().equals(authenticatedUser.getUser())){
             return;
         }
-        Dialog confirmDialog=new Dialog();
+        MyDialog confirmDialog= new MyDialog();
         confirmDialog.setWidth("50%");
 
-        HorizontalLayout appName=new HorizontalLayout(new H1("APP:  "), new H2(request.getApp().getName()));
+        HorizontalLayout appName=new HorizontalLayout(new H2("APP:  "), new H3(request.getApp().getName()));
         appName.setAlignItems(FlexComponent.Alignment.CENTER);
-        HorizontalLayout right=new HorizontalLayout(new H1("RIGHT:  "), new H2(request.getRightType().toString()));
+        HorizontalLayout right=new HorizontalLayout(new H2("RIGHT:  "), new H3(request.getRightType().toString()));
         right.setAlignItems(FlexComponent.Alignment.CENTER);
 
         TextArea premadeMessage=new TextArea();
@@ -213,9 +195,10 @@ public class DialogRight{
         Button confirm=new Button("Confirm", e->{request.setDetails(details.getValue());
             dataBaseService.addNowRequest(request);
             confirmDialog.close();});
-        Button cancel=new Button("Cancel", e-> confirmDialog.close());
 
-        confirmDialog.add(new VerticalLayout(appName, right, premadeMessage, details, new HorizontalLayout(confirm, cancel)));
+        confirmDialog.setTitle("Confirm");
+        confirmDialog.setContent(new VerticalLayout(appName, right, premadeMessage, details));
+        confirmDialog.setContinueButton(confirm);
         confirmDialog.open();
     }
 

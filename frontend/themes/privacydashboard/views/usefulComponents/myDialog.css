@@ -8,9 +8,10 @@
 [theme~="my-dialog"] header {
   align-items: center;
   display: flex;
+  padding-bottom:var(--lumo-space-m);
   /*padding: var(--lumo-space-xs) var(--lumo-space-m);*/
   /*box-shadow: 0 1px var(--lumo-contrast-20pct);*/
-  background-color: var(--lumo-contrast-10pct);
+  /*background-color: var(--lumo-contrast-10pct);*/
 }
 
 [theme~="my-dialog"] header .dialog-title {
@@ -23,22 +24,24 @@
 }
 
 /* CONTENT */
-[theme~="my-dialog"] .dialog-content {
+/*[theme~="my-dialog"] .dialog-content {
   flex-grow: 1;
   overflow: auto;
   padding-top: var(--lumo-space-m);
   padding-bottom: var(--lumo-space-l);
-}
+  background-color: var(--lumo-contrast-10pct);
+}*/
 
 /* FOOTER */
 [theme~="my-dialog"] footer {
   display: flex;
   align-items: center;
+  padding-top:var(--lumo-space-m);
 }
 
 
 [theme~="my-dialog"] footer vaadin-button:not(:last-child) {
-  margin-right: 20px;
+  margin-right: var(--lumo-space-xs);
 }
 
 [theme~="my-dialog"] footer vaadin-button:last-child {

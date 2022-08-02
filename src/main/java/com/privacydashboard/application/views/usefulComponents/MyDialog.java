@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.theme.lumo.Lumo;
 
 public class MyDialog extends Dialog {
@@ -15,7 +16,7 @@ public class MyDialog extends Dialog {
     Button closeButton=new Button(VaadinIcon.CLOSE_SMALL.create(), e->close());
     private Header header=new Header();
 
-    private HorizontalLayout content=new HorizontalLayout();
+    private Span content=new Span();
 
     private Button continueButton=new Button("Continue");
     private Button cancelButton=new Button("Cancel", e->close());
@@ -56,6 +57,11 @@ public class MyDialog extends Dialog {
     }
 
     public void setContent(HorizontalLayout content){
+        this.content.removeAll();
+        this.content.add(content);
+    }
+
+    public void setContent(VerticalLayout content){
         this.content.removeAll();
         this.content.add(content);
     }
