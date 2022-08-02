@@ -52,14 +52,15 @@ public class ProfileView extends VerticalLayout {
     private void initializeInformation(){
         Avatar avatar=new Avatar(user.getName(), user.getProfilePictureUrl());
         image=new Span(avatar);
+        image.addClassName("pointer");
         image.addClickListener(e-> changeImage());
 
         name=new Span("Name: " + user.getName());
         role=new Span("Role: " + user.getRole());
+        mail=new Span("Mail: " + (user.getMail()==null ? "   " : user.getMail()));
         Icon icon=new Icon(VaadinIcon.PENCIL);
         icon.setSize("12px");
         icon.addClickListener(e-> changeMail());
-        mail=new Span("Mail: " + (user.getMail()==null ? "   " : user.getMail()));
         mail.add(icon);
         newMail= new Span("New mail: ");
         newMail.add(new TextArea());
@@ -85,6 +86,7 @@ public class ProfileView extends VerticalLayout {
         newPassword= new PasswordField("New");
         newPassword.setMinLength(8);
         newPassword.setErrorMessage("the password must be at least 8 characters");
+        newPassword.addValueChangeListener(e-> checkConfirmPassword());
 
         confirmPassword= new PasswordField("Confirm");
         confirmPassword.setErrorMessage("the two passwords must be equal");
