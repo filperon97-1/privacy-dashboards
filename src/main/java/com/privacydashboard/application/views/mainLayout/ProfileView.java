@@ -91,7 +91,6 @@ public class ProfileView extends VerticalLayout {
         confirmPassword.addValueChangeListener(e-> checkConfirmPassword());
 
         Button save= new Button("Save", e->savePassword());
-        save.addClassNames("button");
         VerticalLayout layout=new VerticalLayout(actualPassword, newPassword, confirmPassword, save);
         layout.setAlignItems(Alignment.CENTER);
         return layout;
@@ -135,7 +134,6 @@ public class ProfileView extends VerticalLayout {
     private void initializeRemoveEverything(){
         if(user.getRole().equals(Role.SUBJECT)){
             Button removeEverythingButton=new Button("Remove everything", e-> confirmDialog());
-            removeEverythingButton.addClassNames("button");
             add(removeEverythingButton);
         }
     }
@@ -147,9 +145,7 @@ public class ProfileView extends VerticalLayout {
                                                         Notification notification = Notification.show("The request has been sent to the Data Controllers!");
                                                         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                                                         dialog.close();});
-        confirm.addClassNames("button");
         Button cancel=new Button("Cancel", e-> dialog.close());
-        cancel.addClassNames("button");
 
         VerticalLayout layout= new VerticalLayout(text, new HorizontalLayout(confirm, cancel));
         layout.setAlignItems(Alignment.CENTER);
@@ -160,7 +156,6 @@ public class ProfileView extends VerticalLayout {
 
     private void initializeLogOut(){
         Button logOutButton= new Button("LogOut", e-> authenticatedUser.logout());
-        logOutButton.addClassNames("button");
         add(logOutButton);
     }
 

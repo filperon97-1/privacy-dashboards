@@ -36,7 +36,6 @@ public class RegisterView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         implementBinder();
         Button registerButton= new Button("Register", e-> confirm());
-        registerButton.addClassNames("button");
         add(new H1("Registration"), username, password, confirmPassword, role, registerButton);
     }
 

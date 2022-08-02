@@ -51,7 +51,6 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
     private void initializeButton(){
         newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newMessageButton.addClickListener(e-> newMessageDialog.open());
-        newMessageButton.addClassNames("button");
         add(newMessageButton);
     }
 
@@ -66,9 +65,7 @@ public class MessagesView extends VerticalLayout implements AfterNavigationObser
                                                             newMessageDialog.close();
                                                             goToConversation(contactComboBox.getValue());
                                                             }});
-        newMessage.addClassNames("button");
         Button cancel=new Button("Cancel", e-> newMessageDialog.close());
-        cancel.addClassNames("button");
         HorizontalLayout buttonLayout= new HorizontalLayout(newMessage, cancel);
 
         VerticalLayout layout=new VerticalLayout(titleText, contactComboBox, buttonLayout);

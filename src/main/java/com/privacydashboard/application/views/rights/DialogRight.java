@@ -6,6 +6,7 @@ import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
+import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -16,6 +17,8 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
@@ -23,11 +26,14 @@ public class DialogRight{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
 
-    private final Dialog requestDialog= new Dialog();
+    private final MyDialog requestDialog= new MyDialog();
+    private final Button continueButton=new Button("Continue");
+    /*private final Dialog requestDialog= new Dialog();
     private final Header title=new Header();
     private final HorizontalLayout content=new HorizontalLayout();
     private final Button cancelButton=new Button("Cancel", e-> requestDialog.close());
-    private final Button continueButton=new Button("Continue");
+    private final Button continueButton=new Button("Continue");*/
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     public DialogRight(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
@@ -40,7 +46,7 @@ public class DialogRight{
             return;
         }
         RightRequest request=initializeRequest(user, rightType);
-        initializeDialogLayout();
+        //initializeDialogLayout();
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
             withdrawConsent(user, request);
         }
@@ -56,12 +62,12 @@ public class DialogRight{
         requestDialog.open();
     }
 
-    private void initializeDialogLayout(){
+    /*private void initializeDialogLayout(){
         HorizontalLayout buttonLayout= new HorizontalLayout(continueButton, cancelButton);
         VerticalLayout layout=new VerticalLayout(title, content, buttonLayout);
         requestDialog.add(layout);
         //requestDialog.setWidth("70%");
-    }
+    }*/
 
     private RightRequest initializeRequest(User user, RightType rightType){
         RightRequest request= new RightRequest();
@@ -72,7 +78,8 @@ public class DialogRight{
     }
 
     private void withdrawConsent(User user, RightRequest request){
-        title.setText("Select App");
+        requestDialog.setTitle("Withdraw consent");
+        //title.setText("Select App");
 
         ComboBox<String> consensComboBox= new ComboBox<>("Consens");
         consensComboBox.setPlaceholder("Filter by name...");
@@ -84,6 +91,7 @@ public class DialogRight{
         appComboBox.addValueChangeListener(e-> consensComboBox.setItems(dataBaseService.getConsensesFromUserAndApp(user,appComboBox.getValue())));
 
         continueButton.addClickListener( e->{
+            logger.info("button");
             if(appComboBox.getValue()!=null && consensComboBox.getValue()!=null){
                 request.setApp(appComboBox.getValue());
                 request.setReceiver(dataBaseService.getControllersFromApp(appComboBox.getValue()).get(0));
@@ -91,11 +99,13 @@ public class DialogRight{
                 requestDialog.close();
                 showDialogConfirm(request);
             }});
-        content.add(appComboBox, consensComboBox);
+        requestDialog.setContent(new HorizontalLayout(appComboBox, consensComboBox));
+        requestDialog.setContinueButton(continueButton);
+        //content.add(appComboBox, consensComboBox);
     }
 
     private void erasure(User user, RightRequest request){
-        title.setText("Select App");
+        /*title.setText("Select App");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -115,11 +125,11 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(appComboBox, textArea);
+        content.add(appComboBox, textArea);*/
     }
 
     private void info(User user, RightRequest request){
-        title.setText("Select App");
+        /*title.setText("Select App");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -146,11 +156,11 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(appComboBox, infoComboBox);
+        content.add(appComboBox, infoComboBox);*/
     }
 
     private void complain(User user, RightRequest request){
-        title.setText("Select App");
+        /*title.setText("Select App");
 
         ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
         appComboBox.setItems(dataBaseService.getUserApps(user));
@@ -170,7 +180,7 @@ public class DialogRight{
                 showDialogConfirm(request);
             }
         });
-        content.add(new VerticalLayout(appComboBox, textArea));
+        content.add(new VerticalLayout(appComboBox, textArea));*/
     }
 
     public void showDialogConfirm(RightRequest request){

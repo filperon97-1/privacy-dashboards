@@ -92,9 +92,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
         Button save=new Button("Save" , e->{changeStatusRequest(request, checkbox.getValue());
                                                 requestDialog.close();});
-        save.addClassNames("button");
         Button cancel=new Button("Cancel", e->requestDialog.close());
-        cancel.addClassNames("button");
         HorizontalLayout buttonLayout=new HorizontalLayout(save,cancel);
         buttonLayout.setAlignItems(Alignment.CENTER);
         buttonLayout.setVerticalComponentAlignment(Alignment.CENTER);
