@@ -28,8 +28,11 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private User contact;
+
     private final Span title=new Span();
     private final MessageList messageList= new MessageList();
+    private final TextArea messageText=new TextArea();
+    private final Button sendMessageButton= new Button("Send Message");
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -45,23 +48,12 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
         this.communicationService=communicationService;
-        add(title);
-        add(messageList);
-        initializeSendMessageLayout();
-    }
 
-    private void initializeSendMessageLayout(){
-        TextArea messageText=new TextArea();
         messageText.setPlaceholder("Text...");
         messageText.setWidth("700px");
-
-        Button sendMessageButton=new Button("Send Message", e->{
-            if(messageText.getValue()!=null){
-                sendMessage(messageText.getValue());
-                messageText.setValue("");
-                updateConversation();
-            }
-        });
+        sendMessageButton.addClickListener(e-> sendMessage());
+        add(title);
+        add(messageList);
         add(new HorizontalLayout(messageText , sendMessageButton));
     }
 
@@ -77,12 +69,17 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         return messageListItems;
     }
 
-    private void sendMessage(String text){
+    private void sendMessage(){
+        if(messageText.getValue()==null || messageText.getValue().length()==0){
+            return;
+        }
         Message message=new Message();
-        message.setMessage(text);
+        message.setMessage(messageText.getValue());
         message.setReceiver(contact);
         message.setSender(authenticatedUser.getUser());
         dataBaseService.addNowMessage(message);
+        messageText.setValue("");
+        updateConversation();
     }
 
     private void updateConversation(){
