@@ -92,6 +92,15 @@ public class DataBaseService {
         }
     }
 
+    public List<User> getAllContactsFromUserFilterByName(User user, String name){
+        if(user.getRole()==Role.SUBJECT){
+            return userAppRelationRepository.getAllContactsFilterBy2RolesFilterByName(user, Role.CONTROLLER, Role.DPO, name);
+        }
+        else{
+            return userAppRelationRepository.getAllDPOOrControllerContactsFilterByName(user, name);
+        }
+    }
+
     public List<IoTApp> getAppsFrom2Users(User user1, User user2){
         return userAppRelationRepository.getAppsFrom2Users(user1, user2);
     }
@@ -133,15 +142,15 @@ public class DataBaseService {
     // RIGHT REQUEST REPOSITORY
 
     public List<RightRequest> getAllRequestsFromReceiver(User user){
-        return rightRequestRepository.findAllByReceiver(user);
+        return rightRequestRepository.findAllByReceiverOrderByTimeDesc(user);
     }
 
     public List<RightRequest> getPendingRequestsFromSender(User user){
-        return rightRequestRepository.findAllBySenderAndHandled(user, false);
+        return rightRequestRepository.findAllBySenderAndHandledOrderByTimeDesc(user, false);
     }
 
     public List<RightRequest> getHandledRequestsFromSender(User user){
-        return rightRequestRepository.findAllBySenderAndHandled(user, true);
+        return rightRequestRepository.findAllBySenderAndHandledOrderByTimeDesc(user, true);
     }
 
     public void addNowRequest(RightRequest request){

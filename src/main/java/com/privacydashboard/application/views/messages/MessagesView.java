@@ -13,6 +13,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -24,7 +25,7 @@ import javax.annotation.security.PermitAll;
 @PageTitle("Messages")
 @Route(value="messages", layout = MainLayout.class)
 @PermitAll
-public class MessagesView extends VerticalLayout implements AfterNavigationObserver{
+public class MessagesView extends Div implements AfterNavigationObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;

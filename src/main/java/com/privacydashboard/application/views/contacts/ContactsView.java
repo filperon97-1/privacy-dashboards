@@ -17,6 +17,9 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
 
 import java.util.*;
@@ -26,11 +29,13 @@ import javax.annotation.security.PermitAll;
 @Route(value = "contacts", layout = MainLayout.class)
 @PermitAll
 public class ContactsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
-    private final Grid<User> grid = new Grid<>();
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private User priorityUser;
+
+    private final Grid<User> grid = new Grid<>();
+    private final TextField searchText=new TextField();
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -42,21 +47,28 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         this.dataBaseService=dataBaseService;
         this.communicationService=communicationService;
         addClassName("contacts-view");
+        initializeSearchText();
         initializeGrid();
+        add(searchText, grid);
+    }
+
+    private void initializeSearchText(){
+        searchText.setPlaceholder("Search...");
+        searchText.setValueChangeMode(ValueChangeMode.LAZY);
+        searchText.addValueChangeListener(e-> updateContacts());
+        searchText.addClassName("search");
     }
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(contact -> createContact(contact));
-        add(grid);
     }
 
     private VerticalLayout createContact(User contact){
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         Span name = new Span(contact.getName());
         name.addClassName("name");
-        VerticalLayout content=generateContactInformations(contact);
-        Details details = new Details("More", content);
+        Details details = new Details("More", generateContactInformations(contact));
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
         card.setSpacing(false);
@@ -94,15 +106,26 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         return layout;
     }
 
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        List<User> contacts=dataBaseService.getAllContactsFromUser(authenticatedUser.getUser());
+    private void updateContacts(){
+        List<User> contacts;
+        if(searchText.getValue()==null || searchText.getValue().length()==0){
+            contacts=dataBaseService.getAllContactsFromUser(authenticatedUser.getUser());
+        }
+        else{
+            contacts=dataBaseService.getAllContactsFromUserFilterByName(authenticatedUser.getUser(), searchText.getValue());
+        }
+
         if(priorityUser!=null){
             if(contacts.contains(priorityUser)){
                 Collections.swap(contacts, 0 , contacts.indexOf(priorityUser));
             }
         }
         grid.setItems(contacts);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        updateContacts();
     }
 
 }

@@ -7,9 +7,9 @@ import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
@@ -66,7 +66,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         if(request==null){
             return;
         }
-        Dialog requestDialog= new Dialog();
+        MyDialog requestDialog= new MyDialog();
         HorizontalLayout sender=new HorizontalLayout(new Span("Sender User: "), new Span(request.getSender().getName()));
         HorizontalLayout rightType=new HorizontalLayout(new Span("Right: "), new Span(request.getRightType().toString()));
         HorizontalLayout app=new HorizontalLayout(new Span("App: "), new Span(request.getApp().getName()));
@@ -92,13 +92,9 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
         Button save=new Button("Save" , e->{changeStatusRequest(request, checkbox.getValue());
                                                 requestDialog.close();});
-        Button cancel=new Button("Cancel", e->requestDialog.close());
-        HorizontalLayout buttonLayout=new HorizontalLayout(save,cancel);
-        buttonLayout.setAlignItems(Alignment.CENTER);
-        buttonLayout.setVerticalComponentAlignment(Alignment.CENTER);
-
-        VerticalLayout layout= new VerticalLayout(sender, rightType, app, time, details, other, checkbox, buttonLayout);
-        requestDialog.add(layout);
+        requestDialog.setTitle("Right Request");
+        requestDialog.setContinueButton(save);
+        requestDialog.setContent(new VerticalLayout(sender, rightType, app, time, details, other, checkbox));
         requestDialog.open();
     }
 

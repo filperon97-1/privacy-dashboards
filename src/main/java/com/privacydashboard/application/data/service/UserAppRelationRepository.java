@@ -45,4 +45,19 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
             "ORDER BY uar.user.name")
     List<User> getAllDPOOrControllerContacts(@Param("user") User user);
 
+    // Prende i contatti per i Data Subject (gli altri data subject sono esclusi)
+    @Query("SELECT DISTINCT uar.user from UserAppRelation uar WHERE " +
+            "(uar.app in (SELECT app from UserAppRelation WHERE user=:user)) AND " +
+            "(uar.role=:role1 OR uar.role=:role2) AND " +
+            "LOWER(uar.user.name) like concat('%', LOWER(:name), '%')" +
+            "ORDER BY uar.user.name")
+    List<User> getAllContactsFilterBy2RolesFilterByName(@Param("user") User user, @Param("role1") Role role1, @Param("role2") Role role2, @Param("name") String name);
+
+    // Prende i contatti per i Data Controller e DPO
+    @Query("SELECT DISTINCT uar.user from UserAppRelation uar WHERE " +
+            "(uar.app in (SELECT app from UserAppRelation WHERE user=:user)) AND (uar.user<>:user) AND " +
+            "LOWER(uar.user.name) like concat('%', LOWER(:name), '%')" +
+            "ORDER BY uar.user.name")
+    List<User> getAllDPOOrControllerContactsFilterByName(@Param("user") User user, @Param("name") String name);
+
 }

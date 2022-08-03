@@ -52,9 +52,9 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         messageText.setPlaceholder("Text...");
         messageText.setWidth("700px");
         sendMessageButton.addClickListener(e-> sendMessage());
-        add(title);
-        add(messageList);
-        add(new HorizontalLayout(messageText , sendMessageButton));
+        add(title,
+                messageList,
+                new HorizontalLayout(messageText , sendMessageButton));
     }
 
     //DA SISTEMARE LA TIME ZONE
