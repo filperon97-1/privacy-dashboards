@@ -16,6 +16,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -29,7 +30,7 @@ import java.util.List;
 @PageTitle("Apps")
 @Route(value = "apps-view", layout = MainLayout.class)
 @PermitAll
-public class AppsView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
+public class AppsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
@@ -48,6 +49,7 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
         this.communicationService=communicationService;
+        addClassName("app-view");
         initializeSearchText();
         initializeGrid();
         add(searchText, grid);
@@ -136,8 +138,8 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
             Span consensSpan=new Span(consens);
             Button button=new Button("Withdraw consent", e -> withdrawConsent(i, consens));
             HorizontalLayout l=new HorizontalLayout(consensSpan, button);
-            l.setAlignItems(Alignment.CENTER);
-            l.setVerticalComponentAlignment(Alignment.CENTER);
+            l.setAlignItems(FlexComponent.Alignment.CENTER);
+            l.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
             layout.add(l);
         }
         return layout;
