@@ -9,13 +9,11 @@ import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -35,18 +33,26 @@ public class ProfileView extends VerticalLayout {
     private PasswordField actualPassword;
     private PasswordField newPassword;
     private PasswordField confirmPassword;
+    private final MyDialog removeEverythingDialog= new MyDialog();
+    private final Button logOutButton= new Button("LogOut", e-> logout());
 
     public ProfileView(User user, AuthenticatedUser authenticatedUser, DataBaseService dataBaseService, UserDetailsServiceImpl userDetailsService){
         this.user=user;
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
         this.userDetailsService=userDetailsService;
+
         if(!user.equals(authenticatedUser.getUser())){
             return;
         }
+
         initializeInformation();
-        initializeRemoveEverything();
-        initializeLogOut();
+        add(image, name, role, mail, newMail, changePasswordDetails);
+        if(user.getRole().equals(Role.SUBJECT)){
+            initializeRemoveEverything();
+            add(new Button("Remove everything", e-> removeEverythingDialog.setOpened(true)));
+        }
+        add(logOutButton);
         setAlignItems(Alignment.CENTER);
     }
 
@@ -67,8 +73,20 @@ public class ProfileView extends VerticalLayout {
         newMail.add(new TextArea());
         newMail.setVisible(false);
         changePasswordDetails= new Details("Change password", changePassword());
-        add(image, name, role, mail, newMail, changePasswordDetails);
     }
+
+    private void initializeRemoveEverything(){
+        Button confirm=new Button("Confirm", e-> {dataBaseService.removeEverythingFromUser(user);
+            Notification notification = Notification.show("The request has been sent to the Data Controllers!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            removeEverythingDialog.close();});
+
+        removeEverythingDialog.setContinueButton(confirm);
+        removeEverythingDialog.setTitle("Confirm to remove everything");
+        removeEverythingDialog.setContent(
+                new VerticalLayout(new Span("Are you sure you want to remove all your personal information from every app you have?")));
+    }
+
 
     private void changeImage(){
 
@@ -100,20 +118,13 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void checkActualPassword() {
-        if (userDetailsService.isSamePassword(actualPassword.getValue(), user.getHashedPassword())) {
-            actualPassword.setInvalid(false);
-        } else {
-            actualPassword.setInvalid(true);
-        }
+        boolean valid=userDetailsService.isSamePassword(actualPassword.getValue(), user.getHashedPassword());
+        actualPassword.setInvalid(!valid);
     }
 
     private void checkConfirmPassword(){
-        if(confirmPassword.getValue().equals(newPassword.getValue())) {
-            confirmPassword.setInvalid(false);
-        }
-        else {
-            confirmPassword.setInvalid(true);
-        }
+        boolean valid=confirmPassword.getValue().equals(newPassword.getValue());
+        confirmPassword.setInvalid(!valid);
     }
 
     private void savePassword(){
@@ -133,36 +144,9 @@ public class ProfileView extends VerticalLayout {
         Notification notification = Notification.show("Password correctly changed!");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
-
-    private void initializeRemoveEverything(){
-        if(user.getRole().equals(Role.SUBJECT)){
-            Button removeEverythingButton=new Button("Remove everything", e-> confirmDialog());
-            add(removeEverythingButton);
-        }
-    }
-
-    private void confirmDialog(){
-        MyDialog dialog=new MyDialog();
-        dialog.setTitle("Confirm to remove everything");
-        Span text=new Span("Are you sure you want to remove all your personal information from every app you have?");
-        Button confirm=new Button("Confirm", e-> {dataBaseService.removeEverythingFromUser(user);
-                                                        Notification notification = Notification.show("The request has been sent to the Data Controllers!");
-                                                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                                                        dialog.close();});
-        /*Button cancel=new Button("Cancel", e-> dialog.close());
-
-        VerticalLayout layout= new VerticalLayout(text, new HorizontalLayout(confirm, cancel));
-        layout.setAlignItems(Alignment.CENTER);
-        dialog.add(layout);*/
-        dialog.setContent(new VerticalLayout(text));
-        dialog.setContinueButton(confirm);
-        dialog.setOpened(true);
-    }
-
-
-    private void initializeLogOut(){
-        Button logOutButton= new Button("LogOut", e-> authenticatedUser.logout());
-        add(logOutButton);
+    
+    private void logout(){
+        authenticatedUser.logout();
     }
 
 }
