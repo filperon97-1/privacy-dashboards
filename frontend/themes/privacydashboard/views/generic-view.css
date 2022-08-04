@@ -11,3 +11,19 @@
 vaadin-button:hover{
     cursor: pointer;
 }
+
+.search{
+    font-size: var(--lumo-font-size-xs);
+    margin: var(--lumo-space-s);
+    background-color: var(--lumo-primary-color-10pct);
+    border-radius: var(--lumo-border-radius);
+    padding-top: calc(var(--lumo-space-s) * (-1));
+    padding-bottom: calc(var(--lumo-space-s) * (-1));
+}
+
+.scroller{
+    height:calc(10.5*var(--lumo-size-l));
+    width:95%;
+    border-bottom: 1px solid var(--lumo-contrast-20pct);
+    padding: var(--lumo-space-m);
+}

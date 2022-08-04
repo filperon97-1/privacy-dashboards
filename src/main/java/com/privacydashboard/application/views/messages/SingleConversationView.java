@@ -7,11 +7,12 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
@@ -30,6 +31,7 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     private User contact;
 
     private final Span title=new Span();
+    private Scroller scroller;
     private final MessageList messageList= new MessageList();
     private final TextArea messageText=new TextArea();
     private final Button sendMessageButton= new Button("Send Message");
@@ -40,8 +42,11 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         if(contact==null || !dataBaseService.getAllContactsFromUser(authenticatedUser.getUser()).contains(contact)){
             event.rerouteTo(NoContactView.class);
         }
-        title.removeAll();
-        title.add(new H2(contact.getName()));
+        else{
+            title.setText(contact.getName());
+            /*title.removeAll();
+            title.add(new H2(contact.getName()));*/
+        }
     }
 
     public SingleConversationView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
@@ -49,12 +54,22 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         this.authenticatedUser = authenticatedUser;
         this.communicationService=communicationService;
 
+        initializeTextAndButton();
+        initializeScroller();
+        add(title, scroller, new HorizontalLayout(messageText , sendMessageButton));
+    }
+
+    private void initializeTextAndButton(){
         messageText.setPlaceholder("Text...");
         messageText.setWidth("700px");
         sendMessageButton.addClickListener(e-> sendMessage());
-        add(title,
-                messageList,
-                new HorizontalLayout(messageText , sendMessageButton));
+        sendMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    }
+
+    private void initializeScroller(){
+        scroller = new Scroller(messageList);
+        scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
+        scroller.addClassName("scroller");
     }
 
     //DA SISTEMARE LA TIME ZONE

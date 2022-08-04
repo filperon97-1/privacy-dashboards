@@ -16,7 +16,7 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
     @Query("SELECT uar.app from UserAppRelation uar WHERE uar.user=:user")
     List<IoTApp> getIoTAppsFromUser(@Param("user") User user);
 
-    @Query("SELECT i from IoTApp i WHERE i in (SELECT uar.app from UserAppRelation uar WHERE uar.user=:user) AND i.name like concat('%', :filter, '%') ")
+    @Query("SELECT uar.app from UserAppRelation uar WHERE uar.user=:user AND LOWER(uar.app.name) like concat('%', LOWER(:filter), '%') ")
     List<IoTApp>getIoTAppsFromUserFilterByName(@Param("user") User user, @Param("filter") String filter);
 
     UserAppRelation findByUserAndApp(User user, IoTApp app);

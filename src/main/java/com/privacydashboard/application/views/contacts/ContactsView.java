@@ -17,7 +17,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
@@ -32,10 +31,11 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
-    private User priorityUser;
 
-    private final Grid<User> grid = new Grid<>();
     private final TextField searchText=new TextField();
+    private final Grid<User> grid = new Grid<>();
+
+    private User priorityUser;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){

@@ -18,6 +18,8 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
 
 import javax.annotation.security.PermitAll;
@@ -31,7 +33,10 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
+
+    private final TextField searchText=new TextField();
     private final Grid<IoTApp> grid= new Grid<>();
+
     private IoTApp priorityApp;
 
     @Override
@@ -43,13 +48,21 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
         this.communicationService=communicationService;
+        initializeSearchText();
         initializeGrid();
+        add(searchText, grid);
+    }
+
+    private void initializeSearchText(){
+        searchText.setPlaceholder("Search...");
+        searchText.setValueChangeMode(ValueChangeMode.LAZY);
+        searchText.addValueChangeListener(e-> updateGrid());
+        searchText.addClassName("search");
     }
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(app -> initializeApp(app));
-        add(grid);
     }
 
     private Details initializeApp(IoTApp i){
@@ -142,9 +155,14 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
         UI.getCurrent().navigate("rights");
     }
 
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        List<IoTApp> ioTAppList=dataBaseService.getUserApps(authenticatedUser.getUser());
+    private void updateGrid(){
+        List<IoTApp> ioTAppList;
+        if(searchText.getValue()==null || searchText.getValue().length()==0){
+            ioTAppList=dataBaseService.getUserApps(authenticatedUser.getUser());
+        }
+        else{
+            ioTAppList=dataBaseService.getUserAppsByName(authenticatedUser.getUser(), searchText.getValue());
+        }
         // se esiste l'app selezionata nei parametri, mettilo al primo posto
         if(priorityApp!=null){
             if(ioTAppList.contains(priorityApp)){
@@ -152,5 +170,10 @@ public class AppsView extends VerticalLayout implements AfterNavigationObserver,
             }
         }
         grid.setItems(ioTAppList);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        updateGrid();
     }
 }
