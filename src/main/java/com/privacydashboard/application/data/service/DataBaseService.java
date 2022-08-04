@@ -159,8 +159,8 @@ public class DataBaseService {
         addNewRequestNotification(request);
     }
 
-    public void changeHandledRequest(RightRequest request, Boolean newHandled){
-        rightRequestRepository.changeHandled(request.getId(), newHandled);
+    public void changeRightRequest(RightRequest request){
+        rightRequestRepository.changeRequest(request.getId(), request.getHandled(), request.getResponse());
         addUpdatedRequestNotification(request);
     }
 

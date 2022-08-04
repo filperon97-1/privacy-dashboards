@@ -16,8 +16,8 @@ public interface RightRequestRepository extends JpaRepository<RightRequest, UUID
     List<RightRequest> findAllBySenderAndHandledOrderByTimeDesc(User user, Boolean handled);
 
     @Modifying
-    @Query("UPDATE RightRequest SET handled=:newHandled WHERE id=:id")
+    @Query("UPDATE RightRequest SET handled=:newHandled, response=:newResponse WHERE id=:id")
     @Transactional
-    void changeHandled(@Param("id") UUID id, @Param("newHandled") Boolean newHandled);
+    void changeRequest(@Param("id") UUID id, @Param("newHandled") Boolean newHandled, @Param("newResponse") String newResponse);
 
 }

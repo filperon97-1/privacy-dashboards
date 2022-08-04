@@ -13,8 +13,8 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,7 +29,9 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
+
     private final Grid<RightRequest> grid= new Grid<>();
+    private final MyDialog requestDialog= new MyDialog();
     private RightRequest priorityRight=null;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -66,43 +68,48 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         if(request==null){
             return;
         }
-        MyDialog requestDialog= new MyDialog();
-        HorizontalLayout sender=new HorizontalLayout(new Span("Sender User: "), new Span(request.getSender().getName()));
-        HorizontalLayout rightType=new HorizontalLayout(new Span("Right: "), new Span(request.getRightType().toString()));
-        HorizontalLayout app=new HorizontalLayout(new Span("App: "), new Span(request.getApp().getName()));
-        HorizontalLayout time=new HorizontalLayout(new Span("Time: "), new Span(dtf.format(request.getTime())));
-        HorizontalLayout details=new HorizontalLayout(new Span("Details: "), new Span(request.getDetails()));
+        Span sender=new Span("Sender User:   "+ request.getSender().getName());
+        Span rightType=new Span("Right:   " + request.getRightType().toString());
+        Span app=new Span("App:   " + request.getApp().getName());
+        Span time=new Span("Time:   " + dtf.format(request.getTime()));
+        Span details=new Span("Details:   " + request.getDetails());
         String otherString="";
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
-            otherString="Consent to withdraw: ";
+            otherString="Consent to withdraw:   ";
         }
         if(request.getRightType().equals(RightType.COMPLAIN)){
-            otherString="Complain: ";
+            otherString="Complain:   ";
         }
         if(request.getRightType().equals(RightType.INFO)){
-            otherString="Info: ";
+            otherString="Info:   ";
         }
         if(request.getRightType().equals(RightType.ERASURE)){
-            otherString="What to erase: ";
+            otherString="What to erase:   ";
         }
-        HorizontalLayout other=new HorizontalLayout(new Span(otherString), new Span(request.getOther()));
+        Span other=new Span(otherString + request.getOther());
+        TextArea textArea=new TextArea("Your response");
+        textArea.setPlaceholder("Write your response...");
+        textArea.setValue(request.getResponse()==null ? "" : request.getResponse());
         Checkbox checkbox=new Checkbox();
         checkbox.setValue(request.getHandled());
         checkbox.setLabel("Handled");
 
-        Button save=new Button("Save" , e->{changeStatusRequest(request, checkbox.getValue());
-                                                requestDialog.close();});
+        Button save=new Button("Save" , e->changeRequest(request, checkbox.getValue(), textArea.getValue()));
         requestDialog.setTitle("Right Request");
         requestDialog.setContinueButton(save);
-        requestDialog.setContent(new VerticalLayout(sender, rightType, app, time, details, other, checkbox));
+        requestDialog.setContent(new VerticalLayout(sender, rightType, app, time, details, other, textArea, checkbox));
         requestDialog.open();
     }
 
-    private void changeStatusRequest(RightRequest request, Boolean newHandled){
-        if(newHandled!=request.getHandled()){
-            dataBaseService.changeHandledRequest(request, newHandled);
-            updateGrid();
+    private void changeRequest(RightRequest request, Boolean handled, String response){
+        if((response.equals(request.getResponse()) || response.equals(""))  && handled==request.getHandled()){
+            return;
         }
+        request.setResponse(response);
+        request.setHandled(handled);
+        dataBaseService.changeRightRequest(request);
+        updateGrid();
+        requestDialog.close();
     }
 
     private void updateGrid(){

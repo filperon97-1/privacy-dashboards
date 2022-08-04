@@ -144,7 +144,7 @@ public class ProfileView extends VerticalLayout {
         Notification notification = Notification.show("Password correctly changed!");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
-    
+
     private void logout(){
         authenticatedUser.logout();
     }
