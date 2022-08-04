@@ -9,9 +9,9 @@ import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -24,6 +24,7 @@ public class DialogRight{
 
     private final MyDialog requestDialog= new MyDialog();
     private final Button continueButton=new Button("Continue");
+    private final MyDialog confirmDialog=new MyDialog();
 
     public DialogRight(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
         this.dataBaseService=dataBaseService;
@@ -176,13 +177,10 @@ public class DialogRight{
         if(!request.getSender().equals(authenticatedUser.getUser())){
             return;
         }
-        MyDialog confirmDialog= new MyDialog();
         confirmDialog.setWidth("50%");
 
-        HorizontalLayout appName=new HorizontalLayout(new H2("APP:  "), new H3(request.getApp().getName()));
-        appName.setAlignItems(FlexComponent.Alignment.CENTER);
-        HorizontalLayout right=new HorizontalLayout(new H2("RIGHT:  "), new H3(request.getRightType().toString()));
-        right.setAlignItems(FlexComponent.Alignment.CENTER);
+        Span appName=new Span("APP: " + request.getApp().getName());
+        Span right= new Span("RIGHT: " + request.getRightType().toString());
 
         TextArea premadeMessage=new TextArea();
         premadeMessage.setValue(getPremadeText(request));
@@ -192,13 +190,9 @@ public class DialogRight{
         details.setPlaceholder("Add additional information");
         details.setWidthFull();
 
-        Button confirm=new Button("Confirm", e->{request.setDetails(details.getValue());
-            dataBaseService.addNowRequest(request);
-            confirmDialog.close();});
-
         confirmDialog.setTitle("Confirm");
         confirmDialog.setContent(new VerticalLayout(appName, right, premadeMessage, details));
-        confirmDialog.setContinueButton(confirm);
+        confirmDialog.setContinueButton(new Button("Confirm", e-> confirmRequest(request, details.getValue())));
         confirmDialog.open();
     }
 
@@ -228,5 +222,13 @@ public class DialogRight{
                     request.getSender().getName());
         }
         return null;
+    }
+
+    private void confirmRequest(RightRequest request, String details){
+        request.setDetails(details);
+        dataBaseService.addNowRequest(request);
+        confirmDialog.close();
+        Notification notification=Notification.show("The request has been sent to the Data Controllers!");
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }
