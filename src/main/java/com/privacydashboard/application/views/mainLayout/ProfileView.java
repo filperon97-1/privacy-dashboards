@@ -5,6 +5,7 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
+import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
@@ -141,17 +142,20 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void confirmDialog(){
-        Dialog dialog=new Dialog();
+        MyDialog dialog=new MyDialog();
+        dialog.setTitle("Confirm to remove everything");
         Span text=new Span("Are you sure you want to remove all your personal information from every app you have?");
         Button confirm=new Button("Confirm", e-> {dataBaseService.removeEverythingFromUser(user);
                                                         Notification notification = Notification.show("The request has been sent to the Data Controllers!");
                                                         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                                                         dialog.close();});
-        Button cancel=new Button("Cancel", e-> dialog.close());
+        /*Button cancel=new Button("Cancel", e-> dialog.close());
 
         VerticalLayout layout= new VerticalLayout(text, new HorizontalLayout(confirm, cancel));
         layout.setAlignItems(Alignment.CENTER);
-        dialog.add(layout);
+        dialog.add(layout);*/
+        dialog.setContent(new VerticalLayout(text));
+        dialog.setContinueButton(confirm);
         dialog.setOpened(true);
     }
 
