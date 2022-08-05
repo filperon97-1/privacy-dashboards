@@ -69,4 +69,8 @@ public class MyDialog extends Dialog {
     public void setTitle(String title){
         this.title.setText(title);
     }
+
+    public void setWithoutFooter(boolean hide){
+        this.footer.setVisible(!hide);
+    }
 }
