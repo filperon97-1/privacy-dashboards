@@ -86,7 +86,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         if(request.getRightType().equals(RightType.ERASURE)){
             otherString="What to erase:   ";
         }
-        Span other=new Span(otherString + request.getOther());
+        Span other=new Span(otherString + (request.getOther()==null ? "" : request.getOther()));
         TextArea textArea=new TextArea("Your response");
         textArea.setPlaceholder("Write your response...");
         textArea.setValue(request.getResponse()==null ? "" : request.getResponse());

@@ -53,6 +53,10 @@ public class DataBaseService {
         return messageRepository.getUserConversationFromUser(user);
     }
 
+    public List<User> getUserConversationFromUserFilterByName(User user, String name){
+        return messageRepository.getUserConversationFromUserFilterByName(user, name);
+    }
+
     public void addNowMessage(Message message){
         message.setTime(LocalDateTime.now());
         messageRepository.save(message);

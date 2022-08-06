@@ -20,4 +20,9 @@ public interface MessageRepository  extends JpaRepository<Message, UUID> {
             "(SELECT m.receiver FROM Message m WHERE m.sender=:user) OR u in " +
             "(SELECT m.sender FROM Message m WHERE m.receiver=:user)")
     List<User> getUserConversationFromUser(@Param("user") User user);
+
+    @Query("SELECT DISTINCT u FROM User u WHERE " +
+            "(u in (SELECT m.receiver FROM Message m WHERE m.sender=:user) OR u in (SELECT m.sender FROM Message m WHERE m.receiver=:user)) " +
+            " AND LOWER(u.name) like concat('%', LOWER(:name), '%')")
+    List<User> getUserConversationFromUserFilterByName(@Param("user") User user, @Param("name") String name);
 }

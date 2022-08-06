@@ -1,5 +1,5 @@
 .link{
-    color:blue;
+    color: var(--lumo-primary-text-color);
 }
 .link:hover{
     cursor: pointer;
