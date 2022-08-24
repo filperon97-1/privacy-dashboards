@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface RightRequestRepository extends JpaRepository<RightRequest, UUID> {
     List<RightRequest> findAllByReceiverOrderByTimeDesc(User user);
     List<RightRequest> findAllBySenderAndHandledOrderByTimeDesc(User user, Boolean handled);
+    List<RightRequest> findAllByReceiverAndHandledOrderByTimeDesc(User user, Boolean handled);
 
     @Modifying
     @Query("UPDATE RightRequest SET handled=:newHandled, response=:newResponse WHERE id=:id")

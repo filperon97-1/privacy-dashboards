@@ -149,6 +149,14 @@ public class DataBaseService {
         return rightRequestRepository.findAllByReceiverOrderByTimeDesc(user);
     }
 
+    public List<RightRequest> getPendingRequestsFromReceiver(User user){
+        return rightRequestRepository.findAllByReceiverAndHandledOrderByTimeDesc(user, false);
+    }
+
+    public List<RightRequest> getHandledRequestsFromReceiver(User user){
+        return rightRequestRepository.findAllByReceiverAndHandledOrderByTimeDesc(user, true);
+    }
+
     public List<RightRequest> getPendingRequestsFromSender(User user){
         return rightRequestRepository.findAllBySenderAndHandledOrderByTimeDesc(user, false);
     }

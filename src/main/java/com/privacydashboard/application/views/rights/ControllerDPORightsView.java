@@ -8,6 +8,7 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
+import com.privacydashboard.application.views.usefulComponents.ToggleButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
@@ -31,6 +32,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     private final CommunicationService communicationService;
 
     private final Grid<RightRequest> grid= new Grid<>();
+    private final ToggleButton toggleButton=new ToggleButton("HANDLED", false);
     private final MyDialog requestDialog= new MyDialog();
     private RightRequest priorityRight=null;
 
@@ -52,15 +54,17 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     }
 
     private void initializeGrid(){
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.addColumn(request -> request.getSender().getName()).setHeader("NAME");
-        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE");
-        grid.addColumn(request -> request.getApp().getName()).setHeader("APP");
-        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME");
-        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS");
-        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
+        toggleButton.addClickListener(e-> updateGrid(toggleButton.getValue()));
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
+        grid.addColumn(request -> request.getSender().getName()).setHeader("NAME").setSortable(true);
+        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE").setSortable(true);
+        grid.addColumn(request -> request.getApp().getName()).setHeader("APP").setSortable(true);
+        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME").setSortable(true);
+        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS").setSortable(true);
+        grid.addColumn(RightRequest::getHandled).setHeader(toggleButton);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
+
         add(grid);
     }
 
@@ -108,12 +112,19 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         request.setResponse(response);
         request.setHandled(handled);
         dataBaseService.changeRightRequest(request);
-        updateGrid();
+        updateGrid(toggleButton.getValue());
         requestDialog.close();
     }
 
-    private void updateGrid(){
-        List<RightRequest> rightRequests=dataBaseService.getAllRequestsFromReceiver(authenticatedUser.getUser());
+    private void updateGrid(boolean handled){
+        List<RightRequest> rightRequests;
+        if(handled){
+            rightRequests=dataBaseService.getHandledRequestsFromReceiver(authenticatedUser.getUser());
+        }
+        else{
+            rightRequests=dataBaseService.getPendingRequestsFromReceiver(authenticatedUser.getUser());
+        }
+
         if(priorityRight!=null && rightRequests.contains(priorityRight)){
             Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
         }
@@ -124,6 +135,6 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-       updateGrid();
+       updateGrid(false);
     }
 }
