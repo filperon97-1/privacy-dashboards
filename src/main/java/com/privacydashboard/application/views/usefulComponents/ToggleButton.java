@@ -1,5 +1,4 @@
 package com.privacydashboard.application.views.usefulComponents;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.AbstractSinglePropertyField;
 import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.ComponentEvent;
@@ -17,8 +16,8 @@ import com.vaadin.flow.shared.Registration;
 @Tag("vcf-toggle-button")
 @NpmPackage(value = "@vaadin-component-factory/vcf-toggle-button", version = "1.0.3")
 @JsModule("@vaadin-component-factory/vcf-toggle-button")
-@CssImport(value = "./themes/privacydashboard/components/vaadin-checkbox.css", themeFor = "vaadin-checkbox")
-@SuppressWarnings("serial")
+@CssImport(value = "./themes/privacydashboard/views/usefulComponents/vaadin-checkbox.css", themeFor = "vaadin-checkbox")
+//@SuppressWarnings("serial")
 public class ToggleButton extends
         AbstractSinglePropertyField<ToggleButton, Boolean> implements HasStyle,
         HasSize, Focusable<ToggleButton>, ClickNotifier<ToggleButton> {
@@ -71,11 +70,10 @@ public class ToggleButton extends
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    //@SuppressWarnings({ "rawtypes", "unchecked" })
     protected Registration addChangeListener(
             ComponentEventListener<ChangeEvent> listener) {
-        return addListener(ChangeEvent.class,
-                (ComponentEventListener) listener);
+        return addListener(ChangeEvent.class, listener);
     }
 
 }

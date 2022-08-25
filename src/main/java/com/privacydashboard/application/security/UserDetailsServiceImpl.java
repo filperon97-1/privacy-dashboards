@@ -74,6 +74,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.changePasswordByUserID(user.getId(), passwordEncoder.encode(password));
     }
 
+    public void changeUserMail(User user, String mail){
+        userRepository.changeMailByUserID(user.getId(), mail);
+    }
+
     public boolean isSamePassword(String rawPass, String encodedPass){
         return passwordEncoder.matches(rawPass, encodedPass);
     }

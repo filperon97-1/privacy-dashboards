@@ -10,13 +10,13 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProfileView extends VerticalLayout {
     private final User user;
@@ -27,8 +27,9 @@ public class ProfileView extends VerticalLayout {
     private Span image;
     private Span name;
     private Span role;
-    private Span mail;
-    private Span newMail;
+    private Details changeMailDetails;
+    private TextArea actualMail;
+    private TextArea newMail;
     private Details changePasswordDetails;
     private PasswordField actualPassword;
     private PasswordField newPassword;
@@ -36,18 +37,21 @@ public class ProfileView extends VerticalLayout {
     private final MyDialog removeEverythingDialog= new MyDialog();
     private final Button logOutButton= new Button("LogOut", e-> logout());
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     public ProfileView(User user, AuthenticatedUser authenticatedUser, DataBaseService dataBaseService, UserDetailsServiceImpl userDetailsService){
         this.user=user;
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
         this.userDetailsService=userDetailsService;
 
-        if(!user.equals(authenticatedUser.getUser())){
+        if(!authenticatedUser.getUser().equals(user)){
             return;
         }
 
+        addClassName("profile-view");
         initializeInformation();
-        add(image, name, role, mail, newMail, changePasswordDetails);
+        add(image, name, role, changeMailDetails, changePasswordDetails);
         if(user.getRole().equals(Role.SUBJECT)){
             initializeRemoveEverything();
             add(new Button("Remove everything", e-> removeEverythingDialog.setOpened(true)));
@@ -64,14 +68,7 @@ public class ProfileView extends VerticalLayout {
 
         name=new Span("Name: " + user.getName());
         role=new Span("Role: " + user.getRole());
-        mail=new Span("Mail: " + (user.getMail()==null ? "   " : user.getMail()));
-        Icon icon=new Icon(VaadinIcon.PENCIL);
-        icon.setSize("12px");
-        icon.addClickListener(e-> changeMail());
-        mail.add(icon);
-        newMail= new Span("New mail: ");
-        newMail.add(new TextArea());
-        newMail.setVisible(false);
+        changeMailDetails= new Details("Mail: " + (user.getMail()==null ? "   " : user.getMail()), changeMail());
         changePasswordDetails= new Details("Change password", changePassword());
     }
 
@@ -92,8 +89,30 @@ public class ProfileView extends VerticalLayout {
 
     }
 
-    private void changeMail(){
-        newMail.setVisible(true);
+    private VerticalLayout changeMail(){
+        actualMail= new TextArea("Actual Mail: ");
+        actualMail.setValue(user.getMail()==null ?  " " : user.getMail());
+        actualMail.setReadOnly(true);
+        actualMail.addClassName("textField");
+        newMail=new TextArea("New Mail: ");
+        newMail.addClassName("textField");
+        Button save= new Button("Save", e->saveMail());
+        VerticalLayout layout=new VerticalLayout(actualMail, newMail, save);
+        layout.setAlignItems(Alignment.CENTER);
+        return layout;
+    }
+
+    private void saveMail(){
+        if(newMail.getValue()==null || newMail.getValue().length()==0){
+            return;
+        }
+        userDetailsService.changeUserMail(user, newMail.getValue());
+        actualMail.setValue(user.getMail()==null ?  " " : user.getMail());
+        newMail.setValue("");
+        closeMailDetail();
+        Notification notification=Notification.show("Mail changed correctly! \n The changes are gonna be visible on the next login");
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        logger.info(user.getMail());
     }
 
     private VerticalLayout changePassword(){
@@ -140,13 +159,21 @@ public class ProfileView extends VerticalLayout {
         actualPassword.setValue("");
         newPassword.setValue("");
         confirmPassword.setValue("");
-        changePasswordDetails.setOpened(false);
-        Notification notification = Notification.show("Password correctly changed!");
+        closePasswordDetail();
+        Notification notification = Notification.show("Password correctly changed! \n The changes are gonna be visible on the next login");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void logout(){
         authenticatedUser.logout();
+    }
+
+    public void closePasswordDetail(){
+        changePasswordDetails.setOpened(false);
+    }
+
+    public void closeMailDetail(){
+        changeMailDetails.setOpened(false);
     }
 
 }

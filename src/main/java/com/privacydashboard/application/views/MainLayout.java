@@ -166,12 +166,13 @@ public class MainLayout extends AppLayout {
             ContextMenu userMenu = new ContextMenu(avatar);
             userMenu.setOpenOnClick(true);
             ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService, userDetailsService);
+            userMenu.addOpenedChangeListener(e->profileView.closePasswordDetail());
+            userMenu.addOpenedChangeListener(e->profileView.closeMailDetail());
             userMenu.add(profileView);
-
             Span name = new Span(user.getName());
             name.addClassNames("font-medium", "text-s", "text-secondary");
-
             layout.add(avatar, name);
+
         } else {
             Anchor loginLink = new Anchor("login", "Sign in");
             layout.add(loginLink);

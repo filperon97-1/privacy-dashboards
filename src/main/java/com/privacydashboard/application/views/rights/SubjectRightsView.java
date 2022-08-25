@@ -13,7 +13,6 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -76,7 +75,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         grid.addColumn(request -> request.getApp().getName()).setHeader("APP").setSortable(true);
         grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME").setSortable(true);
         grid.addColumn(RightRequest::getDetails).setHeader("DETAILS").setSortable(true);
-        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED").setSortable(true);
+        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
         grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
     }
 
