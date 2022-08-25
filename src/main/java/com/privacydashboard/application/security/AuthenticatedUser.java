@@ -44,6 +44,14 @@ public class AuthenticatedUser {
         return (User) UI.getCurrent().getSession().getAttribute("user");
     }
 
+    public User updateUser(){
+        Optional<User> maybeUser=get();
+        if(maybeUser.isPresent()){
+            UI.getCurrent().getSession().setAttribute("user", maybeUser.get());
+        }
+        return (User) UI.getCurrent().getSession().getAttribute("user");
+    }
+
 
     public void logout() {
         UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGOUT_URL);

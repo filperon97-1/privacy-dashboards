@@ -15,11 +15,9 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ProfileView extends VerticalLayout {
-    private final User user;
+    private User user;
     private final AuthenticatedUser authenticatedUser;
     private final DataBaseService dataBaseService;
     private final UserDetailsServiceImpl userDetailsService;
@@ -36,8 +34,6 @@ public class ProfileView extends VerticalLayout {
     private PasswordField confirmPassword;
     private final MyDialog removeEverythingDialog= new MyDialog();
     private final Button logOutButton= new Button("LogOut", e-> logout());
-
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     public ProfileView(User user, AuthenticatedUser authenticatedUser, DataBaseService dataBaseService, UserDetailsServiceImpl userDetailsService){
         this.user=user;
@@ -68,7 +64,7 @@ public class ProfileView extends VerticalLayout {
 
         name=new Span("Name: " + user.getName());
         role=new Span("Role: " + user.getRole());
-        changeMailDetails= new Details("Mail: " + (user.getMail()==null ? "   " : user.getMail()), changeMail());
+        changeMailDetails= new Details("Mail: " + (user.getMail()==null ? "  " : user.getMail()), changeMail());
         changePasswordDetails= new Details("Change password", changePassword());
     }
 
@@ -103,16 +99,15 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void saveMail(){
-        if(newMail.getValue()==null || newMail.getValue().length()==0){
-            return;
-        }
         userDetailsService.changeUserMail(user, newMail.getValue());
+        closeMailDetail();
+        Notification notification=Notification.show("Mail changed correctly!");
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        // update user information and corresponding components
+        user=authenticatedUser.updateUser();
         actualMail.setValue(user.getMail()==null ?  " " : user.getMail());
         newMail.setValue("");
-        closeMailDetail();
-        Notification notification=Notification.show("Mail changed correctly! \n The changes are gonna be visible on the next login");
-        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        logger.info(user.getMail());
+        changeMailDetails.setSummaryText("Mail: " + actualMail.getValue());
     }
 
     private VerticalLayout changePassword(){
@@ -160,8 +155,9 @@ public class ProfileView extends VerticalLayout {
         newPassword.setValue("");
         confirmPassword.setValue("");
         closePasswordDetail();
-        Notification notification = Notification.show("Password correctly changed! \n The changes are gonna be visible on the next login");
+        Notification notification = Notification.show("Password correctly changed!");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        user=authenticatedUser.updateUser();
     }
 
     private void logout(){
