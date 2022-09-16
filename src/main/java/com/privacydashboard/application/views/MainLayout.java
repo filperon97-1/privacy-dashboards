@@ -11,6 +11,8 @@ import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.messages.MessagesView;
 import com.privacydashboard.application.views.mainLayout.NotificationView;
 import com.privacydashboard.application.views.mainLayout.ProfileView;
+import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacyNoticeView;
+import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
 import com.privacydashboard.application.views.rights.ControllerDPORightsView;
 import com.privacydashboard.application.views.rights.SubjectRightsView;
 import com.vaadin.flow.component.Component;
@@ -150,6 +152,11 @@ public class MainLayout extends AppLayout {
                 new MenuItemInfo("Rights", "las la-school", ControllerDPORightsView.class),  //ONLY FOR CONTROLLERS AND DPOS
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
+
+                new MenuItemInfo("PrivacyNotice", "las la-school", ControllerDPOPrivacyNoticeView.class),  //ONLY FOR CONTROLLERS AND DPOS
+
+                new MenuItemInfo("PrivacyNotice", "las la-school", SubjectPrivacyNoticeView.class),  //ONLY FOR SUBJECTS
+
 
         };
     }

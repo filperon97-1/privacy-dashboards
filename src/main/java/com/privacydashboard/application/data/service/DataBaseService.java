@@ -20,6 +20,7 @@ public class DataBaseService {
     private final IoTAppRepository ioTAppRepository;
     private final UserAppRelationRepository userAppRelationRepository;
     private final RightRequestRepository rightRequestRepository;
+    private final PrivacyNoticeRepository privacyNoticeRepository;
     private final NotificationRepository notificationRepository;
 
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -27,13 +28,15 @@ public class DataBaseService {
     @Autowired
     public DataBaseService(PasswordEncoder passwordEncoder, UserRepository userRepository , MessageRepository messageRepository,
                            IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository,
-                           RightRequestRepository rightRequestRepository, NotificationRepository notificationRepository) {
+                           RightRequestRepository rightRequestRepository, PrivacyNoticeRepository privacyNoticeRepository,
+                           NotificationRepository notificationRepository) {
         this.passwordEncoder=passwordEncoder;
-        this.userRepository = userRepository;
-        this.messageRepository = messageRepository;
-        this.ioTAppRepository = ioTAppRepository;
-        this.userAppRelationRepository = userAppRelationRepository;
-        this.rightRequestRepository = rightRequestRepository;
+        this.userRepository= userRepository;
+        this.messageRepository= messageRepository;
+        this.ioTAppRepository= ioTAppRepository;
+        this.userAppRelationRepository= userAppRelationRepository;
+        this.rightRequestRepository= rightRequestRepository;
+        this.privacyNoticeRepository= privacyNoticeRepository;
         this.notificationRepository= notificationRepository;
     }
 
@@ -174,6 +177,37 @@ public class DataBaseService {
     public void changeRightRequest(RightRequest request){
         rightRequestRepository.changeRequest(request.getId(), request.getHandled(), request.getResponse());
         addUpdatedRequestNotification(request);
+    }
+
+    // PRIVACYPOLICY REPOSITORY
+
+    public PrivacyNotice getPrivacyNoticeFromApp(IoTApp app){
+        return privacyNoticeRepository.findByApp(app);
+    }
+
+    public List<PrivacyNotice> getAllPrivacyNoticeFromUser(User user){
+        return privacyNoticeRepository.getAllPrivacyNoticeFromUser(user);
+    }
+
+    public boolean addPrivacyNoticeForApp(IoTApp app, String text){
+        if(privacyNoticeRepository.findByApp(app)!=null){
+            return false;
+        }
+        PrivacyNotice privacyNotice=new PrivacyNotice();
+        privacyNotice.setApp(app);
+        privacyNotice.setText(text);
+        privacyNoticeRepository.save(privacyNotice);
+        return true;
+    }
+
+    public void changePrivacyNoticeForApp(IoTApp app, String text){
+        PrivacyNotice privacyNotice=privacyNoticeRepository.findByApp(app);
+        if(privacyNotice==null){
+            addPrivacyNoticeForApp(app, text);
+        }
+        else{
+            privacyNoticeRepository.changeText(privacyNotice.getId(), text);
+        }
     }
 
     // NOTIFICATION REPOSITORY

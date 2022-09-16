@@ -41,9 +41,9 @@ public class MessagesView extends Div implements AfterNavigationObserver{
     private final ComboBox<User> contactComboBox= new ComboBox<>("Contacts");
 
     public MessagesView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
-        this.dataBaseService = dataBaseService;
-        this.authenticatedUser = authenticatedUser;
-        this.communicationService=communicationService;
+        this.dataBaseService= dataBaseService;
+        this.authenticatedUser= authenticatedUser;
+        this.communicationService= communicationService;
 
         addClassName("contacts-view");
         initializeHeaderLayout();

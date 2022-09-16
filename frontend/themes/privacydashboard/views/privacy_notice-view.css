@@ -1,0 +1,8 @@
+.privacy_notice-view {
+  height: 100%;
+}
+
+.privacy_notice-view  vaadin-grid {
+  height: 90%;
+  line-height: var(--lumo-line-height-m);
+}
