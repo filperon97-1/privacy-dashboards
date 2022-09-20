@@ -7,17 +7,15 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
@@ -35,8 +33,6 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
     private final Button newPrivacyNoticeButton= new Button("Compile new Privacy Notice", e-> newPrivacyNoticeDialog.open());
     private final ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     public ControllerDPOPrivacyNoticeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
         this.dataBaseService= dataBaseService;
         this.authenticatedUser= authenticatedUser;
@@ -45,13 +41,12 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         addClassName("privacy_notice-view");
         initializeGrid();
         initializeNewPrivacyNoticeDialog();
-        add(newPrivacyNoticeButton);
-        add(grid);
+        add(newPrivacyNoticeButton, grid);
     }
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(privacyNotice -> new Button(privacyNotice.getApp().getName(), e->showPrivacyNotice(privacyNotice)));
+        grid.addComponentColumn(privacyNotice -> new Button(privacyNotice.getApp().getName(), e->goToSinglePrivacyNoticeView(privacyNotice)));
     }
 
     private void initializeNewPrivacyNoticeDialog(){
@@ -71,14 +66,17 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         IoTApp app=appComboBox.getValue();
         if(dataBaseService.getPrivacyNoticeFromApp(app)!=null){
             MyDialog dialog=new MyDialog();
+            Button confirmButton=new Button("Confirm",
+                    e->{
+                        createNewPrivacyNotice(app);
+                        newPrivacyNoticeDialog.close();
+                        dialog.close();
+                    });
+
             dialog.setTitle("Confirm");
             dialog.setContent(new HorizontalLayout(new Span("There is already a Privacy Notice for this app, do you want to create a new one?" +
                     " The current one will be lost")));
-            dialog.setContinueButton(new Button("confirm", e-> {
-                                                                    createNewPrivacyNotice(app);
-                                                                    newPrivacyNoticeDialog.close();
-                                                                    dialog.close();
-            }));
+            dialog.setContinueButton(confirmButton);
             dialog.open();
         }
         else{
@@ -87,13 +85,16 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         }
     }
 
-    private void showPrivacyNotice(PrivacyNotice privacyNotice){
-        add(new Span(privacyNotice.getText()));
+    private void goToSinglePrivacyNoticeView(PrivacyNotice privacyNotice){
+        communicationService.setPrivacyNotice(privacyNotice);
+        UI.getCurrent().navigate(SinglePrivacyNoticeView.class);
     }
 
     private void createNewPrivacyNotice(IoTApp app){
-        Icon uploadIcon = new Icon("lumo", "upload");
-        logger.info("todo bien");
+        PrivacyNotice privacyNotice= new PrivacyNotice();
+        privacyNotice.setText(null);
+        privacyNotice.setApp(app);
+        goToSinglePrivacyNoticeView(privacyNotice);
     }
 
     private void updateGrid(){

@@ -1,14 +1,12 @@
 package com.privacydashboard.application.data.service;
 
-import com.privacydashboard.application.data.entity.IoTApp;
-import com.privacydashboard.application.data.entity.Notification;
-import com.privacydashboard.application.data.entity.RightRequest;
-import com.privacydashboard.application.data.entity.User;
+import com.privacydashboard.application.data.entity.*;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import org.springframework.stereotype.Service;
 
 // classe usata per passare vari oggetti tra le Views senza dover usare parametri nell'URL
+// quando si usa il metodo get<Something> il valore si resetta per evitare azioni non volute in caso si visiti una pagina
 @Service
 public class CommunicationService {
     public CommunicationService(){
@@ -88,5 +86,24 @@ public class CommunicationService {
 
     public void setContact(User contact){
         ComponentUtil.setData(UI.getCurrent(), "Contact", contact);
+    }
+
+    public PrivacyNotice getPrivacyNotice(){
+        PrivacyNotice privacyNotice=null;
+        Object object=ComponentUtil.getData(UI.getCurrent(), "PrivacyNotice");
+        try{
+            if(object!=null){
+                privacyNotice= (PrivacyNotice) object;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            ComponentUtil.setData(UI.getCurrent(), "PrivacyNotice", null);
+        }
+        return privacyNotice;
+    }
+
+    public void setPrivacyNotice(PrivacyNotice privacyNotice){
+        ComponentUtil.setData(UI.getCurrent(), "PrivacyNotice", privacyNotice);
     }
 }

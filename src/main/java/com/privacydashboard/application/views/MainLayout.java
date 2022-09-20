@@ -157,7 +157,6 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("PrivacyNotice", "las la-school", SubjectPrivacyNoticeView.class),  //ONLY FOR SUBJECTS
 
-
         };
     }
 
