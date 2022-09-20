@@ -134,7 +134,7 @@ public class FormPrivacyNotice extends FormLayout {
     private void savePrivacyNotice() {
         String privacyNoticeText = "";
         for (int i = 0; i < nQuestions; i++) {
-            privacyNoticeText += mainText[i].getText() + "\n" + textAreas[i].getValue() + "\n";
+            privacyNoticeText += mainText[i].getText() + "\n" + textAreas[i].getValue() + "\n\n";
         }
         if (privacyNotice.getText()==null) {
             confirmNewPrivacyNotice(privacyNoticeText);

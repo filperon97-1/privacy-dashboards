@@ -18,9 +18,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.upload.SucceededEvent;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.InputStream;
 
 @PageTitle("Compile privacy notice")
 @Route(value="single_privacy_notice", layout = MainLayout.class)
@@ -30,16 +36,20 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
 
-    private FormPrivacyNotice form;
+    private final Tabs tabs=new Tabs();
     private final Tab customizedTab= new Tab("Create from empty");
     private final Tab standardTab= new Tab("Use template");
     private final Tab uploadTab= new Tab(new Icon("lumo", "upload"));
-    private final Tabs tabs=new Tabs(customizedTab, standardTab, uploadTab);
     private final Div content= new Div();
-    private final TextArea textArea= new TextArea();
-    private final Button saveButton= new Button("Save", e->savePrivacyNotice());
+
+    private final VerticalLayout customizedLayout= new VerticalLayout();
+    private FormPrivacyNotice standardLayout;
+    private final VerticalLayout uploadLayout= new VerticalLayout();
+    private final TextArea textAreaCustomized= new TextArea();
 
     private PrivacyNotice privacyNotice;
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -47,66 +57,100 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         if(privacyNotice==null || privacyNotice.getApp()==null || !dataBaseService.getUserApps(authenticatedUser.getUser()).contains(privacyNotice.getApp())){
             event.rerouteTo(ControllerDPOPrivacyNoticeView.class);
         }
-        form=new FormPrivacyNotice(privacyNotice, dataBaseService);
     }
 
+    /*
+    This view is formed of three different views which are gonna be visible on content element and are navigable from the tabs at the top of the page.
+    These views are called customizedLayout, standardLayout and uploadLayout
+     */
     public SinglePrivacyNoticeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
         this.dataBaseService= dataBaseService;
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
-        content.setSizeFull();
-        textArea.setWidthFull();
-
+        initializeCustomizedLayout();
+        initializeStandardLayout();
+        initializeUploadLayout();
         initializeTabs();
         add(tabs, content);
     }
 
-    private void initializeTabs(){
+    private void initializeCustomizedLayout(){
         customizedTab.addClassName("pointer");
+        textAreaCustomized.setWidthFull();
+        Button saveButton= new Button("Save", e->savePrivacyNotice(textAreaCustomized));
+        customizedLayout.add(textAreaCustomized, saveButton);
+    }
+
+    private void initializeStandardLayout(){
         standardTab.addClassName("pointer");
+        standardLayout=new FormPrivacyNotice(privacyNotice, dataBaseService);
+    }
+
+    private void initializeUploadLayout(){
         uploadTab.addClassName("pointer");
+        MemoryBuffer buffer = new MemoryBuffer();
+        Upload upload = new Upload(buffer);
+        upload.addSucceededListener(e-> processFile(buffer, e));
+
+        Button saveButton= new Button("Save", e-> logger.info(buffer.getFileName()));
+        uploadLayout.add(upload, saveButton);
+    }
+
+    private void initializeTabs(){
+        content.setSizeFull();
         tabs.setWidthFull();
+        tabs.add(customizedTab, standardTab, uploadTab);
         tabs.addSelectedChangeListener(
             e->{
                 if(e.getSelectedTab().equals(e.getPreviousTab())){
                     return;
                 }
-                if(e.getSelectedTab().equals(standardTab)){
-                    content.removeAll();
-                    content.add(form);
+                content.removeAll();
+                if(customizedTab.equals(e.getSelectedTab())){
+                    content.add(customizedLayout);
                 }
-                else if(e.getSelectedTab().equals(customizedTab)){
-                    content.removeAll();
-                    content.add(new VerticalLayout(textArea, saveButton));
+                else if(standardTab.equals(e.getSelectedTab())){
+                    content.add(standardLayout);
                 }
-                else{
-                    content.removeAll();
-                    content.add(new Span("Da implementare"));
+                else if(uploadTab.equals(e.getSelectedTab())){
+                    content.add(uploadLayout);
                 }
-            }
-
-        );
+            });
     }
 
-    private void savePrivacyNotice(){
+    private void processFile(MemoryBuffer buffer, SucceededEvent event){
+        String fileName=event.getFileName();
+        logger.info(event + "\nAAAA\n");
+        logger.info(fileName + "\nAAAA\n");
+        InputStream inputStream = buffer.getInputStream();
+        try{
+            logger.info(inputStream.readAllBytes().toString());
+        } catch (Exception e){
+
+        }
+
+        //logger.info(event.);
+    }
+
+    private void savePrivacyNotice(TextArea textArea){
         if(textArea.getValue()==null){
             return;
         }
         if(dataBaseService.getPrivacyNoticeFromApp(privacyNotice.getApp())==null){
-            confirmNewPrivacyNotice();
+            confirmNewPrivacyNotice(textArea.getValue());
         }
         else{
-            confirmOverwritePrivacyNotice();
+            confirmOverwritePrivacyNotice(textArea.getValue());
         }
     }
 
-    private void confirmNewPrivacyNotice(){
+    private void confirmNewPrivacyNotice(String text){
         MyDialog dialog=new MyDialog();
         dialog.setTitle("Confirm");
         dialog.setContent(new HorizontalLayout(new Span("Do you want to upload this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?")));
         dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), textArea.getValue());
+            dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
             Notification notification = Notification.show("Privacy Notice uploaded correctly");
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
@@ -115,12 +159,12 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         dialog.open();
     }
 
-    private void confirmOverwritePrivacyNotice(){
+    private void confirmOverwritePrivacyNotice(String text){
         MyDialog dialog=new MyDialog();
         dialog.setTitle("Confirm");
         dialog.setContent(new HorizontalLayout(new Span("There is already a Privacy Notice for the app " + privacyNotice.getApp().getName() + ", do you want to overwrite it with this one?")));
         dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), textArea.getValue());
+            dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
             Notification notification = Notification.show("Privacy Notice overwritten correctly");
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
@@ -132,13 +176,13 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
     @Override
     public void afterNavigation(AfterNavigationEvent event){
         if(privacyNotice.getText()!=null){
-            textArea.setValue(privacyNotice.getText());
+            textAreaCustomized.setValue(privacyNotice.getText());
             tabs.setSelectedTab(customizedTab);
-            content.add(new VerticalLayout(textArea, saveButton));
+            content.add(customizedLayout);
         }
         else{
             tabs.setSelectedTab(standardTab);
-            content.add(form);
+            content.add(standardLayout);
         }
     }
 }
