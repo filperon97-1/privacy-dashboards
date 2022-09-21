@@ -27,3 +27,11 @@ vaadin-button:hover{
     border-bottom: 1px solid var(--lumo-contrast-20pct);
     padding: var(--lumo-space-m);
 }
+
+.info{
+    max-width: 10px;
+}
+
+.tabs{
+    margin-left: calc(3*var(--lumo-space-l));
+}

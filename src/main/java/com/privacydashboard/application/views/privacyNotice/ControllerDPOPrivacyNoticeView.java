@@ -9,6 +9,7 @@ import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -46,7 +47,11 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(privacyNotice -> new Button(privacyNotice.getApp().getName(), e->goToSinglePrivacyNoticeView(privacyNotice)));
+        grid.addComponentColumn(privacyNotice -> {
+            Button button= new Button(privacyNotice.getApp().getName(), e->goToSinglePrivacyNoticeView(privacyNotice));
+            button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+            return button;
+        });
     }
 
     private void initializeNewPrivacyNoticeDialog(){
