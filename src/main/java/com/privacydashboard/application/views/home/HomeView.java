@@ -23,7 +23,13 @@ import java.util.List;
 public class HomeView extends VerticalLayout {
 
     public HomeView(DataBaseService dataBaseService) {
-        /*setSpacing(false);
+
+        // DIVIDERE IN VARIE SEZIONI
+        // SEZIONE 1: CONTACTS
+        // SEZIONE 2: CONSENSES
+        // SEZIONE 3: RIGHTS
+        // SEZIONE 4:
+        setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
         img.setWidth("200px");
@@ -35,7 +41,7 @@ public class HomeView extends VerticalLayout {
         setSizeFull();
         setJustifyContentMode(JustifyContentMode.CENTER);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");*/
+        getStyle().set("text-align", "center");
     }
 
 }

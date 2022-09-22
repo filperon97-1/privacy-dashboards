@@ -29,7 +29,7 @@ vaadin-button:hover{
 }
 
 .info{
-    max-width: 10px;
+    width: calc(20*var(--lumo-space-l));
 }
 
 .tabs{

@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views.questionnaireDeveloper;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -57,7 +59,9 @@ public class QuestionnaireDeveloper extends AppLayout {
 
         //Domanda 1: Does the app transfer data to a third party?
         titles[0]= new Div(new Span("Does the app transfer data to a third party?"), icons[0]);
-        contextMenus[0].addItem("GDPR Article 13: Where personal data relating to a data subject are collected from the data subject, the controller shall, at the time when personal data are obtained, provide the data subject with... the fact that the controller intends to transfer personal data to a third country or international organisation ");
+        Html html= new Html("<p class=\"info\"><b>GDPR Article 13</b>: <i>Where personal data relating to a data subject are collected from the data subject, the controller shall, at the time when personal data are obtained, provide the data subject with... the fact that the controller intends to transfer personal data to a third country or international organisation </i></p>");
+        contextMenus[0].addItem(html);
+        //contextMenus[0].addItem("GDPR Article 13: Where personal data relating to a data subject are collected from the data subject, the controller shall, at the time when personal data are obtained, provide the data subject with... the fact that the controller intends to transfer personal data to a third country or international organisation ");
         radioGroups[0]= new RadioButtonGroup<>();
         radioGroups[0].setItems("No", "Yes, only in United Europe", "Yes, also outside United Europe", "I don't know");
 
@@ -99,17 +103,65 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[].setItems("Yes", "No", "I don't know");
         */
 
+        //Domanda X: Eliminazione dati
+        /*
+        titles[]= new Div(new Span("Do you have an automatic mechanism that deletes the personal data after the chose period of time?"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("Yes", "No", "I don't know");
+        */
+
+        //Domanda X: Librerie terze
+        /*
+        titles[]= new Div(new Span("Do you use third party libraries?"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("Yes", "No", I don't know");
+        */
+
+        //SE DOMANDA PRIMA ERA SI Domanda X: Librerie terze parte 2
+        /*
+        titles[]= new Div(new Span("Have you checked if these libraries comply with the current regulation about personal data?"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("Yes", "No", "I don't know");
+        */
+
         //SEZIONE 2
 
         // Domanda 1: Usi pseudonomizzazione?
 
         //Domanda 2: App utilizza solo i dati necessari?
 
-        //SEZIONE 3
+        //SEZIONE 3 SICUREZZA
 
         //Domanda 1: Cifratura?
 
+        //Domanda X:Password
+        /*
+        titles[]= new Div(new Span("Do you store passwords in plain text or do you encrypt them?"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("Plain text", "I encrypt them", "I don't store passwords", "I don't know");
+        */
+
+        //Domanda X: Protocollo comunicazione
+        /*
+        titles[]= new Div(new Span("Which cryptographic protocol are you using for communication?"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("TLS 1.2 or 1.3", "TLS < 1.2", "SSL", "My app doesn't need communication", "I don't use any", "I don't know");
+        */
+
         //Domanda 2: Sono stati fatti dei test per verificare le procedure di sicurezza?
+
+        //Domanda X: Backup
+        /*
+        titles[]= new Div(new Span("How often do you regularly make backups"), icons[]);
+        contextMenus[].addItem("");
+        radioGroups[]= new RadioButtonGroup<>();
+        radioGroups[].setItems("every week", "between a week and a month", "between a month and a year", "more than a year", "never", "I don't know" );
+        */
 
         //Domanda X:
         /*
