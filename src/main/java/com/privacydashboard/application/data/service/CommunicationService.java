@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 // quando si usa il metodo get<Something> il valore si resetta per evitare azioni non volute in caso si visiti una pagina
 @Service
 public class CommunicationService {
-    public CommunicationService(){
+    private final DataBaseService dataBaseService;
+    public CommunicationService(DataBaseService dataBaseService){
+        this.dataBaseService= dataBaseService;
     }
 
+    // NON PIU IN USO MA POTREBBE TORNARE UTILE
     public Notification getRightNotification() {
         Notification notification = null;
         Object object = ComponentUtil.getData(UI.getCurrent(), "RightNotification");
@@ -25,6 +28,22 @@ public class CommunicationService {
             ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
         }
         return notification;
+    }
+
+    public RightRequest getRightFromNotification() {
+        RightRequest request= null;
+        Object object = ComponentUtil.getData(UI.getCurrent(), "RightNotification");
+        try {
+            if (object != null) {
+                Notification notification = (Notification) object;
+                request= dataBaseService.getRequestFromId(notification.getObjectId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ComponentUtil.setData(UI.getCurrent(), "RightNotification", null);
+        }
+        return request;
     }
 
     public void setRightNotification(Notification notification){
@@ -105,5 +124,25 @@ public class CommunicationService {
 
     public void setPrivacyNotice(PrivacyNotice privacyNotice){
         ComponentUtil.setData(UI.getCurrent(), "PrivacyNotice", privacyNotice);
+    }
+
+    public PrivacyNotice getPrivacyNoticeFromNotification(){
+        PrivacyNotice privacyNotice=null;
+        Object object= ComponentUtil.getData(UI.getCurrent(), "PrivacyNoticeNotification");
+        try{
+            if(object!=null){
+                Notification notification= (Notification) object;
+                privacyNotice= dataBaseService.getPrivacyNoticeFromId(notification.getObjectId());
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            ComponentUtil.setData(UI.getCurrent(), "PrivacyNoticeNotification", null);
+        }
+        return privacyNotice;
+    }
+
+    public void setPrivacyNoticeNotification(Notification notification){
+        ComponentUtil.setData(UI.getCurrent(), "PrivacyNoticeNotification", notification);
     }
 }

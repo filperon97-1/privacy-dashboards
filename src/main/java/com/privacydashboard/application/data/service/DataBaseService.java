@@ -3,6 +3,7 @@ package com.privacydashboard.application.data.service;
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
+import com.privacydashboard.application.security.AuthenticatedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.*;
 
 @Service
 public class DataBaseService {
+    private final AuthenticatedUser authenticatedUser;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
@@ -26,11 +28,12 @@ public class DataBaseService {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public DataBaseService(PasswordEncoder passwordEncoder, UserRepository userRepository , MessageRepository messageRepository,
+    public DataBaseService(AuthenticatedUser authenticatedUser, PasswordEncoder passwordEncoder, UserRepository userRepository , MessageRepository messageRepository,
                            IoTAppRepository ioTAppRepository, UserAppRelationRepository userAppRelationRepository,
                            RightRequestRepository rightRequestRepository, PrivacyNoticeRepository privacyNoticeRepository,
                            NotificationRepository notificationRepository) {
-        this.passwordEncoder=passwordEncoder;
+        this.authenticatedUser= authenticatedUser;
+        this.passwordEncoder= passwordEncoder;
         this.userRepository= userRepository;
         this.messageRepository= messageRepository;
         this.ioTAppRepository= ioTAppRepository;
@@ -63,7 +66,7 @@ public class DataBaseService {
     public void addNowMessage(Message message){
         message.setTime(LocalDateTime.now());
         messageRepository.save(message);
-        addNewMessageNotification(message);
+        addNotification(message, "Message", message.getReceiver(), message.getSender(), message.getSender().getName() + " sent you a message");
     }
 
     // IOTAPP REPOSITORY
@@ -147,6 +150,10 @@ public class DataBaseService {
     }
 
     // RIGHT REQUEST REPOSITORY
+    public RightRequest getRequestFromId(UUID id){
+        return rightRequestRepository.findById(id).isPresent() ? rightRequestRepository.findById(id).get() : null;
+
+    }
 
     public List<RightRequest> getAllRequestsFromReceiver(User user){
         return rightRequestRepository.findAllByReceiverOrderByTimeDesc(user);
@@ -171,15 +178,20 @@ public class DataBaseService {
     public void addNowRequest(RightRequest request){
         request.setTime(LocalDateTime.now());
         rightRequestRepository.save(request);
-        addNewRequestNotification(request);
+        addNotification(request, "Request", request.getReceiver(), request.getSender(), request.getSender().getName() + " sent you a right request");
     }
 
     public void changeRightRequest(RightRequest request){
         rightRequestRepository.changeRequest(request.getId(), request.getHandled(), request.getResponse());
-        addUpdatedRequestNotification(request);
+        addNotification(request, "Request", request.getSender(), request.getReceiver(), request.getReceiver().getName() + " changed the status of a request");
     }
 
     // PRIVACYPOLICY REPOSITORY
+
+    public PrivacyNotice getPrivacyNoticeFromId(UUID id){
+        return privacyNoticeRepository.findById(id).isPresent() ? privacyNoticeRepository.findById(id).get() : null;
+
+    }
 
     public PrivacyNotice getPrivacyNoticeFromApp(IoTApp app){
         return privacyNoticeRepository.findByApp(app);
@@ -197,6 +209,9 @@ public class DataBaseService {
         privacyNotice.setApp(app);
         privacyNotice.setText(text);
         privacyNoticeRepository.save(privacyNotice);
+        for(User u: getSubjectsFromApp(app)){
+            addNotification(privacyNotice, "PrivacyNotice", u, authenticatedUser.getUser(), authenticatedUser.getUser().getName() + " created a new Privacy Notice for the app: " + app.getName());
+        }
         return true;
     }
 
@@ -207,6 +222,9 @@ public class DataBaseService {
         }
         else{
             privacyNoticeRepository.changeText(privacyNotice.getId(), text);
+        }
+        for(User u: getSubjectsFromApp(app)){
+            addNotification(privacyNotice, "PrivacyNotice", u, authenticatedUser.getUser(), authenticatedUser.getUser().getName() + " updated the Privacy Notice for the app: " + app.getName());
         }
     }
 
@@ -229,37 +247,43 @@ public class DataBaseService {
         notificationRepository.changeIsReadNotificationById(notification.getId(), isRead);
     }
 
-    private void addNewMessageNotification(Message message){
-       Notification notification=new Notification();
-       notification.setReceiver(message.getReceiver());
-       notification.setSender(message.getSender());
-       notification.setDescription(message.getSender().getName() + " sent you a message");
-       notification.setRead(false);
-       notification.setMessage(message);
-       notification.setRequest(null);
-       addNowNotification(notification);
-    }
-
-    private void addNewRequestNotification(RightRequest request){
-        Notification notification=new Notification();
-        notification.setReceiver(request.getReceiver());
-        notification.setSender(request.getSender());
-        notification.setDescription(request.getSender().getName() + " sent you a right request");
+    private boolean addNotification(Object object, String type, User receiver, User sender, String description){
+        Notification notification= new Notification();
+        notification.setReceiver(receiver);
+        notification.setSender(sender);
+        notification.setDescription(description);
+        notification.setType(type);
         notification.setRead(false);
-        notification.setMessage(null);
-        notification.setRequest(request);
+        switch(type) {
+            case "Message":
+                try {
+                    Message message = (Message) object;
+                    notification.setObjectId(message.getId());
+                } catch (Exception e) {
+                    return false;
+                }
+                break;
+            case "Request":
+                try {
+                    RightRequest request = (RightRequest) object;
+                    notification.setObjectId(request.getId());
+                } catch (Exception e) {
+                    return false;
+                }
+                break;
+            case "PrivacyNotice":
+                try {
+                    PrivacyNotice privacyNotice = (PrivacyNotice) object;
+                    notification.setObjectId(privacyNotice.getId());
+                } catch (Exception e) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+        }
         addNowNotification(notification);
-    }
-
-    private void addUpdatedRequestNotification(RightRequest request){
-        Notification notification=new Notification();
-        notification.setReceiver(request.getSender());
-        notification.setSender(request.getReceiver());
-        notification.setDescription(request.getReceiver().getName() + " changed the status of a request");
-        notification.setRead(false);
-        notification.setMessage(null);
-        notification.setRequest(request);
-        addNowNotification(notification);
+        return true;
     }
 
     // REMOVE EVERYTHING

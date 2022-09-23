@@ -40,9 +40,9 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
-        Notification notification=communicationService.getRightNotification();
-        if(notification!=null){
-            priorityRight=notification.getRequest();
+        RightRequest request=communicationService.getRightFromNotification();
+        if(request!=null){
+            priorityRight=request;
         }
     }
 

@@ -1,6 +1,7 @@
 package com.privacydashboard.application.views.privacyNotice;
 
 import com.privacydashboard.application.data.entity.PrivacyNotice;
+import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
@@ -10,27 +11,36 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
+import java.util.Collections;
 import java.util.List;
 
 @PageTitle("PrivacyNotice")
 @Route(value="subject_privacyNotice", layout = MainLayout.class)
 @RolesAllowed("SUBJECT")
-public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNavigationObserver {
+public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
 
     private final Grid<PrivacyNotice> grid= new Grid<>();
     private final MyDialog privacyNoticeDialog= new MyDialog();
 
-    public SubjectPrivacyNoticeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser){
+    private PrivacyNotice priorityNotice;
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent event){
+        priorityNotice= communicationService.getPrivacyNoticeFromNotification();
+        showPrivacyNotice(priorityNotice);
+        //priorityApp=communicationService.getApp();
+    }
+
+    public SubjectPrivacyNoticeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
         this.dataBaseService= dataBaseService;
         this.authenticatedUser= authenticatedUser;
+        this.communicationService= communicationService;
 
         initializeGrid();
         add(grid);
@@ -56,6 +66,11 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
 
     private void updateGrid(){
         List<PrivacyNotice> privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
+        if(priorityNotice!=null){
+            if(privacyNoticeList.contains(priorityNotice)){
+                Collections.swap(privacyNoticeList, 0, privacyNoticeList.indexOf(priorityNotice));
+            }
+        }
         grid.setItems(privacyNoticeList);
     }
 

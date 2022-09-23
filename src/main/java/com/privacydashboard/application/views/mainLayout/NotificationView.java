@@ -6,6 +6,8 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.views.messages.SingleConversationView;
+import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacyNoticeView;
+import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
 import com.privacydashboard.application.views.rights.ControllerDPORightsView;
 import com.privacydashboard.application.views.rights.SubjectRightsView;
 import com.vaadin.flow.component.UI;
@@ -60,22 +62,35 @@ public class NotificationView extends Span{
     }
 
     private void goToNotification(Notification notification){
-        // Message notification
-        if(notification.getMessage()!=null && notification.getRequest()==null){
-            dataBaseService.changeIsReadNotification(notification, true);
-            communicationService.setContact(notification.getSender());
-            UI.getCurrent().navigate(SingleConversationView.class);
+        if(notification==null || notification.getType()==null){
+            return;
         }
-        // Right Request notification
-        if(notification.getRequest()!=null && notification.getMessage()==null){
-            dataBaseService.changeIsReadNotification(notification, true);
-            communicationService.setRightNotification(notification);
-            if(user.getRole().equals(Role.SUBJECT)){
-                UI.getCurrent().navigate(SubjectRightsView.class);
-            }
-            else{
-                UI.getCurrent().navigate(ControllerDPORightsView.class);
-            }
+        switch(notification.getType()){
+            case "Message":
+                dataBaseService.changeIsReadNotification(notification, true);
+                communicationService.setContact(notification.getSender());
+                UI.getCurrent().navigate(SingleConversationView.class);
+                break;
+            case "Request":
+                dataBaseService.changeIsReadNotification(notification, true);
+                communicationService.setRightNotification(notification);
+                if(user.getRole().equals(Role.SUBJECT)){
+                    UI.getCurrent().navigate(SubjectRightsView.class);
+                }
+                else{
+                    UI.getCurrent().navigate(ControllerDPORightsView.class);
+                }
+                break;
+            case "PrivacyNotice":
+                dataBaseService.changeIsReadNotification(notification, true);
+                communicationService.setPrivacyNoticeNotification(notification);
+                if(user.getRole().equals(Role.SUBJECT)){
+                    UI.getCurrent().navigate(SubjectPrivacyNoticeView.class);
+                }
+                else{
+                    UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                }
+                break;
         }
         updateNotifications();
     }

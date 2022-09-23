@@ -50,12 +50,10 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
             return;
         }
         // show notification
-        Notification notification=communicationService.getRightNotification();
-        if(notification!=null){
-            priorityRight=notification.getRequest();
-            if(priorityRight!=null){
-                showRequestList(priorityRight.getHandled());
-            }
+        request= communicationService.getRightFromNotification();
+        if(request!= null){
+            priorityRight=request;
+            showRequestList(priorityRight.getHandled());
         }
     }
 
