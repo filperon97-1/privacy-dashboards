@@ -33,7 +33,9 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
     @Override
     public void beforeEnter(BeforeEnterEvent event){
         priorityNotice= communicationService.getPrivacyNoticeFromNotification();
-        showPrivacyNotice(priorityNotice);
+        if(priorityNotice!=null){
+            showPrivacyNotice(priorityNotice);
+        }
         //priorityApp=communicationService.getApp();
     }
 
