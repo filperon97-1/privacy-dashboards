@@ -6,14 +6,17 @@ import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.charts.model.HorizontalAlign;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 
-public class FormPrivacyNotice extends FormLayout {
+public class FormPrivacyNotice extends VerticalLayout {
     private final PrivacyNotice privacyNotice;
     private  final DataBaseService dataBaseService;
     private final String ws= "&nbsp;&nbsp;&nbsp;";  // three white spaces to use while doing a list
@@ -27,7 +30,7 @@ public class FormPrivacyNotice extends FormLayout {
         this.privacyNotice= privacyNotice;
         this.dataBaseService= dataBaseService;
         addClassName("privacy_notice-view");
-        setResponsiveSteps(new ResponsiveStep("0", 1));
+        //setResponsiveSteps(new ResponsiveStep("0", 1));
 
         mainText[0]= new Span("What data do we collect?");
         example[0]= new Html("<p>Example:<i> We collect personal identification information such as name, phone number, mail...<i/></p>");
@@ -128,6 +131,7 @@ public class FormPrivacyNotice extends FormLayout {
             textAreas[i].addClassName("textArea");
             add(mainText[i], example[i], textAreas[i]);
         }
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(saveButton);
     }
 

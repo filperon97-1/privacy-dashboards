@@ -13,11 +13,12 @@
 
 /* example style*/
 .privacy_notice-view p{
-    margin-top: var(--lumo-space-m);
-    margin-bottom: var(--lumo-space-m);
+    /*margin-top: var(--lumo-space-m);
+    margin-bottom: var(--lumo-space-m);*/
     padding-left: var(--lumo-space-l);
 }
 
 .privacy_notice-view .textArea{
+    width: 100%;
     margin-bottom: var(--lumo-space-l);
 }
