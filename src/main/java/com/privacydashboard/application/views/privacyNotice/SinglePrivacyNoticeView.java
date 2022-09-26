@@ -57,6 +57,11 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         if(privacyNotice==null || privacyNotice.getApp()==null || !dataBaseService.getUserApps(authenticatedUser.getUser()).contains(privacyNotice.getApp())){
             event.rerouteTo(ControllerDPOPrivacyNoticeView.class);
         }
+
+        initializeCustomizedLayout();
+        initializeStandardLayout();
+        initializeUploadLayout();
+        initializeTabs();
     }
 
     /*
@@ -68,10 +73,7 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
-        initializeCustomizedLayout();
-        initializeStandardLayout();
-        initializeUploadLayout();
-        initializeTabs();
+
         add(tabs, content);
     }
 

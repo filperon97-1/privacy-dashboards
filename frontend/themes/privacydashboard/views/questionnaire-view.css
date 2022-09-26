@@ -23,6 +23,23 @@
 .singleQuestion-questionnaire{
     background-color: white;
     border-radius: var(--lumo-border-radius);
-      box-shadow: var(--lumo-box-shadow-xs);
-      padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
+    box-shadow: var(--lumo-box-shadow-xs);
+    padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
+}
+
+.buttonLayout-questionnaire{
+    min-width:90%;
+    max-width: 90%;
+    margin: auto;
+    display:flex;
+    justify-content: space-between;
+
+}
+
+.button-questionnaire{
+    color: grey;
+}
+
+.activeButton-questionnaire{
+    color: black;
 }

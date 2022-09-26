@@ -3,11 +3,13 @@ package com.privacydashboard.application.views.questionnaireDeveloper;
 import com.vaadin.flow.component.EventData;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
@@ -184,6 +186,7 @@ public class QuestionnaireDeveloper extends AppLayout {
             }
             sections[0].add(singleQuestion[i]);
         }
+        sections[0].add(createButtonsLayout(false, true, false));
     }
 
     private void section2(){
@@ -230,6 +233,9 @@ public class QuestionnaireDeveloper extends AppLayout {
             }
             sections[1].add(singleQuestion[i]);
         }
+        sections[1].add(createButtonsLayout(true, true, false));
+        sections[2].add(createButtonsLayout(true, false, true));
+        sections[3].add(createButtonsLayout(true, true, true));
     }
 
     private void changeTab(Tabs.SelectedChangeEvent e){
@@ -243,5 +249,35 @@ public class QuestionnaireDeveloper extends AppLayout {
 
     private Html createInfo(String title, String description){
         return new Html("<p class=\"info\"><b>" + title +"</b>: <i>" + description + "</i></p>");
+    }
+
+    private HorizontalLayout createButtonsLayout(boolean left, boolean right, boolean end){
+        HorizontalLayout layout= new HorizontalLayout();
+        layout.addClassName("buttonLayout-questionnaire");
+        Span leftButton= new Span();
+        leftButton.addClassNames("las la-2x la-arrow-circle-left button-questionnaire");
+        layout.add(leftButton);
+        if(left){
+            leftButton.addClassNames("activeButton-questionnaire pointer");
+            leftButton.addClickListener(e-> tabs.setSelectedIndex(tabs.getSelectedIndex()-1));
+        }
+        if(end){
+            Button saveButton= new Button("Save", e-> saveQuestionnaire());
+            saveButton.addClassNames("saveButton-questionnaire");
+            layout.add(saveButton);
+        }
+        Span rightButton = new Span();
+        rightButton.addClassNames("las la-2x la-arrow-circle-right button-questionnaire");
+        if(right){
+            rightButton.addClassNames("activeButton-questionnaire pointer");
+            rightButton.addClickListener(e-> tabs.setSelectedIndex(tabs.getSelectedIndex()+1));
+
+        }
+        layout.add(rightButton);
+        return layout;
+    }
+
+    private void saveQuestionnaire(){
+
     }
 }
