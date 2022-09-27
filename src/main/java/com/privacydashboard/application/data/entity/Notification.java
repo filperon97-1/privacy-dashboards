@@ -2,6 +2,7 @@ package com.privacydashboard.application.data.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "notification")
@@ -13,12 +14,8 @@ public class Notification extends AbstractEntity{
     @JoinColumn(name = "senderId")
     private User sender;
     private String description;
-    @OneToOne
-    @JoinColumn(name= "messageId")
-    private Message message;
-    @ManyToOne
-    @JoinColumn(name= "requestId")
-    private RightRequest request;
+    private UUID objectId;
+    private String type;
     private LocalDateTime time;
     private Boolean isRead;
 
@@ -40,17 +37,17 @@ public class Notification extends AbstractEntity{
     public void setDescription(String description) {
         this.description = description;
     }
-    public Message getMessage() {
-        return message;
+    public UUID getObjectId() {
+        return objectId;
     }
-    public void setMessage(Message message) {
-        this.message = message;
+    public void setObjectId(UUID objectId) {
+        this.objectId = objectId;
     }
-    public RightRequest getRequest() {
-        return request;
+    public String getType() {
+        return type;
     }
-    public void setRequest(RightRequest request) {
-        this.request = request;
+    public void setType(String type) {
+        this.type = type;
     }
     public LocalDateTime getTime() {
         return time;

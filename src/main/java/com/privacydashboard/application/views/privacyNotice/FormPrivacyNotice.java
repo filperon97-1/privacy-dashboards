@@ -13,6 +13,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FormPrivacyNotice extends VerticalLayout {
     private final PrivacyNotice privacyNotice;

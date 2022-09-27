@@ -140,8 +140,6 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         } catch (Exception e){
 
         }
-
-        //logger.info(event.);
     }
 
     private void savePrivacyNotice(String text){
