@@ -7,8 +7,6 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.charts.model.HorizontalAlign;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -30,7 +28,6 @@ public class FormPrivacyNotice extends VerticalLayout {
         this.privacyNotice= privacyNotice;
         this.dataBaseService= dataBaseService;
         addClassName("privacy_notice-view");
-        //setResponsiveSteps(new ResponsiveStep("0", 1));
 
         mainText[0]= new Span("What data do we collect?");
         example[0]= new Html("<p>Example:<i> We collect personal identification information such as name, phone number, mail...<i/></p>");
@@ -119,11 +116,6 @@ public class FormPrivacyNotice extends VerticalLayout {
                 ws + "Email: <br/>" +
                 ws + "Address: </i>" +
                 "</p>");
-        /*
-        mainText[]= new Span("");
-        example[]= new Html("<p>Example:<i>  </i>" +
-                "</p>");
-         */
 
         for(int i=0; i<nQuestions; i++){
             mainText[i].addClassName("mainText");
@@ -136,41 +128,55 @@ public class FormPrivacyNotice extends VerticalLayout {
     }
 
     private void savePrivacyNotice() {
-        String privacyNoticeText = "";
-        for (int i = 0; i < nQuestions; i++) {
-            privacyNoticeText += mainText[i].getText() + "\n" + textAreas[i].getValue() + "\n\n";
-        }
-        if (privacyNotice.getText()==null) {
-            confirmNewPrivacyNotice(privacyNoticeText);
-        } else {
-            confirmOverwritePrivacyNotice(privacyNoticeText);
-        }
-    }
-    private void confirmNewPrivacyNotice(String text) {
         MyDialog dialog=new MyDialog();
-        dialog.setTitle("Do you want to upload this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?");
-        dialog.setContent(new HorizontalLayout(new Span(text)));
-        dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
-            Notification notification = Notification.show("Privacy Notice uploaded correctly");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
-            dialog.close();
-        }));
+        String titleText;
+        String text=convertText();
+        Button saveButton= new Button("Confirm");
+
+        if (privacyNotice.getText()==null) {
+            titleText= "Do you want to upload this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?";
+            saveButton.addClickListener(e->{
+                dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
+                Notification notification = Notification.show("Privacy Notice uploaded correctly");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                dialog.close();
+            });
+        }
+        else {
+            titleText= "Do you want to overwrite this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?";
+            saveButton.addClickListener(e->{
+                dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
+                Notification notification = Notification.show("Privacy Notice overwritten correctly");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                dialog.close();
+            });
+        }
+
+        dialog.setTitle(titleText);
+        dialog.setContent(new HorizontalLayout(visualizeText(text)));
+        dialog.setContinueButton(saveButton);
         dialog.open();
     }
 
-    private void confirmOverwritePrivacyNotice(String text){
-        MyDialog dialog=new MyDialog();
-        dialog.setTitle("There is already a Privacy Notice for the app: " + privacyNotice.getApp().getName() + " Do you want to overwrite it?");
-        dialog.setContent(new HorizontalLayout(new Span(text)));
-        dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
-            Notification notification = Notification.show("Privacy Notice overwritten correctly");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
-            dialog.close();
-        }));
-        dialog.open();
+    /*
+    DA CAPIRE COME VISUALIZZARE IL TESTO.
+    PER ORA LO SALVO COME HTML MA IN CASO SI VOGLIA CARICARE DIRETTAMENTE IL FILE BISOGNA CAPIRE COME FARE
+     */
+    private String convertText(){
+        String privacyNoticeText = "<p>";
+        for (int i = 0; i < nQuestions; i++) {
+            privacyNoticeText += "<b>" + mainText[i].getText() + "</b><br/>" + textAreas[i].getValue() + "<br/><br/>";
+        }
+        return privacyNoticeText + "</p>";
+    }
+
+    /*
+    DA CAPIRE COME VISUALIZZARE IL TESTO.
+    PER ORA LO SALVO COME HTML MA IN CASO SI VOGLIA CARICARE DIRETTAMENTE IL FILE BISOGNA CAPIRE COME FARE
+     */
+    private Html visualizeText(String text){
+        return new Html(text);
     }
 }

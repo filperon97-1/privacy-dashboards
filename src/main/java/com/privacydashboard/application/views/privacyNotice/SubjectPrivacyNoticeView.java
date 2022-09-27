@@ -5,6 +5,8 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -42,13 +44,8 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
     }
 
     private void showPrivacyNotice(PrivacyNotice privacyNotice){
-        TextArea textArea=new TextArea();
-        textArea.setValue(privacyNotice.getText());
-        textArea.setReadOnly(true);
-        textArea.setWidthFull();
-
         privacyNoticeDialog.setTitle("Privacy Notice " + privacyNotice.getApp().getName());
-        privacyNoticeDialog.setContent(new VerticalLayout(textArea));
+        privacyNoticeDialog.setContent(new VerticalLayout(convertText(privacyNotice.getText())));
         privacyNoticeDialog.setWithoutFooter(true);
         privacyNoticeDialog.setWidth("100%");
         privacyNoticeDialog.open();
@@ -62,6 +59,25 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
     @Override
     public void afterNavigation(AfterNavigationEvent event){
         updateGrid();
+    }
+
+    /*
+    DA CAPIRE COME VISUALIZZARE IL TESTO.
+    PER ORA LO SALVO COME HTML IN CASO NON DIA ERRORI ALTRIMENTI COME TEXTAREA
+    MA IN CASO SI VOGLIA CARICARE DIRETTAMENTE IL FILE BISOGNA CAPIRE COME FARE
+     */
+    private Component convertText(String text){
+        try{
+            Html html= new Html(text);
+            return html;
+        } catch (Exception e){
+            e.printStackTrace();
+            TextArea textArea= new TextArea();
+            textArea.setValue(text);
+            textArea.setWidthFull();
+            textArea.setReadOnly(true);
+            return textArea;
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -15,9 +16,9 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.richtexteditor.RichTextEditor;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -45,7 +46,6 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
     private final VerticalLayout customizedLayout= new VerticalLayout();
     private FormPrivacyNotice standardLayout;
     private final VerticalLayout uploadLayout= new VerticalLayout();
-    private final TextArea textAreaCustomized= new TextArea();
 
     private PrivacyNotice privacyNotice;
 
@@ -73,15 +73,24 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
-
         add(tabs, content);
     }
 
     private void initializeCustomizedLayout(){
         customizedTab.addClassName("pointer");
-        textAreaCustomized.setWidthFull();
-        Button saveButton= new Button("Save", e->savePrivacyNotice(textAreaCustomized));
-        customizedLayout.add(textAreaCustomized, saveButton);
+        RichTextEditor textEditor=new RichTextEditor();
+        Button saveButton= new Button("Save", e->{
+            if(textEditor.getValue()!=null){
+                savePrivacyNotice("<span>" + textEditor.asHtml().getValue() + "</span>");
+            }
+        });
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        if(privacyNotice.getText()!=null) {
+            textEditor.asHtml().setValue(privacyNotice.getText());
+        }
+
+        customizedLayout.add(textEditor, saveButton);
     }
 
     private void initializeStandardLayout(){
@@ -135,50 +144,43 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
         //logger.info(event.);
     }
 
-    private void savePrivacyNotice(TextArea textArea){
-        if(textArea.getValue()==null){
-            return;
-        }
+    private void savePrivacyNotice(String text){
+        MyDialog dialog= new MyDialog();
+        String textContent;
+        Button saveButton= new Button("Confirm");
+
+        // if first PrivacyNotice for the app
         if(dataBaseService.getPrivacyNoticeFromApp(privacyNotice.getApp())==null){
-            confirmNewPrivacyNotice(textArea.getValue());
+            textContent= "Do you want to upload this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?";
+            saveButton.addClickListener(e-> {
+                dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
+                Notification notification = Notification.show("Privacy Notice uploaded correctly");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                dialog.close();
+            });
         }
+        // if updating an older PrivacyNotice for the app
         else{
-            confirmOverwritePrivacyNotice(textArea.getValue());
+            textContent= "There is already a Privacy Notice for the app " + privacyNotice.getApp().getName() + ", do you want to overwrite it with this one?";
+            saveButton.addClickListener(e-> {
+                dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
+                Notification notification = Notification.show("Privacy Notice overwritten correctly");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                dialog.close();
+            });
         }
-    }
 
-    private void confirmNewPrivacyNotice(String text){
-        MyDialog dialog=new MyDialog();
         dialog.setTitle("Confirm");
-        dialog.setContent(new HorizontalLayout(new Span("Do you want to upload this Privacy Notice for the app: " + privacyNotice.getApp().getName() + "?")));
-        dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
-            Notification notification = Notification.show("Privacy Notice uploaded correctly");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
-            dialog.close();
-        }));
-        dialog.open();
-    }
-
-    private void confirmOverwritePrivacyNotice(String text){
-        MyDialog dialog=new MyDialog();
-        dialog.setTitle("Confirm");
-        dialog.setContent(new HorizontalLayout(new Span("There is already a Privacy Notice for the app " + privacyNotice.getApp().getName() + ", do you want to overwrite it with this one?")));
-        dialog.setContinueButton(new Button("confirm", e-> {
-            dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
-            Notification notification = Notification.show("Privacy Notice overwritten correctly");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
-            dialog.close();
-        }));
+        dialog.setContent(new HorizontalLayout(new Span(textContent)));
+        dialog.setContinueButton(saveButton);
         dialog.open();
     }
 
     @Override
     public void afterNavigation(AfterNavigationEvent event){
         if(privacyNotice.getText()!=null){
-            textAreaCustomized.setValue(privacyNotice.getText());
             tabs.setSelectedTab(customizedTab);
             content.add(customizedLayout);
         }

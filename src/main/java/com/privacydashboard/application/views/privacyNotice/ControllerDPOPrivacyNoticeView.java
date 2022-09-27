@@ -49,7 +49,7 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(privacyNotice -> {
             Button button= new Button(privacyNotice.getApp().getName(), e->goToSinglePrivacyNoticeView(privacyNotice));
-            button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+            button.addThemeVariants(ButtonVariant.LUMO_ICON);
             return button;
         });
     }
@@ -90,11 +90,6 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         }
     }
 
-    private void goToSinglePrivacyNoticeView(PrivacyNotice privacyNotice){
-        communicationService.setPrivacyNotice(privacyNotice);
-        UI.getCurrent().navigate(SinglePrivacyNoticeView.class);
-    }
-
     private void createNewPrivacyNotice(IoTApp app){
         PrivacyNotice privacyNotice= new PrivacyNotice();
         privacyNotice.setText(null);
@@ -102,6 +97,11 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         goToSinglePrivacyNoticeView(privacyNotice);
     }
 
+    private void goToSinglePrivacyNoticeView(PrivacyNotice privacyNotice){
+        communicationService.setPrivacyNotice(privacyNotice);
+        UI.getCurrent().navigate(SinglePrivacyNoticeView.class);
+    }
+    
     private void updateGrid(){
         List<PrivacyNotice> privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
         grid.setItems(privacyNoticeList);
