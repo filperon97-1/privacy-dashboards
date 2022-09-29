@@ -27,6 +27,14 @@
     padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
 }
 
+.singleQuestionHidden-questionnaire{
+    /*background-color: white;
+    border-radius: var(--lumo-border-radius);
+    box-shadow: var(--lumo-box-shadow-xs);*/
+    max-width:95%;
+    margin-left: calc(var(--lumo-space-l) * 1.5)
+}
+
 .buttonLayout-questionnaire{
     min-width:90%;
     max-width: 90%;
