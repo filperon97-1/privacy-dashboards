@@ -1,5 +1,5 @@
 @import url('./main-layout.css');
-@import url('./views/grid-views.css');
+@import url('./views/grid-view.css');
 @import url('./views/contacts-view.css');
 @import url('./views/generic-view.css');
 @import url('./views/usefulComponents/myDialog.css');

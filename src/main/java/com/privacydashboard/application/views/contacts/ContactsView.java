@@ -46,7 +46,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         this.authenticatedUser=authenticatedUser;
         this.dataBaseService=dataBaseService;
         this.communicationService=communicationService;
-        addClassName("contacts-view");
+        addClassName("grid-view");
         initializeSearchText();
         initializeGrid();
         add(searchText, grid);
@@ -61,7 +61,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(contact -> createContact(contact));
+        grid.addComponentColumn(this::createContact);
     }
 
     private VerticalLayout createContact(User contact){

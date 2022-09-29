@@ -2,12 +2,14 @@ package com.privacydashboard.application.views.privacyNotice;
 
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.PrivacyNotice;
+import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -42,11 +44,12 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
-        addClassName("privacy_notice-view");
+        addClassName("grid-view");
         initializeSearchText();
         initializeGrid();
         initializeNewPrivacyNoticeDialog();
 
+        newPrivacyNoticeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         HorizontalLayout headerLayout= new HorizontalLayout(searchText, newPrivacyNoticeButton);
         headerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(headerLayout, grid);
@@ -61,11 +64,18 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(privacyNotice -> {
-            Button button= new Button(privacyNotice.getApp().getName(), e->goToSinglePrivacyNoticeView(privacyNotice));
-            button.addThemeVariants(ButtonVariant.LUMO_ICON);
-            return button;
-        });
+        grid.addComponentColumn(this::showPrivacyNotice);
+    }
+
+    private HorizontalLayout showPrivacyNotice(PrivacyNotice privacyNotice){
+        Avatar avatar = new Avatar(privacyNotice.getApp().getName());
+        Span name= new Span(privacyNotice.getApp().getName());
+        name.addClassName("name");
+        name.addClassName("link");
+        HorizontalLayout card = new HorizontalLayout(avatar, name);
+        card.addClassName("card");
+        card.addClickListener(e-> goToSinglePrivacyNoticeView(privacyNotice));
+        return card;
     }
 
     private void initializeNewPrivacyNoticeDialog(){

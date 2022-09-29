@@ -14,6 +14,7 @@ import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacy
 import com.privacydashboard.application.views.privacyNotice.SinglePrivacyNoticeView;
 import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
@@ -52,7 +53,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         this.dataBaseService=dataBaseService;
         this.authenticatedUser=authenticatedUser;
         this.communicationService=communicationService;
-        addClassName("app-view");
+        addClassName("grid-view");
         initializeSearchText();
         initializeGrid();
         add(searchText, grid);
@@ -67,10 +68,43 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(this::initializeApp);
+        grid.addComponentColumn(this::createApp);
     }
 
-    private Details initializeApp(IoTApp i){
+    private VerticalLayout createApp(IoTApp app){
+        Avatar avatar = new Avatar(app.getName());
+        Span name = new Span(app.getName());
+        name.addClassName("name");
+        Details details = new Details("More", initializeApp(app));
+        VerticalLayout card = new VerticalLayout();
+        card.addClassName("card");
+        card.setSpacing(false);
+        card.add(new HorizontalLayout(avatar , name) , details);
+
+        // se c'è un priorityUser apri details
+        if(app.equals(priorityApp)){
+            details.setOpened(true);
+        }
+        return card;
+    }
+
+    private VerticalLayout initializeApp(IoTApp i){
+        Span description= new Span(i.getDescription());
+        Span privacyNotice= new Span(new Button("Privacy Notice", e-> goToPrivacyNotice(i)));
+        Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
+        Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
+
+        VerticalLayout content=new VerticalLayout(description, privacyNotice, controllerDetails, DPODetails);
+        if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
+            content.add(new Details("Consenses: " , getConsenses(i)));
+        }
+        else{
+            content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
+        }
+        return content;
+    }
+
+    private Details initializeApp(IoTApp i, boolean f){
         Span description= new Span(i.getDescription());
         Span privacyNotice= new Span(new Button("Privacy Notice", e-> goToPrivacyNotice(i)));
         Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));

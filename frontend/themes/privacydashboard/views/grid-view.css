@@ -1,19 +1,19 @@
-.contacts-view {
+.grid-view {
   height: 100%;
   background-color: var(--lumo-contrast-10pct);
 }
 
-.contacts-view vaadin-grid {
+.grid-view vaadin-grid {
   height: 90%;
   line-height: var(--lumo-line-height-m);
 }
 
-.contacts-view vaadin-grid,
-.contacts-view vaadin-grid-cell-content {
+.grid-view vaadin-grid,
+.grid-view vaadin-grid-cell-content {
   background-color: var(--lumo-contrast-10pct);
 }
 
-.contacts-view .card {
+.grid-view .card {
   background-color: var(--lumo-base-color);
   /*background-color: var(--lumo-contrast-5pct);*/
   border-radius: var(--lumo-border-radius);
@@ -21,7 +21,7 @@
   padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
 }
 
-.contacts-view .name {
+.grid-view .name {
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
   margin-right: var(--lumo-space-s);
