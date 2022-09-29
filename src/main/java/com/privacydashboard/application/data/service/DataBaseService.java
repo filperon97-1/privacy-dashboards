@@ -7,6 +7,7 @@ import com.privacydashboard.application.security.AuthenticatedUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -190,7 +191,6 @@ public class DataBaseService {
 
     public PrivacyNotice getPrivacyNoticeFromId(UUID id){
         return privacyNoticeRepository.findById(id).isPresent() ? privacyNoticeRepository.findById(id).get() : null;
-
     }
 
     public PrivacyNotice getPrivacyNoticeFromApp(IoTApp app){
@@ -199,6 +199,10 @@ public class DataBaseService {
 
     public List<PrivacyNotice> getAllPrivacyNoticeFromUser(User user){
         return privacyNoticeRepository.getAllPrivacyNoticeFromUser(user);
+    }
+
+    public List<PrivacyNotice> getUserPrivacyNoticeByAppName(User user, String name){
+        return privacyNoticeRepository.getPrivacyNoticeFromUserFilterByAppName(user, name);
     }
 
     public boolean addPrivacyNoticeForApp(IoTApp app, String text){

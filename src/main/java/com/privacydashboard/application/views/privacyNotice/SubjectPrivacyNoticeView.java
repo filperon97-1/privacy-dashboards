@@ -13,8 +13,9 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
-
 import javax.annotation.security.RolesAllowed;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
 
+    private final TextField searchText=new TextField();
     private final Grid<PrivacyNotice> grid= new Grid<>();
     private final MyDialog privacyNoticeDialog= new MyDialog();
 
@@ -34,11 +36,18 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
+        // get from notification
         priorityNotice= communicationService.getPrivacyNoticeFromNotification();
         if(priorityNotice!=null){
             showPrivacyNotice(priorityNotice);
+            return;
         }
-        //priorityApp=communicationService.getApp();
+
+        // get from link of another View
+        priorityNotice= communicationService.getPrivacyNotice();
+        if(priorityNotice!=null){
+            showPrivacyNotice(priorityNotice);
+        }
     }
 
     public SubjectPrivacyNoticeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
@@ -46,8 +55,16 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
+        initializeSearchText();
         initializeGrid();
-        add(grid);
+        add(searchText, grid);
+    }
+
+    private void initializeSearchText(){
+        searchText.setPlaceholder("Search...");
+        searchText.setValueChangeMode(ValueChangeMode.LAZY);
+        searchText.addValueChangeListener(e-> updateGrid());
+        searchText.addClassName("search");
     }
 
     private void initializeGrid(){
@@ -64,7 +81,14 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
     }
 
     private void updateGrid(){
-        List<PrivacyNotice> privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
+        List<PrivacyNotice> privacyNoticeList;
+        if(searchText.getValue()==null || searchText.getValue().length()==0){
+            privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
+        }
+        else{
+            privacyNoticeList=dataBaseService.getUserPrivacyNoticeByAppName(authenticatedUser.getUser(), searchText.getValue());
+        }
+
         if(priorityNotice!=null){
             if(privacyNoticeList.contains(priorityNotice)){
                 Collections.swap(privacyNoticeList, 0, privacyNoticeList.indexOf(priorityNotice));
@@ -85,8 +109,7 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
      */
     private Component convertText(String text){
         try{
-            Html html= new Html(text);
-            return html;
+            return new Html(text);
         } catch (Exception e){
             e.printStackTrace();
             TextArea textArea= new TextArea();

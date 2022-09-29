@@ -14,10 +14,12 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
-
 import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
 
+    private final TextField searchText=new TextField();
     private final Grid<PrivacyNotice> grid=new Grid<>();
     private final MyDialog newPrivacyNoticeDialog=new MyDialog();
     private final Button newPrivacyNoticeButton= new Button("Compile new Privacy Notice", e-> newPrivacyNoticeDialog.open());
@@ -40,9 +43,20 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         this.communicationService= communicationService;
 
         addClassName("privacy_notice-view");
+        initializeSearchText();
         initializeGrid();
         initializeNewPrivacyNoticeDialog();
-        add(newPrivacyNoticeButton, grid);
+
+        HorizontalLayout headerLayout= new HorizontalLayout(searchText, newPrivacyNoticeButton);
+        headerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        add(headerLayout, grid);
+    }
+
+    private void initializeSearchText(){
+        searchText.setPlaceholder("Search...");
+        searchText.setValueChangeMode(ValueChangeMode.LAZY);
+        searchText.addValueChangeListener(e-> updateGrid());
+        searchText.addClassName("search");
     }
 
     private void initializeGrid(){
@@ -103,7 +117,13 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
     }
     
     private void updateGrid(){
-        List<PrivacyNotice> privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
+        List<PrivacyNotice> privacyNoticeList;
+        if(searchText.getValue()==null || searchText.getValue().length()==0){
+            privacyNoticeList=dataBaseService.getAllPrivacyNoticeFromUser(authenticatedUser.getUser());
+        }
+        else{
+            privacyNoticeList=dataBaseService.getUserPrivacyNoticeByAppName(authenticatedUser.getUser(), searchText.getValue());
+        }
         grid.setItems(privacyNoticeList);
     }
 

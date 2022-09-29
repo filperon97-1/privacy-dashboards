@@ -23,4 +23,9 @@ public interface PrivacyNoticeRepository extends JpaRepository<PrivacyNotice, UU
     @Query("SELECT DISTINCT pn FROM PrivacyNotice pn WHERE " +
             "(pn.app in (SELECT uar.app FROM UserAppRelation uar WHERE uar.user=:user))")
     List<PrivacyNotice> getAllPrivacyNoticeFromUser(@Param("user") User user);
+
+    @Query("SELECT DISTINCT pn FROM PrivacyNotice pn WHERE " +
+            "(pn.app in (SELECT uar.app FROM UserAppRelation uar WHERE " +
+            "(uar.user=:user AND LOWER(uar.app.name) like concat('%', LOWER(:name), '%')))) ")
+    List<PrivacyNotice> getPrivacyNoticeFromUserFilterByAppName(@Param("user") User user, @Param("name") String name);
 }

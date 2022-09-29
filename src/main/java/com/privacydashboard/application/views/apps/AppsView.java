@@ -10,6 +10,9 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
+import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacyNoticeView;
+import com.privacydashboard.application.views.privacyNotice.SinglePrivacyNoticeView;
+import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
@@ -64,44 +67,40 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(app -> initializeApp(app));
+        grid.addComponentColumn(this::initializeApp);
     }
 
     private Details initializeApp(IoTApp i){
-        VerticalLayout content;
-        Span description= new Span("description: " + i.getDescription());
+        Span description= new Span(i.getDescription());
+        Span privacyNotice= new Span(new Button("Privacy Notice", e-> goToPrivacyNotice(i)));
         Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
         Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
 
+        VerticalLayout content=new VerticalLayout(description, privacyNotice, controllerDetails, DPODetails);
+
         if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
-            Details consensesDetails= new Details("Consenses: " , getConsenses(i));
-            content= new VerticalLayout(description, controllerDetails, DPODetails, consensesDetails);
+            content.add(new Details("Consenses: " , getConsenses(i)));
         }
         else{
-            Details subjectDetails=new Details("Data Subjects: " , getUsers(i, Role.SUBJECT));
-            content= new VerticalLayout(description, controllerDetails, DPODetails, subjectDetails);
+            content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
         }
         Details details=new Details(i.getName(), content);
-
-        // SECONDO METODO (ACCORDION)
-        /*
-        Accordion accordion= new Accordion();
-        accordion.add("Data Controllers: ", getUsers(i, Role.CONTROLLER));
-        accordion.add("Data Protection Officer: ", getUsers(i, Role.DPO));
-        if(getUser().getRole().equals(Role.SUBJECT)) {
-            accordion.add("Consenses: ", getConsenses(i));
-        }
-        else{
-            accordion.add("Data Subjects: " , getUsers(i, Role.SUBJECT));
-        }
-        Details details= new Details(i.getName(), new VerticalLayout(description, accordion));
-         */
 
         // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
         if(i.equals(priorityApp)){
             details.setOpened(true);
         }
         return details;
+    }
+
+    private void goToPrivacyNotice(IoTApp i){
+        communicationService.setPrivacyNotice(dataBaseService.getPrivacyNoticeFromApp(i));
+        if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
+            UI.getCurrent().navigate(SubjectPrivacyNoticeView.class);
+        }
+        else{
+            UI.getCurrent().navigate(SinglePrivacyNoticeView.class);
+        }
     }
 
     private VerticalLayout getUsers(IoTApp i, Role role){
