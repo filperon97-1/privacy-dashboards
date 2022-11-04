@@ -16,7 +16,8 @@ vaadin-button:hover{
 .search{
     font-size: var(--lumo-font-size-xs);
     margin: var(--lumo-space-s);
-    background-color: var(--lumo-primary-color-10pct);
+    /*background-color: var(--lumo-primary-color-10pct);*/
+    background-color: var(--lumo-primary-color-5pct);
     border-radius: var(--lumo-border-radius);
     padding-top: calc(var(--lumo-space-s) * (-1));
     padding-bottom: calc(var(--lumo-space-s) * (-1));

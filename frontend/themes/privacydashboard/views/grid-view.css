@@ -1,6 +1,6 @@
 .grid-view {
   height: 100%;
-  background-color: var(--lumo-contrast-10pct);
+  /*background-color: var(--lumo-contrast-10pct);*/
 }
 
 .grid-view vaadin-grid {
@@ -10,12 +10,12 @@
 
 .grid-view vaadin-grid,
 .grid-view vaadin-grid-cell-content {
-  background-color: var(--lumo-contrast-10pct);
+  /*background-color: var(--lumo-contrast-10pct);*/
 }
 
 .grid-view .card {
   background-color: var(--lumo-base-color);
-  /*background-color: var(--lumo-contrast-5pct);*/
+  background-color: var(--lumo-contrast-5pct);
   border-radius: var(--lumo-border-radius);
   box-shadow: var(--lumo-box-shadow-xs);
   padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);

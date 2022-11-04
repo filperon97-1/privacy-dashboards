@@ -6,15 +6,17 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 
 public class ProfileView extends VerticalLayout {
     private User user;
@@ -26,8 +28,7 @@ public class ProfileView extends VerticalLayout {
     private Span name;
     private Span role;
     private Details changeMailDetails;
-    private TextArea actualMail;
-    private TextArea newMail;
+    private TextField newMail;
     private Details changePasswordDetails;
     private PasswordField actualPassword;
     private PasswordField newPassword;
@@ -64,8 +65,8 @@ public class ProfileView extends VerticalLayout {
 
         name=new Span("Name: " + user.getName());
         role=new Span("Role: " + user.getRole());
-        changeMailDetails= new Details("Mail: " + (user.getMail()==null ? "  " : user.getMail()), changeMail());
-        changePasswordDetails= new Details("Change password", changePassword());
+        changeMailDetails= new Details("Mail: " + (user.getMail()==null ? "There's no mail yet" : user.getMail()), changeMailLayout());
+        changePasswordDetails= new Details("Change password", changePasswordLayout());
     }
 
     private void initializeRemoveEverything(){
@@ -85,15 +86,17 @@ public class ProfileView extends VerticalLayout {
 
     }
 
-    private VerticalLayout changeMail(){
-        actualMail= new TextArea("Actual Mail: ");
-        actualMail.setValue(user.getMail()==null ?  " " : user.getMail());
-        actualMail.setReadOnly(true);
-        actualMail.addClassName("textField");
-        newMail=new TextArea("New Mail: ");
-        newMail.addClassName("textField");
-        Button save= new Button("Save", e->saveMail());
-        VerticalLayout layout=new VerticalLayout(actualMail, newMail, save);
+    private VerticalLayout changeMailLayout(){
+        newMail= new TextField("New Mail: ");
+        Button save= new Button("Save");
+        MyDialog dialog= new MyDialog();
+        dialog.setTitle("Confirm new mail");
+        dialog.setContent(new HorizontalLayout(new Span("Are you sure you want to change the mail?")));
+        dialog.setContinueButton(new Button("Confirm", e->{saveMail();
+                                                                dialog.close();}));
+        save.addClickListener(e->dialog.open());
+        newMail.addKeyDownListener(Key.ENTER, e->dialog.open());
+        VerticalLayout layout=new VerticalLayout(newMail, save);
         layout.setAlignItems(Alignment.CENTER);
         return layout;
     }
@@ -105,23 +108,22 @@ public class ProfileView extends VerticalLayout {
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         // update user information and corresponding components
         user=authenticatedUser.updateUser();
-        actualMail.setValue(user.getMail()==null ?  " " : user.getMail());
         newMail.setValue("");
-        changeMailDetails.setSummaryText("Mail: " + actualMail.getValue());
+        changeMailDetails.setSummaryText("Actual Mail: " + (user.getMail()==null ? "There's no mail yet" : user.getMail()));
     }
 
-    private VerticalLayout changePassword(){
-        actualPassword= new PasswordField("Actual");
+    private VerticalLayout changePasswordLayout(){
+        actualPassword= new PasswordField("Actual Password");
         actualPassword.setErrorMessage("password must be the same as old one");
         actualPassword.setMinLength(8);
         actualPassword.addValueChangeListener(e-> checkActualPassword());
 
-        newPassword= new PasswordField("New");
+        newPassword= new PasswordField("New Password");
         newPassword.setMinLength(8);
         newPassword.setErrorMessage("the password must be at least 8 characters");
         newPassword.addValueChangeListener(e-> checkConfirmPassword());
 
-        confirmPassword= new PasswordField("Confirm");
+        confirmPassword= new PasswordField("Confirm Password");
         confirmPassword.setErrorMessage("the two passwords must be equal");
         confirmPassword.addValueChangeListener(e-> checkConfirmPassword());
 
@@ -150,14 +152,20 @@ public class ProfileView extends VerticalLayout {
         if(actualPassword.isInvalid() || newPassword.isInvalid() || confirmPassword.isInvalid()) {
             return;
         }
-        userDetailsService.changeUserPassword(user, newPassword.getValue());
-        actualPassword.setValue("");
-        newPassword.setValue("");
-        confirmPassword.setValue("");
-        closePasswordDetail();
-        Notification notification = Notification.show("Password correctly changed!");
-        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        user=authenticatedUser.updateUser();
+
+        MyDialog dialog= new MyDialog();
+        dialog.setTitle("Confirm new password");
+        dialog.setContent(new HorizontalLayout(new Span("Are you sure you want to change the password?")));
+        dialog.setContinueButton(new Button("Confirm", e->{userDetailsService.changeUserPassword(user, newPassword.getValue());
+            actualPassword.setValue("");
+            newPassword.setValue("");
+            confirmPassword.setValue("");
+            closePasswordDetail();
+            Notification notification = Notification.show("Password correctly changed!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            user=authenticatedUser.updateUser();
+            dialog.close();}));
+        dialog.open();
     }
 
     private void logout(){

@@ -10,16 +10,16 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-public class MyDialog extends Dialog {
-    private Span title=new Span();
-    Button closeButton=new Button(VaadinIcon.CLOSE_SMALL.create(), e->close());
-    private Header header=new Header();
+public class MyDialog extends Dialog{
+    private final Span title=new Span();
+    private final Button closeButton=new Button(VaadinIcon.CLOSE_SMALL.create(), e->close());
+    private final Header header=new Header();
 
-    private Span content=new Span();
+    private final Span content=new Span();
 
     private Button continueButton=new Button("Continue");
-    private Button cancelButton=new Button("Cancel", e->close());
-    private Footer footer= new Footer();
+    private final Button cancelButton=new Button("Cancel", e->close());
+    private final Footer footer= new Footer();
 
     public MyDialog(){
         getElement().getThemeList().add("my-dialog");
@@ -32,6 +32,7 @@ public class MyDialog extends Dialog {
         //getElement().setAttribute("aria-labelledby", "dialog-title");
         title.addClassName("dialog-title");
         closeButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST, ButtonVariant.LUMO_TERTIARY);
+        header.setTitle("TITLE");
         header.add(title);
         header.add(closeButton);
         add(header);

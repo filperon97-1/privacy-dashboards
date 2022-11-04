@@ -26,16 +26,18 @@ import javax.annotation.security.PermitAll;
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class QuestionnaireDeveloper extends AppLayout {
     private final Tabs tabs= new Tabs();
-    private final Integer nSections= 4;
+    private final Span content= new Span();
+
+    private final Integer nSections= 3;
     private final VerticalLayout[] sections= new VerticalLayout[nSections];
-    private final Integer nQuestions= 30;
+
+    private final Integer nQuestions= 29;
     private final Div[] titles= new Div[nQuestions];
     private final RadioButtonGroup<String>[] radioGroups= new RadioButtonGroup[nQuestions];
     private final Span[] icons= new Span[nQuestions];
     private final ContextMenu[] contextMenus= new ContextMenu[nQuestions];
     private final TextArea[] textAreas= new TextArea[nQuestions];
     private final VerticalLayout[] singleQuestion= new VerticalLayout[nQuestions];
-    private final Span content= new Span();
 
     private Integer n=0;    // question number
 
@@ -45,7 +47,7 @@ public class QuestionnaireDeveloper extends AppLayout {
         section1(); // dati sensibili
         section2(); // sicurezza
         section3(); // open source
-        section4(); // licenze, tools e test
+        //section4(); // licenze, tools e test
 
         content.add(sections[0]);   // first section to be shown
     }
@@ -68,12 +70,12 @@ public class QuestionnaireDeveloper extends AppLayout {
             singleQuestion[i].addClassName("singleQuestion-questionnaire");
         }
 
+        Tab[] tab= new Tab[] {new Tab("Personal Data"), new Tab("Security"), new Tab("Tests and certifications")};
         for(int i=0; i<nSections; i++){
             sections[i]= new VerticalLayout();
             sections[i].addClassName("section-questionnaire");
-            Tab tab=new Tab("Section " + (i+1));
-            tab.addClassName("pointer");
-            tabs.add(tab);
+            tab[i].addClassName("pointer");
+            tabs.add(tab[i]);
         }
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.addSelectedChangeListener(this::changeTab);
@@ -104,14 +106,6 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[n].setItems("Yes", "No", "I don't know");
         setHiddenQuestion(n, n-1, "Yes");
         n++;
-
-        // Pseudonominizzazione
-        titles[n].add(new Span("Are the personal data processed pseudonymized or anonymized?"), icons[n]);
-        contextMenus[n].addItem(createInfo("GDPR Article 5", "Personal data shall be: ... collected for specified, explicit and legitimate purposes and not further processed in a manner that is incompatible with those purposes ... adequate, relevant and limited to what is necessary in relation to the purposes for which they are processed"));
-        radioGroups[n].setItems("Yes", "No", "I don't know");
-        setHiddenQuestion(n, n-1, "Yes");
-        n++;
-
 
         //Periodo mantenimento dei dati
         titles[n].add(new Span("For how long are the data going to be stored?"), icons[n]);
@@ -194,8 +188,14 @@ public class QuestionnaireDeveloper extends AppLayout {
 
         // Usi pseudonomizzazione?
         titles[n].add(new Span("Do you pseudonymize the personal data?"));
-        contextMenus[n].addItem(createInfo("GDPR Article 32", " the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk"));
-        radioGroups[n].setItems();
+        contextMenus[n].addItem(createInfo("GDPR Article 25", " the controller shall, both at the time of the determination of the means for processing and at the time of the processing itself, implement appropriate technical and organisational measures, such as pseudonymisation, which are designed to implement data-protection principles"));
+        radioGroups[n].setItems("Yes", "No", "I don't know");
+        n++;
+
+        // Usi cifratura?
+        titles[n].add(new Span("Do you encrypt the personal data?"));
+        contextMenus[n].addItem(createInfo("GDPR Article 32", "the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk, including inter alia as appropriate: ... encryption of personal data;"));
+        radioGroups[n].setItems("Yes", "No", "I don't know");
         n++;
 
         // Protocollo comunicazione
@@ -210,21 +210,17 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[n].setItems("Yes", "No", "I don't know" );
         n++;
 
-        //Domanda X: Backup
+        //Backup
         titles[n].add(new Span("How often do you regularly make backups"), icons[n]);
         contextMenus[n].addItem(createInfo("GDPR Article 32", " the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk"));
         radioGroups[n].setItems("every week", "between a week and a month", "between a month and a year", "more than a year", "never", "I don't know" );
         n++;
 
-        /*
-        In terms of database management, good practices include:
-
-    using nominative accounts for database access and create specific accounts for each application;
-    revoking the administrative privileges of user or application accounts to avoid modification to database structure (table, vues, process, etc);
-    having protection against SQL or script injection attacks;
-    encouraging at rest disk and database encryption.
-
-         */
+        // Procedure in caso di attacco?
+        titles[n].add(new Span("Have you identified some procedures the availability and access to personal data in case of an incident?"));
+        contextMenus[n].addItem(createInfo("GDPR Article 32", "the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk, including inter alia as appropriate: ... the ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident;"));
+        radioGroups[n].setItems("Yes", "No", "I don't know");
+        n++;
 
         createSectionLayout(begin, n, 1);
         createButtonsLayout(true, true, false, 1);
@@ -232,20 +228,6 @@ public class QuestionnaireDeveloper extends AppLayout {
 
     // SEZIONE 3: OPEN SOURCE
     private void section3(){
-
-        // D2.6
-
-        /*
-           ARTICOLO 25: misure tecniche e organizzative adeguate, quali la pseudonimizzazione, volte ad attuare in modo efficace i principi di protezione dei dati, quali la minimizzazione
-                         misure tecniche e organizzative adeguate per garantire che siano trattati, per impostazione predefinita, solo i dati personali necessari
-           ARTIOLO 32: misure tecniche e organizzative adeguate per garantire un livello di sicurezza adeguato al rischio
-                        esempi: pseudonimizzazione e la cifratura dei dati personali;
-                                 ripristinare tempestivamente la disponibilità e l'accesso dei dati personali in caso di incidente fisico o tecnico;
-                                 procedura per testare, verificare e valutare regolarmente l'efficacia delle misure tecniche e organizzative al fine di garantire la sicurezza del trattamento.
-
-         */
-
-        // CONSIGLI CNIL
         int begin=n;
 
         // OpenChain
@@ -273,23 +255,8 @@ public class QuestionnaireDeveloper extends AppLayout {
                 "    processing on a large scale of special categories of data \n" +
                 "    a systematic monitoring of a publicly accessible area on a large scale"));
         radioGroups[n].setItems("Yes", "No", "I don't know");
-        /*
-        //
-        titles[n].add(new Span(""), icons[n]);
-        contextMenus[n].addItem(createInfo("GDPR Article 32", " the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk"));
-        radioGroups[n].setItems();
+        setHiddenQuestion(n, n-1, "Yes");
         n++;
-         */
-
-        createSectionLayout(begin, n, 2);
-        createButtonsLayout(true, true, false, 2);
-    }
-
-
-    // SEZIONE 4: LICENZE
-    private void section4(){
-        int begin=n;
-        // Domande sparse
 
         //Static analysis checks: coding style coding quality
         titles[n].add(new Span("Do you use any static analysis tool for code quality?"), icons[n]);
@@ -318,7 +285,7 @@ public class QuestionnaireDeveloper extends AppLayout {
         n++;
 
         // Test
-        titles[n].add(new Span("Did you successfully perform any test on the software functionalities (unit test, integration test...)"), icons[n]);
+        titles[n].add(new Span("Did you successfully perform any test on the software functionalities (unit test, integration test...)?"), icons[n]);
         contextMenus[n].addItem("It is important to test your app to prevent any unintentional and possibly dangerous behaviour");
         radioGroups[n].setItems("Yes", "No", "I don't know");
         textAreas[n]= new TextArea("If yes, which tests did you perform?");
@@ -330,6 +297,43 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[n].setItems("Yes, >=90%", "Yes, >=75% <90%", "Yes, >=50% <75%", "Yes, <50%", "No", "I don't know");
         setHiddenQuestion(n, n-1, "Yes");
         n++;
+
+        // Test sicurezza?
+        titles[n].add(new Span("Do you regularly test the effectiveness of your measures for ensuring the security of the process?"));
+        contextMenus[n].addItem(createInfo("GDPR Article 32", "the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk, including inter alia as appropriate: ... a process for regularly testing, assessing and evaluating the effectiveness of technical and organisational measures for ensuring the security of the processing."));
+        radioGroups[n].setItems("Yes", "No", "I don't know");
+        n++;
+
+        logger.info(String.valueOf(n));
+        /*
+        //
+        titles[n].add(new Span(""), icons[n]);
+        contextMenus[n].addItem(createInfo("GDPR Article 32", " the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk"));
+        radioGroups[n].setItems();
+        n++;
+         */
+
+
+        /*
+        In terms of database management, good practices include:
+
+    using nominative accounts for database access and create specific accounts for each application;
+    revoking the administrative privileges of user or application accounts to avoid modification to database structure (table, vues, process, etc);
+    having protection against SQL or script injection attacks;
+    encouraging at rest disk and database encryption.
+
+         */
+
+        createSectionLayout(begin, n, 2);
+        createButtonsLayout(true, false, true, 2);
+    }
+
+
+    // SEZIONE 4: LICENZE
+    private void section4(){
+        int begin=n;
+
+
 
         createSectionLayout(begin, n, 3);
         createButtonsLayout(true, false, true, 3);

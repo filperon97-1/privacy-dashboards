@@ -15,7 +15,7 @@
 }
 
 [theme~="my-dialog"] header .dialog-title {
-  font-size: var(--lumo-font-size-m);
+  font-size: var(--lumo-font-size-l);
   margin: 0 auto 0 0;
   font-weight: bold;
 }
