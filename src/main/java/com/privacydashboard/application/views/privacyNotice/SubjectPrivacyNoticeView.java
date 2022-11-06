@@ -1,16 +1,23 @@
 package com.privacydashboard.application.views.privacyNotice;
 
 import com.privacydashboard.application.data.entity.PrivacyNotice;
+import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.apps.AppsView;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -55,6 +62,8 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
+        addClassName("grid-view");
+
         initializeSearchText();
         initializeGrid();
         add(searchText, grid);
@@ -69,7 +78,50 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
 
     private void initializeGrid(){
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(privacyNotice -> new Button(privacyNotice.getApp().getName(), e->showPrivacyNotice(privacyNotice)));
+        grid.addComponentColumn(this::createPrivacyNotice);
+    }
+
+    private VerticalLayout createPrivacyNotice(PrivacyNotice privacyNotice){
+        Avatar avatar = new Avatar(privacyNotice.getApp().getName());
+        Span name= new Span(privacyNotice.getApp().getName());
+        name.addClassName("name");
+        name.addClassName("link");
+        name.addClickListener(e-> showPrivacyNotice(privacyNotice));
+        Details details = new Details("More", detailsLayout(privacyNotice));
+        VerticalLayout card = new VerticalLayout(new HorizontalLayout(avatar , name) , details);
+        card.addClassName("card");
+        return card;
+    }
+
+    private VerticalLayout detailsLayout(PrivacyNotice privacyNotice){
+        Span goToApp=new Span("Go to the app");
+        goToApp.addClassName("link");
+        goToApp.addClickListener(e-> communicationService.setApp(privacyNotice.getApp()));
+        goToApp.addClickListener(e-> UI.getCurrent().navigate(AppsView.class));
+
+        List<User> controllers= dataBaseService.getControllersFromApp(privacyNotice.getApp());
+        VerticalLayout controllersLayout= new VerticalLayout();
+        for(User u : controllers){
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            controllersLayout.add(contactLink);
+        }
+        Details controllersDetails= new Details("Data Controllers:", controllersLayout);
+
+        List<User> dpos= dataBaseService.getDPOsFromApp(privacyNotice.getApp());
+        VerticalLayout dposLayout= new VerticalLayout();
+        for(User u : dpos){
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            dposLayout.add(contactLink);
+        }
+        Details dposDetails= new Details("Data Protection Officers:", dposLayout);
+
+        return new VerticalLayout(goToApp, controllersDetails, dposDetails);
     }
 
     private void showPrivacyNotice(PrivacyNotice privacyNotice){
@@ -111,7 +163,7 @@ public class SubjectPrivacyNoticeView extends VerticalLayout implements AfterNav
         try{
             return new Html(text);
         } catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
             TextArea textArea= new TextArea();
             textArea.setValue(text);
             textArea.setWidthFull();

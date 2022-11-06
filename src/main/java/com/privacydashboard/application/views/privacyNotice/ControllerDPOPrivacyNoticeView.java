@@ -7,12 +7,15 @@ import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.apps.AppsView;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
@@ -67,15 +70,58 @@ public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements Af
         grid.addComponentColumn(this::showPrivacyNotice);
     }
 
-    private HorizontalLayout showPrivacyNotice(PrivacyNotice privacyNotice){
+    private VerticalLayout showPrivacyNotice(PrivacyNotice privacyNotice){
         Avatar avatar = new Avatar(privacyNotice.getApp().getName());
         Span name= new Span(privacyNotice.getApp().getName());
         name.addClassName("name");
         name.addClassName("link");
-        HorizontalLayout card = new HorizontalLayout(avatar, name);
+        name.addClickListener(e-> goToSinglePrivacyNoticeView(privacyNotice));
+        Details details = new Details("More", detailsLayout(privacyNotice));
+        VerticalLayout card = new VerticalLayout(new HorizontalLayout(avatar , name) , details);
         card.addClassName("card");
-        card.addClickListener(e-> goToSinglePrivacyNoticeView(privacyNotice));
         return card;
+    }
+
+    private VerticalLayout detailsLayout(PrivacyNotice privacyNotice){
+        Span goToApp=new Span("Go to the app");
+        goToApp.addClassName("link");
+        goToApp.addClickListener(e-> communicationService.setApp(privacyNotice.getApp()));
+        goToApp.addClickListener(e-> UI.getCurrent().navigate(AppsView.class));
+
+        List<User> controllers= dataBaseService.getControllersFromApp(privacyNotice.getApp());
+        VerticalLayout controllersLayout= new VerticalLayout();
+        for(User u : controllers){
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            controllersLayout.add(contactLink);
+        }
+        Details controllersDetails= new Details("Data Controllers:", controllersLayout);
+
+        List<User> dpos= dataBaseService.getDPOsFromApp(privacyNotice.getApp());
+        VerticalLayout dposLayout= new VerticalLayout();
+        for(User u : dpos){
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            dposLayout.add(contactLink);
+        }
+        Details dposDetails= new Details("Data Protection Officers:", dposLayout);
+
+        List<User> subjects= dataBaseService.getSubjectsFromApp(privacyNotice.getApp());
+        VerticalLayout subjectsLayout= new VerticalLayout();
+        for(User u : subjects){
+            Span contactLink=new Span(u.getName());
+            contactLink.addClassName("link");
+            contactLink.addClickListener(e->communicationService.setContact(u));
+            contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
+            subjectsLayout.add(contactLink);
+        }
+        Details subjectsDetails= new Details("Data Subjects:", subjectsLayout);
+
+        return new VerticalLayout(goToApp, controllersDetails, dposDetails, subjectsDetails);
     }
 
     private void initializeNewPrivacyNoticeDialog(){

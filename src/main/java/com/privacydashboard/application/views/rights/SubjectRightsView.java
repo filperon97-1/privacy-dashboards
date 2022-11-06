@@ -144,6 +144,9 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     }
 
     private void generateAllRightsDetails(){
+        add(generateRightDetail("Data portability", "you have the right to receive your personal data [GDPR, article 20]",
+                "Access data", RightType.PORTABILITY));
+
         add(generateRightDetail("Consenses", "you have the right to withdraw consent at any time [GDPR, article 13 2(C)]",
                 "Withdraw a consent", RightType.WITHDRAWCONSENT));
 

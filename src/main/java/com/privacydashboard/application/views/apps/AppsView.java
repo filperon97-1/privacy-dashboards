@@ -90,7 +90,9 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
 
     private VerticalLayout initializeApp(IoTApp i){
         Span description= new Span(i.getDescription());
-        Span privacyNotice= new Span(new Button("Privacy Notice", e-> goToPrivacyNotice(i)));
+        Span privacyNotice= new Span("Privacy Notice");
+        privacyNotice.addClassName("link");
+        privacyNotice.addClickListener(e-> goToPrivacyNotice(i));
         Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
         Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
 
@@ -102,29 +104,6 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
             content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
         }
         return content;
-    }
-
-    private Details initializeApp(IoTApp i, boolean f){
-        Span description= new Span(i.getDescription());
-        Span privacyNotice= new Span(new Button("Privacy Notice", e-> goToPrivacyNotice(i)));
-        Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
-        Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
-
-        VerticalLayout content=new VerticalLayout(description, privacyNotice, controllerDetails, DPODetails);
-
-        if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
-            content.add(new Details("Consenses: " , getConsenses(i)));
-        }
-        else{
-            content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
-        }
-        Details details=new Details(i.getName(), content);
-
-        // SE E L'APP CERCATA NEI PARAMETRI APRI DETAILS
-        if(i.equals(priorityApp)){
-            details.setOpened(true);
-        }
-        return details;
     }
 
     private void goToPrivacyNotice(IoTApp i){

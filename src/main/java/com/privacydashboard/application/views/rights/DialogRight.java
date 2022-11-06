@@ -37,6 +37,9 @@ public class DialogRight{
             return;
         }
         RightRequest request=initializeRequest(user, rightType);
+        if(request.getRightType().equals(RightType.PORTABILITY)){
+            portability(user, request);
+        }
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
             withdrawConsent(user, request);
         }
@@ -58,6 +61,28 @@ public class DialogRight{
         request.setRightType(rightType);
         request.setHandled(false);
         return request;
+    }
+
+    private void portability(User user, RightRequest request){
+        requestDialog.setTitle("Access data");
+
+        ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
+        appComboBox.setItems(dataBaseService.getUserApps(user));
+        appComboBox.setItemLabelGenerator(IoTApp::getName);
+        appComboBox.setPlaceholder("Filter by name...");
+
+        requestDialog.setContent(new HorizontalLayout(appComboBox));
+
+        continueButton.addClickListener(e->{
+            if(appComboBox.getValue()!=null){
+                request.setApp(appComboBox.getValue());
+                request.setReceiver(dataBaseService.getControllersFromApp(appComboBox.getValue()).get(0));
+                requestDialog.close();
+                showDialogConfirm(request);
+            }
+        });
+        requestDialog.setContinueButton(continueButton);
+
     }
 
     private void withdrawConsent(User user, RightRequest request){
@@ -197,6 +222,12 @@ public class DialogRight{
     }
 
     private String getPremadeText(RightRequest request){
+        if(request.getRightType().equals(RightType.PORTABILITY)){
+            return("Dear " + request.getReceiver().getName() + ", \n" +
+                    "\"I would like to have access to my data from the app " +  request.getApp().getName() + " in a commonly used open format (XML, JSON),\n" +
+                    "Best regards, \n" +
+                    request.getSender().getName());
+        }
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
             return("Dear " + request.getReceiver().getName() + ", \n" +
                     "I would like to withdraw the consent: " +request.getOther() + " from the app " + request.getApp().getName() + ",\n" +
