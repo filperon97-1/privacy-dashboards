@@ -11,14 +11,15 @@ import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
 import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.UUID;
 
 public interface IoTAppRepository extends JpaRepository<IoTApp, UUID> {
     IoTApp findByName(String name);
 
     @Modifying
-    @Query("UPDATE IoTApp SET questionnaireVote=:vote, detailVote=:detailVote WHERE id=:id")
+    @Query("UPDATE IoTApp SET questionnaireVote=:vote, detailVote=:detailVote, optionalAnswers=:optionalAnswers WHERE id=:id")
     @Transactional
-    void changeQuestionnaire(@Param("id") UUID id, @Param("vote") QuestionnaireVote vote, @Param("detailVote") String[] detailVote);
+    void changeQuestionnaire(@Param("id") UUID id, @Param("vote") QuestionnaireVote vote, @Param("detailVote") String[] detailVote, @Param("optionalAnswers") Hashtable<Integer, String> optionalAnswers);
 
 }

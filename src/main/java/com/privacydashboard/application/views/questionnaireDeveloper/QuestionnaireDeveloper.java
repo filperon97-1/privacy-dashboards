@@ -23,10 +23,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +35,7 @@ import java.util.*;
 @Route(value="questionnaire_developer")
 @RolesAllowed({"CONTROLLER", "DPO"})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
-public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObserver {
+public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObserver, AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
@@ -59,22 +56,11 @@ public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObse
     private final VerticalLayout[] singleQuestion= new VerticalLayout[nQuestions];
 
     private Integer n;    // question number
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
         app=communicationService.getApp();
-        // Precompile questionnaire if there was a previous one
-        if(app.getQuestionnaireVote()!=null && app.getDetailVote()!=null){
-            for(int i=0; i<nQuestions; i++){
-                radioGroups[i].setValue(app.getDetailVote()[i]);
-            }
-        }
-
-        H1 title= new H1("Questionnaire " + app.getName());
-        title.addClassName("title-questionnaire");
-        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs);
-        sectionDrawer.addClassNames("drawer-questionnaire");
-        addToDrawer(sectionDrawer);
     }
 
     public QuestionnaireDeveloper(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
@@ -443,7 +429,7 @@ public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObse
     private void evaluateAndConfirm(){
         QuestionnaireVote vote= QuestionnaireVote.GREEN;
         String[] detailVote= new String[nQuestions];
-        Dictionary<Integer, String> optionalAnswers= new Hashtable<>();
+        Hashtable<Integer, String> optionalAnswers= new Hashtable<>();
         for(int i=0; i<nQuestions; i++){
             /*
             VOTE:
@@ -472,6 +458,25 @@ public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObse
         dataBaseService.updateQuestionnaireForApp(app, vote, detailVote, optionalAnswers);
         Notification notification = Notification.show("Questionnaire uploaded correctly");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        // Precompile questionnaire if there was a previous one
+        if(app.getQuestionnaireVote()!=null && app.getDetailVote()!=null){
+            for(int i=0; i<nQuestions; i++){
+                radioGroups[i].setValue(app.getDetailVote()[i]);
+                if(textAreas[i]!=null && app.getOptionalAnswers()!=null){
+                    textAreas[i].setValue(app.getOptionalAnswers().get(i));
+                }
+            }
+        }
+
+        H1 title= new H1("Questionnaire " + app.getName());
+        title.addClassName("title-questionnaire");
+        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs);
+        sectionDrawer.addClassNames("drawer-questionnaire");
+        addToDrawer(sectionDrawer);
     }
 
 }

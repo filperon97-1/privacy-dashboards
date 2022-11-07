@@ -3,7 +3,7 @@ package com.privacydashboard.application.data.entity;
 import com.privacydashboard.application.data.QuestionnaireVote;
 
 import javax.persistence.*;
-import java.util.Dictionary;
+import java.util.Hashtable;
 
 @Entity
 @Table(name= "iot_app")
@@ -12,7 +12,8 @@ public class IoTApp extends AbstractEntity{
     private String description;
     private QuestionnaireVote questionnaireVote;
     private String[] detailVote;
-    //private Dictionary<Integer, String> optionalAnswers;
+    @Lob
+    private Hashtable<Integer, String> optionalAnswers;
 
     public String getName() {
         return name;
@@ -38,10 +39,10 @@ public class IoTApp extends AbstractEntity{
     public void setDetailVote(String[] detailVote) {
         this.detailVote = detailVote;
     }
-    /*public Dictionary<Integer, String> getOptionalAnswers() {
+    public Hashtable<Integer, String> getOptionalAnswers() {
         return optionalAnswers;
     }
-    public void setOptionalAnswers(Dictionary<Integer, String> optionalAnswers) {
+    public void setOptionalAnswers(Hashtable<Integer, String> optionalAnswers) {
         this.optionalAnswers = optionalAnswers;
-    }*/
+    }
 }

@@ -77,8 +77,8 @@ public class DataBaseService {
         return ioTAppRepository.findById(id);
     }
 
-    public void updateQuestionnaireForApp(IoTApp app, QuestionnaireVote vote, String[] detailVote, Dictionary<Integer, String> optionalAnswers){
-        ioTAppRepository.changeQuestionnaire(app.getId(), vote, detailVote);
+    public void updateQuestionnaireForApp(IoTApp app, QuestionnaireVote vote, String[] detailVote, Hashtable<Integer, String> optionalAnswers){
+        ioTAppRepository.changeQuestionnaire(app.getId(), vote, detailVote, optionalAnswers);
     }
 
     // USERAPPRELATION REPOSITORY
