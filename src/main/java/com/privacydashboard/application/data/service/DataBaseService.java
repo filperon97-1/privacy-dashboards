@@ -1,5 +1,6 @@
 package com.privacydashboard.application.data.service;
 
+import com.privacydashboard.application.data.QuestionnaireVote;
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
@@ -74,6 +75,10 @@ public class DataBaseService {
 
     public Optional<IoTApp> getApp(UUID id) {
         return ioTAppRepository.findById(id);
+    }
+
+    public void updateQuestionnaireForApp(IoTApp app, QuestionnaireVote vote, String[] detailVote, Dictionary<Integer, String> optionalAnswers){
+        ioTAppRepository.changeQuestionnaire(app.getId(), vote, detailVote);
     }
 
     // USERAPPRELATION REPOSITORY

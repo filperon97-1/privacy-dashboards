@@ -1,6 +1,13 @@
 package com.privacydashboard.application.views.questionnaireDeveloper;
 
+import com.privacydashboard.application.data.QuestionnaireVote;
+import com.privacydashboard.application.data.entity.IoTApp;
+import com.privacydashboard.application.data.service.CommunicationService;
+import com.privacydashboard.application.data.service.DataBaseService;
+import com.privacydashboard.application.security.AuthenticatedUser;
+import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -8,23 +15,35 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.util.*;
 
 @PageTitle("Questionnaire")
 @Route(value="questionnaire_developer")
-@PermitAll
+@RolesAllowed({"CONTROLLER", "DPO"})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
-public class QuestionnaireDeveloper extends AppLayout {
+public class QuestionnaireDeveloper extends AppLayout implements BeforeEnterObserver {
+    private final DataBaseService dataBaseService;
+    private final AuthenticatedUser authenticatedUser;
+    private final CommunicationService communicationService;
+    private IoTApp app;
+
     private final Tabs tabs= new Tabs();
     private final Span content= new Span();
 
@@ -41,7 +60,28 @@ public class QuestionnaireDeveloper extends AppLayout {
 
     private Integer n;    // question number
 
-    public QuestionnaireDeveloper(){
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        app=communicationService.getApp();
+        // Precompile questionnaire if there was a previous one
+        if(app.getQuestionnaireVote()!=null && app.getDetailVote()!=null){
+            for(int i=0; i<nQuestions; i++){
+                radioGroups[i].setValue(app.getDetailVote()[i]);
+            }
+        }
+
+        H1 title= new H1("Questionnaire " + app.getName());
+        title.addClassName("title-questionnaire");
+        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs);
+        sectionDrawer.addClassNames("drawer-questionnaire");
+        addToDrawer(sectionDrawer);
+    }
+
+    public QuestionnaireDeveloper(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
+        this.dataBaseService= dataBaseService;
+        this.authenticatedUser= authenticatedUser;
+        this.communicationService= communicationService;
+
         n=0;
         initializeLayout();
         section1(); // dati sensibili
@@ -78,12 +118,6 @@ public class QuestionnaireDeveloper extends AppLayout {
         }
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.addSelectedChangeListener(this::changeTab);
-
-        H1 title= new H1("Questionnaire");
-        title.addClassName("title-questionnaire");
-        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs);
-        sectionDrawer.addClassNames("drawer-questionnaire");
-        addToDrawer(sectionDrawer);
         setContent(content);
         setPrimarySection(Section.DRAWER);
     }
@@ -321,7 +355,6 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[question].addValueChangeListener(e-> {
             singleQuestion[question].removeClassNames("green", "orange", "red");
             if(green.contains(radioGroups[question].getValue())){
-                radioGroups[question].setValue("I don't know");
                 singleQuestion[question].addClassName("green");
                 return;
             }
@@ -393,6 +426,52 @@ public class QuestionnaireDeveloper extends AppLayout {
     }
 
     private void saveQuestionnaire(){
-
+        MyDialog dialog= new MyDialog();
+        dialog.setTitle("Confirm");
+        dialog.setContent(new VerticalLayout(new Span("Are you sure you want to upload the questionnaire? Any previous one will be lost")));
+        dialog.setContinueButton(new Button("Confirm", e-> {
+            evaluateAndConfirm();
+            dialog.close();
+            UI.getCurrent().navigate(Questionnaire.class);
+        }));
+        dialog.open();
     }
+
+    /*
+    DA COMPLETARE
+     */
+    private void evaluateAndConfirm(){
+        QuestionnaireVote vote= QuestionnaireVote.GREEN;
+        String[] detailVote= new String[nQuestions];
+        Dictionary<Integer, String> optionalAnswers= new Hashtable<>();
+        for(int i=0; i<nQuestions; i++){
+            /*
+            VOTE:
+            if there is a orange answer-> vote=orange
+            if there is a red answer or a not given answer(not hidden question) -> vote=red
+            otherwise -> vote=green
+             */
+            if(radioGroups[i].hasClassName("red")){
+                vote= QuestionnaireVote.RED;
+            }
+            else if(radioGroups[i].hasClassName("orange") && !vote.equals(QuestionnaireVote.RED)){
+                vote= QuestionnaireVote.ORANGE;
+            }
+            else if(!radioGroups[i].hasClassName("green") && radioGroups[i].isVisible()){ //Risposta non data e non è una domanda hidden?
+                vote= QuestionnaireVote.RED;
+            }
+
+            //DetailVote
+            detailVote[i]= radioGroups[i].getValue();
+
+            //optional answers
+            if(textAreas[i]!= null){
+                optionalAnswers.put(i, textAreas[i].getValue());
+            }
+        }
+        dataBaseService.updateQuestionnaireForApp(app, vote, detailVote, optionalAnswers);
+        Notification notification = Notification.show("Questionnaire uploaded correctly");
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    }
+
 }

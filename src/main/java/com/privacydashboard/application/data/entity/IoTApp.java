@@ -1,17 +1,18 @@
 package com.privacydashboard.application.data.entity;
 
+import com.privacydashboard.application.data.QuestionnaireVote;
+
 import javax.persistence.*;
-//import java.util.Set;
+import java.util.Dictionary;
 
 @Entity
 @Table(name= "iot_app")
 public class IoTApp extends AbstractEntity{
     private String name;
     private String description;
-    /*@ManyToMany
-    @JoinColumn(name = "controller_id")
-    private Set<User> dataControllers;
-    private Set<User> DPOs;*/
+    private QuestionnaireVote questionnaireVote;
+    private String[] detailVote;
+    //private Dictionary<Integer, String> optionalAnswers;
 
     public String getName() {
         return name;
@@ -25,16 +26,22 @@ public class IoTApp extends AbstractEntity{
     public void setDescription(String description) {
         this.description = description;
     }
-    /*public Set<User> getDataControllers() {
-        return dataControllers;
+    public QuestionnaireVote getQuestionnaireVote() {
+        return questionnaireVote;
     }
-    public void setDataControllers(Set<User> dataControllers) {
-        this.dataControllers = dataControllers;
+    public void setQuestionnaireVote(QuestionnaireVote questionnaireVote) {
+        this.questionnaireVote = questionnaireVote;
     }
-    public Set<User> getDPOs() {
-        return DPOs;
+    public String[] getDetailVote() {
+        return detailVote;
     }
-    public void setDPOs(Set<User> DPOs) {
-        this.DPOs = DPOs;
+    public void setDetailVote(String[] detailVote) {
+        this.detailVote = detailVote;
+    }
+    /*public Dictionary<Integer, String> getOptionalAnswers() {
+        return optionalAnswers;
+    }
+    public void setOptionalAnswers(Dictionary<Integer, String> optionalAnswers) {
+        this.optionalAnswers = optionalAnswers;
     }*/
 }

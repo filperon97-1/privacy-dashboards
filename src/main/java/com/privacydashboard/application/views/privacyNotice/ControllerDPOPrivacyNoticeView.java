@@ -18,6 +18,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -31,7 +32,7 @@ import java.util.List;
 @PageTitle("PrivacyNotice")
 @Route(value="controller_privacyNotice", layout = MainLayout.class)
 @RolesAllowed({"CONTROLLER", "DPO"})
-public class ControllerDPOPrivacyNoticeView extends VerticalLayout implements AfterNavigationObserver {
+public class ControllerDPOPrivacyNoticeView extends Div implements AfterNavigationObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;

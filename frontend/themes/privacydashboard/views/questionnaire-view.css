@@ -56,10 +56,19 @@
     background-color:#3cb371;
 }
 
-.orange{
-    background-color:#ffa500;
+.greenName{
+    color:#3cb371;
 }
 
-.red{
-    background-color:#ff0000;
+.orangeName{
+    color:#ffa500;
+}
+
+.redName{
+    color:#ff0000;
+}
+
+.linkQuestionnaire:hover{
+    cursor: pointer;
+    text-decoration: underline;
 }

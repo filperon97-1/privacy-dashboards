@@ -1,5 +1,6 @@
 package com.privacydashboard.application.data.generator;
 
+import com.privacydashboard.application.data.QuestionnaireVote;
 import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
@@ -62,10 +63,14 @@ public class DataGenerator {
                 apps[i]= new IoTApp();
                 apps[i].setDescription("description" + String.valueOf(i));
                 apps[i].setName("appppp" + String.valueOf(i));
+                if(i==0){
+                    apps[0].setQuestionnaireVote(QuestionnaireVote.GREEN);
+                }
                 //apps[i].setDataController(controller[i]);
                 ioTAppRepository.save(apps[i]);
 
             }
+
 
             //AGGIUNTA USERAPPRELATION
 
