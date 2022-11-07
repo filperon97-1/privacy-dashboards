@@ -10,7 +10,6 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
-import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacyNoticeView;
 import com.privacydashboard.application.views.privacyNotice.SinglePrivacyNoticeView;
 import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
 import com.vaadin.flow.component.UI;

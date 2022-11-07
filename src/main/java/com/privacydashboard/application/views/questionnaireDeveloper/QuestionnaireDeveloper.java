@@ -16,9 +16,9 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.annotation.security.PermitAll;
+import java.util.*;
 
 @PageTitle("Questionnaire")
 @Route(value="questionnaire_developer")
@@ -39,15 +39,14 @@ public class QuestionnaireDeveloper extends AppLayout {
     private final TextArea[] textAreas= new TextArea[nQuestions];
     private final VerticalLayout[] singleQuestion= new VerticalLayout[nQuestions];
 
-    private Integer n=0;    // question number
+    private Integer n;    // question number
 
-    Logger logger = LoggerFactory.getLogger(getClass());
     public QuestionnaireDeveloper(){
+        n=0;
         initializeLayout();
         section1(); // dati sensibili
         section2(); // sicurezza
-        section3(); // open source
-        //section4(); // licenze, tools e test
+        section3(); // test e certificazioni
 
         content.add(sections[0]);   // first section to be shown
     }
@@ -82,7 +81,6 @@ public class QuestionnaireDeveloper extends AppLayout {
 
         H1 title= new H1("Questionnaire");
         title.addClassName("title-questionnaire");
-
         com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs);
         sectionDrawer.addClassNames("drawer-questionnaire");
         addToDrawer(sectionDrawer);
@@ -98,6 +96,7 @@ public class QuestionnaireDeveloper extends AppLayout {
         titles[n].add(new Span("Have you identified all the personal data that are going to be processed?"), icons[n]);
         contextMenus[n].addItem("According to the GDPR, personal data has to be processed in a particular and restricted way, so it it important to identify which are the personal dara that are going to be processed");
         radioGroups[n].setItems("Yes", "No", "I don't know");
+        manageChangeColorQuestion(n, Collections.singletonList("Yes"), Collections.emptyList(), Arrays.asList("No", "I don't know"));
         n++;
 
         // Sono soltanto i dati strettamente necessari al funzionamento? (hidden question)
@@ -304,45 +303,36 @@ public class QuestionnaireDeveloper extends AppLayout {
         radioGroups[n].setItems("Yes", "No", "I don't know");
         n++;
 
-        logger.info(String.valueOf(n));
-        /*
-        //
-        titles[n].add(new Span(""), icons[n]);
-        contextMenus[n].addItem(createInfo("GDPR Article 32", " the controller and the processor shall implement appropriate technical and organisational measures to ensure a level of security appropriate to the risk"));
-        radioGroups[n].setItems();
-        n++;
-         */
-
-
-        /*
-        In terms of database management, good practices include:
-
-    using nominative accounts for database access and create specific accounts for each application;
-    revoking the administrative privileges of user or application accounts to avoid modification to database structure (table, vues, process, etc);
-    having protection against SQL or script injection attacks;
-    encouraging at rest disk and database encryption.
-
-         */
-
         createSectionLayout(begin, n, 2);
         createButtonsLayout(true, false, true, 2);
-    }
-
-
-    // SEZIONE 4: LICENZE
-    private void section4(){
-        int begin=n;
-
-
-
-        createSectionLayout(begin, n, 3);
-        createButtonsLayout(true, false, true, 3);
     }
 
     private void setHiddenQuestion(int question, int previousQuestion, String value){
         singleQuestion[question].setVisible(false);
         singleQuestion[question].addClassName("singleQuestionHidden-questionnaire");
         radioGroups[previousQuestion].addValueChangeListener(e-> singleQuestion[question].setVisible(value.equals(e.getValue())));
+    }
+
+    /*
+    Each question has 3 different groups of answers: good answers(green), mediocre answers(orange) and bad answers(red).
+    Based on the given answer, the section will change color accordingly
+    */
+    private void manageChangeColorQuestion(int question, List<String> green, List<String> orange, List<String> red){
+        radioGroups[question].addValueChangeListener(e-> {
+            singleQuestion[question].removeClassNames("green", "orange", "red");
+            if(green.contains(radioGroups[question].getValue())){
+                radioGroups[question].setValue("I don't know");
+                singleQuestion[question].addClassName("green");
+                return;
+            }
+            if(orange.contains(radioGroups[question].getValue())){
+                singleQuestion[question].addClassName("orange");
+                return;
+            }
+            if(red.contains(radioGroups[question].getValue())){
+                singleQuestion[question].addClassName("red");
+            }
+        });
     }
 
     private void createSectionLayout(int begin, int end, int section){
@@ -355,6 +345,11 @@ public class QuestionnaireDeveloper extends AppLayout {
         }
     }
 
+    /*
+    Left=true -> there is a previous page therefore there is a button that let you go in that page
+    Right=true -> there is a next page therefore there is a button that let you go in that page
+    End=true -> the last page, there is the 'Save' button
+     */
     private void createButtonsLayout(boolean left, boolean right, boolean end, int section){
         HorizontalLayout layout= new HorizontalLayout();
         layout.addClassName("buttonLayout-questionnaire");

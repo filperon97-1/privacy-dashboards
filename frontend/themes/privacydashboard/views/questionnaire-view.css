@@ -51,3 +51,15 @@
 .activeButton-questionnaire{
     color: black;
 }
+
+.green{
+    background-color:#3cb371;
+}
+
+.orange{
+    background-color:#ffa500;
+}
+
+.red{
+    background-color:#ff0000;
+}

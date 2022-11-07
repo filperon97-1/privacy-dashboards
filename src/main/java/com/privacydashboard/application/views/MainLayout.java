@@ -13,6 +13,7 @@ import com.privacydashboard.application.views.mainLayout.NotificationView;
 import com.privacydashboard.application.views.mainLayout.ProfileView;
 import com.privacydashboard.application.views.privacyNotice.ControllerDPOPrivacyNoticeView;
 import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
+import com.privacydashboard.application.views.questionnaireDeveloper.Questionnaire;
 import com.privacydashboard.application.views.questionnaireDeveloper.QuestionnaireDeveloper;
 import com.privacydashboard.application.views.rights.ControllerDPORightsView;
 import com.privacydashboard.application.views.rights.SubjectRightsView;
@@ -158,7 +159,7 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("PrivacyNotice", "las la-school", SubjectPrivacyNoticeView.class),  //ONLY FOR SUBJECTS
 
-                new MenuItemInfo("Questionnaire", "las la-school", QuestionnaireDeveloper.class),  //ONLY FOR SUBJECTS
+                new MenuItemInfo("Questionnaire", "las la-school", Questionnaire.class)
 
         };
     }
