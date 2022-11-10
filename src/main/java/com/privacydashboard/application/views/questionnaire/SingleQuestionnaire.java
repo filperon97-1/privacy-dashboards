@@ -112,7 +112,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         setContent(content);
         setPrimarySection(Section.DRAWER);
 
-        goBackbutton.addClassName("goBackButton");
+        goBackbutton.addClassName("goBackButton-questionnaire");
     }
 
     // SEZIONE 1: DATI SENSIBILI

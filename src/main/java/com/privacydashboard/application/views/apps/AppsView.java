@@ -15,6 +15,8 @@ import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNotice
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -33,6 +35,7 @@ import java.util.List;
 @PageTitle("Apps")
 @Route(value = "apps-view", layout = MainLayout.class)
 @PermitAll
+@NpmPackage(value = "line-awesome", version = "1.3.0")
 public class AppsView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
@@ -89,13 +92,14 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
 
     private VerticalLayout initializeApp(IoTApp i){
         Span description= new Span(i.getDescription());
+        Div vote= getEvaluation(i);
         Span privacyNotice= new Span("Privacy Notice");
         privacyNotice.addClassName("link");
         privacyNotice.addClickListener(e-> goToPrivacyNotice(i));
         Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
         Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
 
-        VerticalLayout content=new VerticalLayout(description, privacyNotice, controllerDetails, DPODetails);
+        VerticalLayout content=new VerticalLayout(description, vote, privacyNotice, controllerDetails, DPODetails);
         if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
             content.add(new Details("Consenses: " , getConsenses(i)));
         }
@@ -104,6 +108,44 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         }
         return content;
     }
+
+    private Div getEvaluation(IoTApp app){
+        Span icon= new Span();
+        icon.addClassNames("las la-info-circle");
+        icon.addClassName("pointer");
+        ContextMenu contextMenu= new ContextMenu();
+        contextMenu.setTarget(icon);
+        contextMenu.setOpenOnClick(true);
+        contextMenu.addClassName("info");
+        Span descr= new Span("Evaluation: ");
+        Span vote=new Span();
+
+        if(app.getQuestionnaireVote()==null){
+            vote.setText("NO EVALUATION YET");
+            vote.addClassName("redName");
+            contextMenu.addItem("The questionnaire to evaluate this app hasn't been performed yet");
+        }
+        else{
+            switch (app.getQuestionnaireVote()){
+                case RED:
+                    vote.setText("RED ");
+                    vote.addClassName("redName");
+                    contextMenu.addItem("The app is not compliant with the GDPR");
+                    break;
+                case ORANGE:
+                    vote.setText("ORANGE ");
+                    vote.addClassName("orangeName");
+                    contextMenu.addItem("The app is not so compliant with the GDPR");
+                    break;
+                case GREEN:
+                    vote.setText("GREEN ");
+                    vote.addClassName("greenName");
+                    contextMenu.addItem("The app is compliant with the GDPR");
+                    break;
+            }
+        }
+        return new Div(descr, vote, icon);
+        }
 
     private void goToPrivacyNotice(IoTApp i){
         communicationService.setPrivacyNotice(dataBaseService.getPrivacyNoticeFromApp(i));
