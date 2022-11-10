@@ -11,6 +11,7 @@ public class IoTApp extends AbstractEntity{
     private String name;
     private String description;
     private QuestionnaireVote questionnaireVote;
+
     private String[] detailVote;
     @Lob
     private Hashtable<Integer, String> optionalAnswers;

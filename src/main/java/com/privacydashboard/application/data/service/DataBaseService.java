@@ -87,8 +87,20 @@ public class DataBaseService {
         return userAppRelationRepository.getIoTAppsFromUser(user);
     }
 
+    public List<IoTApp> getUserAppsWithVote(User user){
+        List<IoTApp> appList= userAppRelationRepository.getIoTAppsFromUser(user);
+        appList.removeIf(app -> app.getQuestionnaireVote() == null);
+        return appList;
+    }
+
     public List<IoTApp> getUserAppsByName(User user, String name){
         return userAppRelationRepository.getIoTAppsFromUserFilterByName(user, name);
+    }
+
+    public List<IoTApp> getUserAppsWithVoteByName(User user, String name){
+        List<IoTApp> appList= userAppRelationRepository.getIoTAppsFromUserFilterByName(user, name);
+        appList.removeIf(app -> app.getQuestionnaireVote() == null);
+        return appList;
     }
 
     public List<String> getConsensesFromUserAndApp(User user, IoTApp app){

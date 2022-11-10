@@ -28,9 +28,6 @@
 }
 
 .singleQuestionHidden-questionnaire{
-    /*background-color: white;
-    border-radius: var(--lumo-border-radius);
-    box-shadow: var(--lumo-box-shadow-xs);*/
     max-width:95%;
     margin-left: calc(var(--lumo-space-l) * 1.5)
 }
@@ -41,7 +38,6 @@
     margin: auto;
     display:flex;
     justify-content: space-between;
-
 }
 
 .button-questionnaire{
@@ -54,6 +50,14 @@
 
 .green{
     background-color:#3cb371;
+}
+
+.orange{
+    background-color:#ffa500;
+}
+
+.red{
+    background-color:#ff0000;
 }
 
 .greenName{
@@ -71,4 +75,13 @@
 .linkQuestionnaire:hover{
     cursor: pointer;
     text-decoration: underline;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.goBackButton{
+    margin-left: calc(0.5*var(--lumo-size-s));
+    width:40%;
 }

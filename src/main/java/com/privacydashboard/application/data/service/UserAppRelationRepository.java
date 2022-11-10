@@ -1,5 +1,6 @@
 package com.privacydashboard.application.data.service;
 
+import com.privacydashboard.application.data.QuestionnaireVote;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
