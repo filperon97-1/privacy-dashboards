@@ -321,4 +321,14 @@ public class DataBaseService {
             addNowRequest(request);
         }
     }
+
+    public void removeEverythingFromUserAndApp(User user, IoTApp app){
+        RightRequest request=new RightRequest();
+        request.setHandled(false);
+        request.setRightType(RightType.DELTEEVERYTHING);
+        request.setReceiver(getControllersFromApp(app).get(0));
+        request.setSender(user);
+        request.setApp(app);
+        addNowRequest(request);
+    }
 }

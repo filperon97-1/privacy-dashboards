@@ -12,6 +12,7 @@ import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.privacyNotice.SinglePrivacyNoticeView;
 import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
+import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
@@ -21,6 +22,8 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -102,6 +105,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         VerticalLayout content=new VerticalLayout(description, vote, privacyNotice, controllerDetails, DPODetails);
         if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
             content.add(new Details("Consenses: " , getConsenses(i)));
+            content.add(new Button("Remove everything", e->removeEverything(i)));
         }
         else{
             content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
@@ -208,6 +212,20 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         request.setHandled(false);
         communicationService.setRightRequest(request);
         UI.getCurrent().navigate("rights");
+    }
+
+    private void removeEverything(IoTApp app){
+        MyDialog dialog= new MyDialog();
+        Button confirm=new Button("Confirm", e-> {dataBaseService.removeEverythingFromUserAndApp(authenticatedUser.getUser(), app);
+            Notification notification = Notification.show("The request has been sent to the Data Controllers!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            dialog.close();});
+
+        dialog.setContinueButton(confirm);
+        dialog.setTitle("Confirm to remove everything");
+        dialog.setContent(
+                new VerticalLayout(new Span("Are you sure you want to remove all your personal information from the app " +  app.getName() + "?")));
+        dialog.open();
     }
 
     private void updateGrid(){

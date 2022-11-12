@@ -88,7 +88,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         messageLink.addClickListener(e->UI.getCurrent().navigate(SingleConversationView.class));
         return new VerticalLayout(new Span("Name: " + contact.getName()),
                                   new Span("Role: Data " +contact.getRole()),
-                                  new Span("Mail: "+ (contact.getMail()==null ? "" : contact.getMail())),
+                                  new Span("Mail: "+ (contact.getMail()==null ? "There's no mail yet" : contact.getMail())),
                                   messageLink,
                                   new Details("Apps:" , getApps(contact)));
     }
