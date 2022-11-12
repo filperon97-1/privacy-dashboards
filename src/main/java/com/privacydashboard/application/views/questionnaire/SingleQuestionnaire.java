@@ -23,6 +23,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
 import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
@@ -516,6 +517,12 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
             Span question= new Span(((Span) titles[i].getComponentAt(0)).getText());
             question.addClassName("bold");
             VerticalLayout answer=new VerticalLayout(question, new Span("YOUR ANSWER:  " + (radioGroups[i].getValue()==null ? "NO ANSWER" : radioGroups[i].getValue())));
+            if(textAreas[i]!=null && !textAreas[i].getValue().equals("")){
+                TextArea textArea= new TextArea();
+                textArea.setValue(textAreas[i].getValue());
+                textArea.setReadOnly(true);
+                answer.add(textArea);
+            }
             answer.addClassName("singleQuestion-questionnaire");
 
             if(singleQuestion[i].hasClassName("green")){

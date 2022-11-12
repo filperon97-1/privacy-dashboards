@@ -1,0 +1,25 @@
+.home-view{
+     display: grid;
+}
+
+.home-view .section{
+    height:width;
+    background-color: white;
+    border-radius: var(--lumo-border-radius);
+    box-shadow: var(--lumo-box-shadow-xs);
+    margin: var(--lumo-space-l);
+    /*padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);*/
+}
+
+.home-view .section:hover{
+    background-color: gray;
+    font-weight: bold;
+}
+
+.home-view .title{
+    font-size:var(--lumo-font-size-l);
+}
+
+.home-view .section:hover .title{
+    font-size:var(--lumo-font-size-xl);
+}

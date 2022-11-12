@@ -142,7 +142,7 @@ public class MainLayout extends AppLayout {
 
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[]{ //
-                new MenuItemInfo("Home", "la la-file", HomeView.class), //
+                new MenuItemInfo("Home", "las la-home", HomeView.class), //
 
                 new MenuItemInfo("Contacts", "las la-address-book", ContactsView.class), //
 
@@ -154,11 +154,11 @@ public class MainLayout extends AppLayout {
 
                 new MenuItemInfo("Apps", "la la-list", AppsView.class), //
 
-                new MenuItemInfo("PrivacyNotice", "las la-school", ControllerDPOPrivacyNoticeView.class),  //ONLY FOR CONTROLLERS AND DPOS
+                new MenuItemInfo("PrivacyNotice", "la la-file", ControllerDPOPrivacyNoticeView.class),  //ONLY FOR CONTROLLERS AND DPOS
 
-                new MenuItemInfo("PrivacyNotice", "las la-school", SubjectPrivacyNoticeView.class),  //ONLY FOR SUBJECTS
+                new MenuItemInfo("PrivacyNotice", "la la-file", SubjectPrivacyNoticeView.class),  //ONLY FOR SUBJECTS
 
-                new MenuItemInfo("Questionnaire", "las la-school", Questionnaire.class)
+                new MenuItemInfo("Questionnaire", "las la-archive", Questionnaire.class)
 
         };
     }
