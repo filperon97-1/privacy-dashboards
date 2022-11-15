@@ -1,7 +1,6 @@
 package com.privacydashboard.application.views.rights;
 
 import com.privacydashboard.application.data.RightType;
-import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
@@ -54,6 +53,12 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         if(request!= null){
             priorityRight=request;
             showRequestList(priorityRight.getHandled());
+            return;
+        }
+        // show Pending Requests (action available from Home)
+        Boolean open= communicationService.getOpenPendingRequests();
+        if(open!=null && open){
+            showRequestList(false);
         }
     }
 

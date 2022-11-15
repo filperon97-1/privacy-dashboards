@@ -12,7 +12,9 @@
 }
 
 .home-view .section:hover{
-    background-color: gray;
+    /*background-color: #95959C;*/
+    /*background-color: #80819A;*/
+    background-color: #7E98BA;
     font-weight: bold;
 }
 
@@ -22,4 +24,12 @@
 
 .home-view .section:hover .title{
     font-size:var(--lumo-font-size-xl);
+}
+
+.home-view .section:hover .icons{
+    color:black;
+}
+
+.home-view .icons{
+    color: gray;
 }

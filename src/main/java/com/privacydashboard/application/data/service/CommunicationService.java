@@ -145,4 +145,14 @@ public class CommunicationService {
     public void setPrivacyNoticeNotification(Notification notification){
         ComponentUtil.setData(UI.getCurrent(), "PrivacyNoticeNotification", notification);
     }
+
+    public void setOpenPendingRequests(Boolean open){
+        ComponentUtil.setData(UI.getCurrent(), "openPendingRequest", open);
+    }
+
+    public Boolean getOpenPendingRequests(){
+        Boolean open= (Boolean) ComponentUtil.getData(UI.getCurrent(), "openPendingRequest");
+        ComponentUtil.setData(UI.getCurrent(), "openPendingRequest", null);
+        return open;
+    }
 }

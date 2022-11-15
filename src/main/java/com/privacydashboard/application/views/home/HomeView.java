@@ -1,10 +1,8 @@
 package com.privacydashboard.application.views.home;
 
 import com.privacydashboard.application.data.Role;
-import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
-import com.privacydashboard.application.data.service.UserService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -14,12 +12,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import javax.annotation.security.PermitAll;
 import java.util.Arrays;
-import java.util.List;
 
 @PageTitle("Home")
 @Route(value = "", layout = MainLayout.class)
@@ -47,19 +42,9 @@ public class HomeView extends VerticalLayout {
 
         createSections();
 
-
-
-
-
-        /*add(new HorizontalLayout(layouts[0], layouts[1], layouts[2]));
-        add(new HorizontalLayout(layouts[3], layouts[4], layouts[5]));*/
         for(int i=0;i<nRows;i++){
             add(new HorizontalLayout(Arrays.copyOfRange(layouts, i*nSection/nRows, (i+1)*nSection/nRows)));
         }
-
-
-        // DIVIDERE IN VARIE SEZIONI: CONTACTS, MESSAGES, APPS, RIGHTS, PRIVACY NOTICE, QUESTIONNAIRE (per Controllers),
-
     }
 
     private void initializeLayout(){
@@ -69,7 +54,7 @@ public class HomeView extends VerticalLayout {
             titles[i]= new Span();
             titles[i].addClassName("title");
             icons[i]= new Div();
-            icons[i].addClassNames("las la-10x");
+            icons[i].addClassNames("las la-10x icons");
             layouts[i].add(titles[i], icons[i]);
             layouts[i].setAlignItems(Alignment.CENTER);
         }
@@ -87,6 +72,13 @@ public class HomeView extends VerticalLayout {
         else{
             createSingleSection(2, "Rights", "rights", "la-school");
             createSingleSection(4, "Privacy Notice", "subject_privacyNotice", "la-file");
+
+            titles[5].setText("Pending Requests");
+            layouts[5].addClickListener((e->{
+                communicationService.setOpenPendingRequests(true);
+                UI.getCurrent().navigate("rights");
+            }));
+            icons[5].addClassName("la-archive");
         }
 
     }
