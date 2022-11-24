@@ -11,7 +11,7 @@ public class IoTApp extends AbstractEntity{
     private String name;
     private String description;
     private QuestionnaireVote questionnaireVote;
-
+    @Column(length=2000)
     private String[] detailVote;
     @Lob
     private Hashtable<Integer, String> optionalAnswers;
@@ -38,7 +38,7 @@ public class IoTApp extends AbstractEntity{
         return detailVote;
     }
     public void setDetailVote(String[] detailVote) {
-        this.detailVote = detailVote;
+        this.detailVote=detailVote;
     }
     public Hashtable<Integer, String> getOptionalAnswers() {
         return optionalAnswers;
