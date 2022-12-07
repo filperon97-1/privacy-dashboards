@@ -39,9 +39,7 @@ public class HomeView extends VerticalLayout {
         addClassName("home-view");
 
         initializeLayout();
-
         createSections();
-
         for(int i=0;i<nRows;i++){
             add(new HorizontalLayout(Arrays.copyOfRange(layouts, i*nSection/nRows, (i+1)*nSection/nRows)));
         }

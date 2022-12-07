@@ -76,8 +76,31 @@ public class DataBaseService {
         return ioTAppRepository.findById(id);
     }
 
+    public void addApp(IoTApp app){
+        ioTAppRepository.save(app);
+    }
+
+    public void deleteApp(UUID id){
+        ioTAppRepository.deleteById(id);
+    }
+
+    /**
+     * if 1 parameter is null, that parameter is not gonna change
+     */
+    public void changeNameAndDescriptionForApp(IoTApp app, String name, String description){
+        String newName= name==null ? app.getName() : name;
+        String newDescription= description==null ? app.getDescription() : description;
+        ioTAppRepository.changeNameAndDescription(app.getId(), newName, newDescription);
+    }
+
+    /**
+     * if 1 parameter is null, that parameter is not gonna change
+     */
     public void updateQuestionnaireForApp(IoTApp app, QuestionnaireVote vote, String[] detailVote, Hashtable<Integer, String> optionalAnswers){
-        ioTAppRepository.changeQuestionnaire(app.getId(), vote, detailVote, optionalAnswers);
+        QuestionnaireVote newVote= vote==null ? app.getQuestionnaireVote() : vote;
+        String[] newDetailVote= detailVote==null ? app.getDetailVote() : detailVote;
+        Hashtable<Integer, String> newOptionalAnswers= optionalAnswers==null ? app.getOptionalAnswers() : optionalAnswers;
+        ioTAppRepository.changeQuestionnaire(app.getId(), newVote, newDetailVote, newOptionalAnswers);
     }
 
     // USERAPPRELATION REPOSITORY
