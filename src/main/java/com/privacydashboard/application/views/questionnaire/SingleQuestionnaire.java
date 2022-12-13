@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views.questionnaire;
 
+import com.privacydashboard.application.data.GlobalVariables;
 import com.privacydashboard.application.data.QuestionnaireVote;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.service.CommunicationService;
@@ -48,13 +49,12 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
     private final VerticalLayout[] sections= new VerticalLayout[nSections];
     private final Button goBackbutton= new Button("Go back", e->goBack());
 
-    private final Integer nQuestions= 30;
-    private final Div[] titles= new Div[nQuestions];
-    private final RadioButtonGroup<String>[] radioGroups= new RadioButtonGroup[nQuestions];
-    private final Span[] icons= new Span[nQuestions];
-    private final ContextMenu[] contextMenus= new ContextMenu[nQuestions];
-    private final TextArea[] textAreas= new TextArea[nQuestions];
-    private final VerticalLayout[] singleQuestion= new VerticalLayout[nQuestions];
+    private final Div[] titles= new Div[GlobalVariables.nQuestions];
+    private final RadioButtonGroup<String>[] radioGroups= new RadioButtonGroup[GlobalVariables.nQuestions];
+    private final Span[] icons= new Span[GlobalVariables.nQuestions];
+    private final ContextMenu[] contextMenus= new ContextMenu[GlobalVariables.nQuestions];
+    private final TextArea[] textAreas= new TextArea[GlobalVariables.nQuestions];
+    private final VerticalLayout[] singleQuestion= new VerticalLayout[GlobalVariables.nQuestions];
 
     private Integer n;    // question number
 
@@ -81,7 +81,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
     }
 
     private void initializeLayout(){
-        for(int i=0; i<nQuestions; i++){
+        for(int i=0; i<GlobalVariables.nQuestions; i++){
             icons[i]=new Span();
             icons[i].addClassNames("las la-info-circle");
             icons[i].addClassName("pointer");
@@ -508,7 +508,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         VerticalLayout redLayout = new VerticalLayout();
         int greenN=0, orangeN=0, redN=0;
 
-        for(int i=0; i<nQuestions; i++){
+        for(int i=0; i<GlobalVariables.nQuestions; i++){
             if(!singleQuestion[i].isVisible()){
                 continue;
             }
@@ -571,7 +571,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
     }
 
     private void saveQuestionnaire(){
-        String[] detailVote= new String[nQuestions];
+        String[] detailVote= new String[GlobalVariables.nQuestions];
         Hashtable<Integer, String> optionalAnswers= new Hashtable<>();
         AtomicReference<QuestionnaireVote> vote = new AtomicReference<>();
         evaluateAndConfirm(vote, detailVote, optionalAnswers);
@@ -598,7 +598,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
 
     private void evaluateAndConfirm(AtomicReference<QuestionnaireVote> vote, String[] detailVote, Hashtable<Integer, String> optionalAnswers){
         vote.set(QuestionnaireVote.GREEN);
-        for(int i=0; i<nQuestions; i++){
+        for(int i=0; i<GlobalVariables.nQuestions; i++){
             /*
             VOTE:
             if there is a orange answer-> vote=orange
@@ -633,7 +633,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         }
         // Precompile questionnaire if there was a previous one
         if(app.getQuestionnaireVote()!=null && app.getDetailVote()!=null){
-            for(int i=0; i<nQuestions; i++){
+            for(int i=0; i<GlobalVariables.nQuestions; i++){
                 radioGroups[i].setValue(app.getDetailVote()[i]);
                 if(textAreas[i]!=null && app.getOptionalAnswers()!=null){
                     textAreas[i].setValue(app.getOptionalAnswers().get(i));

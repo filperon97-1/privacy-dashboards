@@ -50,25 +50,25 @@ public class DataBaseService {
         return userRepository.findById(id);
     }
 
-    // MESSAGE REPOSITORY
-
-    public List<Message> getConversationFromUsers(User user1, User user2){
-        return messageRepository.getConversationFromUsers(user1, user2);
+    public void addUser(User user){
+        userRepository.save(user);
     }
 
-    public List<User> getUserConversationFromUser(User user){
-        return messageRepository.getUserConversationFromUser(user);
+    public void deleteUser(UUID id){
+        userRepository.deleteById(id);
     }
 
-    public List<User> getUserConversationFromUserFilterByName(User user, String name){
-        return messageRepository.getUserConversationFromUserFilterByName(user, name);
+    /**
+     * if 1 parameter is null, that parameter is not gonna change
+     */
+    public void changeValuesForUser(User user, String name, String hashedPassword, String mail){
+        String newName= name==null ? user.getName() : name;
+        String newHashedPassword= hashedPassword==null ? user.getHashedPassword() : hashedPassword;
+        String newMail= mail==null ? user.getMail() : mail;
+        userRepository.changeValues(user.getId(), newName, newHashedPassword, newMail);
     }
 
-    public void addNowMessage(Message message){
-        message.setTime(LocalDateTime.now());
-        messageRepository.save(message);
-        addNotification(message, "Message", message.getReceiver(), message.getSender(), message.getSender().getName() + " sent you a message");
-    }
+
 
     // IOTAPP REPOSITORY
 
@@ -105,6 +105,14 @@ public class DataBaseService {
 
     // USERAPPRELATION REPOSITORY
 
+    public Optional<UserAppRelation> getUserAppRelation(UUID id){
+        return userAppRelationRepository.findById(id);
+    }
+
+    public UserAppRelation getUserAppRelationByUserAndApp(User user, IoTApp app){
+        return userAppRelationRepository.findByUserAndApp(user, app);
+    }
+
     public List<IoTApp> getUserApps(User user){
         return userAppRelationRepository.getIoTAppsFromUser(user);
     }
@@ -126,7 +134,29 @@ public class DataBaseService {
     }
 
     public List<String> getConsensesFromUserAndApp(User user, IoTApp app){
-        return userAppRelationRepository.findByUserAndApp(user, app).getConsenses();
+        UserAppRelation userAppRelation=userAppRelationRepository.findByUserAndApp(user, app);
+        if(userAppRelation==null){
+            return null;
+        }
+        return userAppRelation.getConsenses();
+    }
+
+    public void removeConsensesFromUserAppRelation(UserAppRelation userAppRelation, List<String> consenses){
+        List<String> actualConsenses= userAppRelation.getConsenses();
+        for(String consens : consenses){
+            actualConsenses.remove(consens);
+        }
+        userAppRelationRepository.updateConsenses(userAppRelation.getId(), actualConsenses);
+    }
+
+    public void removeAllConsenses(UserAppRelation userAppRelation){
+        userAppRelationRepository.updateConsenses(userAppRelation.getId(), null);
+    }
+
+    public void addConsenses(UserAppRelation userAppRelation, List<String> consenses){
+        List<String> actualConsenses= userAppRelation.getConsenses();
+        actualConsenses.addAll(consenses);
+        userAppRelationRepository.updateConsenses(userAppRelation.getId(), actualConsenses);
     }
 
     public List<User> getUsersFromApp(IoTApp app){
@@ -189,10 +219,38 @@ public class DataBaseService {
         }
     }
 
+    // MESSAGE REPOSITORY
+
+    public Optional<Message> getMessageFromID(UUID id){
+        return messageRepository.findById(id);
+    }
+
+    public List<Message> getConversationFromUsers(User user1, User user2){
+        return messageRepository.getConversationFromUsers(user1, user2);
+    }
+
+    public List<User> getUserConversationFromUser(User user){
+        return messageRepository.getUserConversationFromUser(user);
+    }
+
+    public List<User> getUserConversationFromUserFilterByName(User user, String name){
+        return messageRepository.getUserConversationFromUserFilterByName(user, name);
+    }
+
+    public void addMessage(Message message){
+        messageRepository.save(message);
+        addNotification(message, "Message", message.getReceiver(), message.getSender(), message.getSender().getName() + " sent you a message");
+    }
+
+    public void addNowMessage(Message message){
+        message.setTime(LocalDateTime.now());
+        messageRepository.save(message);
+        addNotification(message, "Message", message.getReceiver(), message.getSender(), message.getSender().getName() + " sent you a message");
+    }
+
     // RIGHT REQUEST REPOSITORY
     public RightRequest getRequestFromId(UUID id){
         return rightRequestRepository.findById(id).isPresent() ? rightRequestRepository.findById(id).get() : null;
-
     }
 
     public List<RightRequest> getAllRequestsFromReceiver(User user){
@@ -207,6 +265,10 @@ public class DataBaseService {
         return rightRequestRepository.findAllByReceiverAndHandledOrderByTimeDesc(user, true);
     }
 
+    public List<RightRequest> getAllRequestsFromSender(User user){
+        return rightRequestRepository.findAllBySenderOrderByTimeDesc(user);
+    }
+
     public List<RightRequest> getPendingRequestsFromSender(User user){
         return rightRequestRepository.findAllBySenderAndHandledOrderByTimeDesc(user, false);
     }
@@ -215,10 +277,14 @@ public class DataBaseService {
         return rightRequestRepository.findAllBySenderAndHandledOrderByTimeDesc(user, true);
     }
 
-    public void addNowRequest(RightRequest request){
-        request.setTime(LocalDateTime.now());
+    public void addRequest(RightRequest request){
         rightRequestRepository.save(request);
         addNotification(request, "Request", request.getReceiver(), request.getSender(), request.getSender().getName() + " sent you a right request");
+    }
+
+    public void addNowRequest(RightRequest request){
+        request.setTime(LocalDateTime.now());
+        addRequest(request);
     }
 
     public void changeRightRequest(RightRequest request){
@@ -226,10 +292,19 @@ public class DataBaseService {
         addNotification(request, "Request", request.getSender(), request.getReceiver(), request.getReceiver().getName() + " changed the status of a request");
     }
 
+    public void changeValuesOfRightRequest(RightRequest request){
+        rightRequestRepository.changeValuesOfRequest(request.getId(), request.getOther(), request.getDetails());
+        addNotification(request, "Request", request.getReceiver(), request.getSender(), request.getSender().getName() + " changed the status of a request");
+    }
+
+    public void deleteRequest(RightRequest request){
+        rightRequestRepository.deleteById(request.getId());
+    }
+
     // PRIVACYPOLICY REPOSITORY
 
-    public PrivacyNotice getPrivacyNoticeFromId(UUID id){
-        return privacyNoticeRepository.findById(id).isPresent() ? privacyNoticeRepository.findById(id).get() : null;
+    public Optional<PrivacyNotice> getPrivacyNoticeFromId(UUID id){
+        return privacyNoticeRepository.findById(id);
     }
 
     public PrivacyNotice getPrivacyNoticeFromApp(IoTApp app){
@@ -258,6 +333,10 @@ public class DataBaseService {
         return true;
     }
 
+    public void deletePrivacyNotice(PrivacyNotice privacyNotice){
+        privacyNoticeRepository.delete(privacyNotice);
+    }
+
     public void changePrivacyNoticeForApp(IoTApp app, String text){
         PrivacyNotice privacyNotice=privacyNoticeRepository.findByApp(app);
         if(privacyNotice==null){
@@ -273,6 +352,14 @@ public class DataBaseService {
 
     // NOTIFICATION REPOSITORY
 
+    public Optional<Notification> getNotificationFromId(UUID id){
+        return notificationRepository.findById(id);
+    }
+
+    public void addNotification(Notification notification){
+        notificationRepository.save(notification);
+    }
+
     public void addNowNotification(Notification notification){
         notification.setTime(LocalDateTime.now());
         notificationRepository.save(notification);
@@ -286,8 +373,16 @@ public class DataBaseService {
         return notificationRepository.findAllByReceiverAndIsRead(user, false);
     }
 
+    public List<Notification> getOldNotificationsFromUser(User user){
+        return notificationRepository.findAllByReceiverAndIsRead(user, true);
+    }
+
     public void changeIsReadNotification(Notification notification, boolean isRead){
         notificationRepository.changeIsReadNotificationById(notification.getId(), isRead);
+    }
+
+    public void deleteNotification(Notification notification){
+        notificationRepository.deleteById(notification.getId());
     }
 
     private boolean addNotification(Object object, String type, User receiver, User sender, String description){

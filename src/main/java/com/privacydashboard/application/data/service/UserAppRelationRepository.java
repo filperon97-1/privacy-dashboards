@@ -6,9 +6,11 @@ import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.entity.UserAppRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,5 +62,10 @@ public interface UserAppRelationRepository extends JpaRepository<UserAppRelation
             "LOWER(uar.user.name) like concat('%', LOWER(:name), '%')" +
             "ORDER BY uar.user.name")
     List<User> getAllDPOOrControllerContactsFilterByName(@Param("user") User user, @Param("name") String name);
+
+    @Modifying
+    @Query("UPDATE UserAppRelation SET consenses=:consenses WHERE id=:id")
+    @Transactional
+    void updateConsenses(@Param("id") UUID id, @Param("consenses") List<String> consenses);
 
 }

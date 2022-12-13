@@ -5,6 +5,8 @@ import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.UI;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 // classe usata per passare vari oggetti tra le Views senza dover usare parametri nell'URL
 // quando si usa il metodo get<Something> il valore si resetta per evitare azioni non volute in caso si visiti una pagina
 @Service
@@ -132,7 +134,10 @@ public class CommunicationService {
         try{
             if(object!=null){
                 Notification notification= (Notification) object;
-                privacyNotice= dataBaseService.getPrivacyNoticeFromId(notification.getObjectId());
+                Optional<PrivacyNotice> maybePrivacyNotice= dataBaseService.getPrivacyNoticeFromId(notification.getObjectId());
+                if(maybePrivacyNotice.isPresent()){
+                    privacyNotice=maybePrivacyNotice.get();
+                }
             }
         } catch (Exception e){
             e.printStackTrace();

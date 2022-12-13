@@ -1,33 +1,24 @@
 package com.privacydashboard.application.data.apiController;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.privacydashboard.application.data.entity.IoTApp;
+import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
-import com.privacydashboard.application.security.AuthenticatedUser;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.List;
 
 
 @RestController
-@AnonymousAllowed
 public class ApiAppController {
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
-
     @Autowired
     private DataBaseService dataBaseService;
-    @Autowired
-    private AuthenticatedUser authenticatedUser;
     @Autowired
     private ApiGeneralController apiGeneralController;
 
@@ -42,10 +33,67 @@ public class ApiAppController {
     public ResponseEntity<?> get(@RequestParam() String appId){
         try {
             IoTApp app = apiGeneralController.getAppFromId(appId);
-            ObjectNode appJson = apiGeneralController.createJsonFromApp(app);
-            return ResponseEntity.ok(appJson);
+            return ResponseEntity.ok(apiGeneralController.createJsonFromApp(app));
         }
         catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+        }
+    }
+
+    /**
+     * Get all the controller associated with an app
+     * RESTRICTIONS:  NONE
+     * @param appId ID of the app to get controllers from
+     * @return Json with information about all the controllers. Bad Request if app does not exist
+     */
+    @GetMapping
+    @RequestMapping("api/app/getControllers")
+    public ResponseEntity<?> getControllers(@RequestParam() String appId){
+        try{
+            IoTApp app= apiGeneralController.getAppFromId(appId);
+            List<User> controllers= dataBaseService.getControllersFromApp(app);
+            return ResponseEntity.ok(getJsonArrayFromUsers(controllers));
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+        }
+    }
+
+    /**
+     * Get all the DPOs associated with an app
+     * RESTRICTIONS:  NONE
+     * @param appId ID of the app to get DPOs from
+     * @return Json with information about all the DPOs. Bad Request if app does not exist
+     */
+    @GetMapping
+    @RequestMapping("api/app/getDPOs")
+    public ResponseEntity<?> getDPOs(@RequestParam() String appId){
+        try{
+            IoTApp app= apiGeneralController.getAppFromId(appId);
+            List<User> dpos= dataBaseService.getDPOsFromApp(app);
+            return ResponseEntity.ok(getJsonArrayFromUsers(dpos));
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+        }
+    }
+
+    /**
+     * Get all the subjects associated with an app
+     * RESTRICTIONS:  The one calling the function MUST be the controller/DPO of the app
+     * @param appId ID of the app to get aubjects from
+     * @return Json with information about all the subjects. Bad Request if app does not exist or not authorized
+     */
+    @GetMapping
+    @RequestMapping("api/app/getSubjects")
+    public ResponseEntity<?> getSubjects(@RequestParam() String appId){
+        try{
+            IoTApp app= apiGeneralController.getAppFromId(appId);
+            User user= apiGeneralController.getAuthenicatedUser();
+            if(!apiGeneralController.isControllerOrDpo(true, null) || !apiGeneralController.userHasApp(user, app)){
+                return ResponseEntity.badRequest().body("You MUST be the controller/DPO of that app");
+            }
+            List<User> subjects= dataBaseService.getSubjectsFromApp(app);
+            return ResponseEntity.ok(getJsonArrayFromUsers(subjects));
+        } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
         }
     }
@@ -75,8 +123,10 @@ public class ApiAppController {
             dataBaseService.addUserApp(apiGeneralController.getAuthenicatedUser(),app);
             return ResponseEntity.ok("app created successfully");
         }
-        catch (IOException | IllegalArgumentException e){
+        catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+        } catch (IOException e){
+            return ResponseEntity.badRequest().body("invalid JSON");
         }
     }
 
@@ -117,7 +167,7 @@ public class ApiAppController {
      * @param body JSON specifying what values must be changed of the app
      * @return Ok if correctly updated. Bad Request if app does not exist, user is not controller/DPO of the app, JSON is invalid
      */
-    @PostMapping
+    @PutMapping
     @RequestMapping("api/app/update")
     public ResponseEntity<?> update(@RequestParam String appId, @RequestBody String body){
         try{
@@ -132,8 +182,10 @@ public class ApiAppController {
             updateApp(app1, app2);
             return ResponseEntity.ok("app updated successfully");
         }
-        catch (IOException | IllegalArgumentException e){
+        catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+        } catch (IOException e){
+            return ResponseEntity.badRequest().body("invalid JSON");
         }
     }
 
@@ -145,6 +197,17 @@ public class ApiAppController {
         if(newApp.getQuestionnaireVote()!=null || newApp.getDetailVote()!=null || newApp.getOptionalAnswers()!=null){
             dataBaseService.updateQuestionnaireForApp(oldApp, oldApp.getQuestionnaireVote(), oldApp.getDetailVote(), oldApp.getOptionalAnswers());
         }
+    }
+
+    private ArrayNode getJsonArrayFromUsers(List<User> userList){
+        ArrayNode usersArray= new ObjectMapper().createArrayNode();
+        ObjectNode userJson;
+        for(User user : userList){
+            userJson= apiGeneralController.createJsonFromUser(user);
+            userJson.remove("hashedPassword");
+            usersArray.add(userJson);
+        }
+        return usersArray;
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
