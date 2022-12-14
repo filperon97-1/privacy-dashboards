@@ -9,6 +9,7 @@ import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -51,8 +52,11 @@ public class ProfileView extends VerticalLayout {
         add(image, name, role, changeMailDetails, changePasswordDetails);
         if(user.getRole().equals(Role.SUBJECT)){
             initializeRemoveEverything();
-            add(new Button("Remove everything", e-> removeEverythingDialog.setOpened(true)));
+            Button removeEverythingButton= new Button("Remove everything", e-> removeEverythingDialog.setOpened(true));
+            removeEverythingButton.addClassName("buuutton");
+            add(removeEverythingButton);
         }
+        logOutButton.addClassName("buuutton");
         add(logOutButton);
         setAlignItems(Alignment.CENTER);
     }
@@ -89,6 +93,7 @@ public class ProfileView extends VerticalLayout {
     private VerticalLayout changeMailLayout(){
         newMail= new TextField("New Mail: ");
         Button save= new Button("Save");
+        save.addClassName("buuutton");
         MyDialog dialog= new MyDialog();
         dialog.setTitle("Confirm new mail");
         dialog.setContent(new HorizontalLayout(new Span("Are you sure you want to change the mail?")));
@@ -128,6 +133,7 @@ public class ProfileView extends VerticalLayout {
         confirmPassword.addValueChangeListener(e-> checkConfirmPassword());
 
         Button save= new Button("Save", e->savePassword());
+        save.addClassName("buuutton");
         VerticalLayout layout=new VerticalLayout(actualPassword, newPassword, confirmPassword, save);
         layout.setAlignItems(Alignment.CENTER);
         return layout;

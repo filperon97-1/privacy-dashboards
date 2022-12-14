@@ -85,6 +85,8 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     private void createButtons(){
         Button pendingRequests=new Button("Pending requests", event -> showRequestList(false));
         Button handledRequests=new Button("Handled requests", event -> showRequestList(true));
+        pendingRequests.addClassName("buuutton");
+        handledRequests.addClassName("buuutton");
         add(new HorizontalLayout(pendingRequests, handledRequests));
     }
 
@@ -171,6 +173,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
 
     private Details generateRightDetail(String title, String description, String buttonString , RightType rightType){
         Button button=new Button(buttonString, e-> startRequest(rightType));
+        button.addClassName("buuutton");
         return new Details(title, new VerticalLayout(new Span(description), button));
     }
 

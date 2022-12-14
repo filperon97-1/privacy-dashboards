@@ -20,6 +20,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import javax.annotation.security.PermitAll;
@@ -71,8 +73,19 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         Details details = new Details("More", generateContactInformations(contact));
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
+        card.addClassName("canOpen");
         card.setSpacing(false);
         card.add(new HorizontalLayout(avatar , name) , details);
+
+        card.addClickListener(e-> {
+            if(card.hasClassName("canOpen")){
+                details.setOpened(true);
+                card.removeClassNames("canOpen");
+            }
+            else if(!details.isOpened()){
+                card.addClassName("canOpen");
+            }
+        });
 
         // se c'è un priorityUser apri details
         if(contact.equals(priorityUser)){

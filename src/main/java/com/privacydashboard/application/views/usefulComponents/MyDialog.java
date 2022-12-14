@@ -29,9 +29,9 @@ public class MyDialog extends Dialog{
     }
 
     private void initializeHeader(){
-        //getElement().setAttribute("aria-labelledby", "dialog-title");
         title.addClassName("dialog-title");
         closeButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST, ButtonVariant.LUMO_TERTIARY);
+        cancelButton.addClassName("cancelButton");
         header.setTitle("TITLE");
         header.add(title);
         header.add(closeButton);
@@ -44,14 +44,14 @@ public class MyDialog extends Dialog{
     }
 
     private void initializeButtons(){
-        continueButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        continueButton.addClassName("buuutton");
         footer.add(continueButton, cancelButton);
         add(footer);
     }
 
     public void setContinueButton(Button button){
         this.continueButton=button;
-        continueButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        continueButton.addClassName("buuutton");
         footer.removeAll();
         footer.add(continueButton, cancelButton);
     }

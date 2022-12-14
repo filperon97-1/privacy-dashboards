@@ -30,6 +30,12 @@
   background-color: var(--lumo-primary-color-10pct);
 }
 
+[slot='drawer'] nav a:hover{
+  border-radius: var(--lumo-border-radius);
+  background-color: #E7EEF5;
+  color: var(--lumo-primary-text-color);
+}
+
 [slot='drawer'] footer vaadin-context-menu {
   align-items: center;
   display: flex;

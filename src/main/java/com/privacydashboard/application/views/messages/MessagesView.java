@@ -59,7 +59,8 @@ public class MessagesView extends Div implements AfterNavigationObserver{
     }
 
     private void initializeHeaderLayout(){
-        newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newMessageButton.addClassName("buuutton");
+        //newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newMessageButton.addClickListener(e-> newMessageDialog.open());
         searchText.setPlaceholder("Search...");
         searchText.setValueChangeMode(ValueChangeMode.LAZY);
@@ -91,9 +92,9 @@ public class MessagesView extends Div implements AfterNavigationObserver{
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         Span name= new Span(contact.getName());
         name.addClassName("name");
-        name.addClassName("link");
         HorizontalLayout card = new HorizontalLayout(avatar, name);
         card.addClassName("card");
+        card.addClassName("canOpen");
         card.addClickListener(e-> goToConversation(contact));
         return card;
     }

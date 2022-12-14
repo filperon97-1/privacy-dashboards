@@ -5,6 +5,7 @@
 .link:hover{
     cursor: pointer;
     text-decoration: underline;
+    font-size: var(--lumo-font-size-l);
 }
 .pointer:hover{
     cursor: pointer;
@@ -36,4 +37,28 @@ vaadin-button:hover{
 
 .tabs{
     margin-left: calc(3*var(--lumo-space-l));
+}
+
+.buuutton{
+  background-color: #4185DF;
+  color:white;
+}
+
+.buuutton:hover{
+  /**background-color: #4A99FF;**/
+  background-color: blue;
+  font-size: var(--lumo-font-size-m);
+  font-weight: bold;
+}
+
+.cancelButton{
+  /**background-color: #FF6666;**/
+  background-color: #FF6680;
+  color:white;
+}
+
+.cancelButton:hover{
+  background-color: red;
+  font-size: var(--lumo-font-size-m);
+  font-weight: bold;
 }

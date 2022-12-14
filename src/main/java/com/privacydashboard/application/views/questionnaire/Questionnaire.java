@@ -48,7 +48,7 @@ public class Questionnaire extends Div implements AfterNavigationObserver{
         initializeGrid();
         initializeNewQuestionnaireDialog();
 
-        newQuestionnaireButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newQuestionnaireButton.addClassName("buuutton");
         HorizontalLayout headerLayout= new HorizontalLayout(searchText, newQuestionnaireButton);
         headerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(headerLayout, grid);
@@ -72,6 +72,7 @@ public class Questionnaire extends Div implements AfterNavigationObserver{
         name.addClassName("name");
         HorizontalLayout card = new HorizontalLayout(avatar, name);
         card.addClassName("card");
+        card.addClassName("canOpen");
         card.addClickListener(e-> goToSingleQuestionnaire(app));
         if(app.getQuestionnaireVote()==null){
             name.addClassName("link");

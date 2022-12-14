@@ -54,16 +54,19 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         this.authenticatedUser = authenticatedUser;
         this.communicationService=communicationService;
 
-        initializeTextAndButton();
         initializeScroller();
-        add(title, scroller, new HorizontalLayout(messageText , sendMessageButton));
+        add(title, scroller, initializeTextAndButton());
     }
 
-    private void initializeTextAndButton(){
+    private HorizontalLayout initializeTextAndButton(){
         messageText.setPlaceholder("Text...");
         messageText.setWidth("700px");
         sendMessageButton.addClickListener(e-> sendMessage());
-        sendMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        sendMessageButton.addClassName("buuutton");
+        HorizontalLayout layout=new HorizontalLayout(messageText , sendMessageButton);
+        layout.setAlignItems(Alignment.CENTER);
+        layout.setVerticalComponentAlignment(Alignment.CENTER);
+        return layout;
     }
 
     private void initializeScroller(){

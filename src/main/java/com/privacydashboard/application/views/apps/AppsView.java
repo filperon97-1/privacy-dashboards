@@ -83,8 +83,18 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         Details details = new Details("More", initializeApp(app));
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
+        card.addClassName("canOpen");
         card.setSpacing(false);
         card.add(new HorizontalLayout(avatar , name) , details);
+        card.addClickListener(e-> {
+            if(card.hasClassName("canOpen")){
+                details.setOpened(true);
+                card.removeClassNames("canOpen");
+            }
+            else if(!details.isOpened()){
+                card.addClassName("canOpen");
+            }
+        });
 
         // se c'è un priorityUser apri details
         if(app.equals(priorityApp)){
@@ -105,7 +115,9 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         VerticalLayout content=new VerticalLayout(description, vote, privacyNotice, controllerDetails, DPODetails);
         if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
             content.add(new Details("Consenses: " , getConsenses(i)));
-            content.add(new Button("Remove everything", e->removeEverything(i)));
+            Button removeEverythingButton= new Button("Remove everything", e->removeEverything(i));
+            removeEverythingButton.addClassName("buuutton");
+            content.add(removeEverythingButton);
         }
         else{
             content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
@@ -194,6 +206,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         for(String consens :  consenses){
             Span consensSpan=new Span(consens);
             Button button=new Button("Withdraw consent", e -> withdrawConsent(i, consens));
+            button.addClassName("buuutton");
             HorizontalLayout l=new HorizontalLayout(consensSpan, button);
             l.setAlignItems(FlexComponent.Alignment.CENTER);
             l.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);

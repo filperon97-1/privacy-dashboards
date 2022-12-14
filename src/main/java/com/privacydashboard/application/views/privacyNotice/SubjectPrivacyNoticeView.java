@@ -87,10 +87,22 @@ public class SubjectPrivacyNoticeView extends Div implements AfterNavigationObse
         Span name= new Span(privacyNotice.getApp().getName());
         name.addClassName("name");
         name.addClassName("link");
-        name.addClickListener(e-> showPrivacyNotice(privacyNotice));
+        //name.addClickListener(e-> showPrivacyNotice(privacyNotice));
         Details details = new Details("More", detailsLayout(privacyNotice));
-        VerticalLayout card = new VerticalLayout(new HorizontalLayout(avatar , name) , details);
+        HorizontalLayout avatarLayout= new HorizontalLayout(avatar, name);
+        avatarLayout.addClickListener(e-> showPrivacyNotice(privacyNotice));
+        VerticalLayout card = new VerticalLayout(avatarLayout , details);
         card.addClassName("card");
+        card.addClassName("canOpen");
+        card.addClickListener(e-> {
+            if(card.hasClassName("canOpen")){
+                details.setOpened(true);
+                card.removeClassNames("canOpen");
+            }
+            else if(!details.isOpened()){
+                card.addClassName("canOpen");
+            }
+        });
         return card;
     }
 

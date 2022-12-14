@@ -14,15 +14,32 @@
 }
 
 .grid-view .card {
-  background-color: var(--lumo-base-color);
+  /**background-color: var(--lumo-base-color);**/
   background-color: var(--lumo-contrast-5pct);
   border-radius: var(--lumo-border-radius);
   box-shadow: var(--lumo-box-shadow-xs);
   padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
 }
 
+.grid-view .card:hover {
+  /**background-color: #A5C9E8;**/
+  background-color: #B7D0E5;
+}
+
+.grid-view .card:hover .name{
+  font-size: var(--lumo-font-size-l);
+}
+
 .grid-view .name {
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
   margin-right: var(--lumo-space-s);
+}
+
+.grid-view .canOpen:hover{
+  cursor: pointer;
+}
+
+.grid-view .canOpen:hover .name{
+  font-size: var(--lumo-font-size-l);
 }

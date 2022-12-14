@@ -53,7 +53,7 @@ public class ControllerDPOPrivacyNoticeView extends Div implements AfterNavigati
         initializeGrid();
         initializeNewPrivacyNoticeDialog();
 
-        newPrivacyNoticeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newPrivacyNoticeButton.addClassName("buuutton");
         HorizontalLayout headerLayout= new HorizontalLayout(searchText, newPrivacyNoticeButton);
         headerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(headerLayout, grid);
@@ -80,6 +80,16 @@ public class ControllerDPOPrivacyNoticeView extends Div implements AfterNavigati
         Details details = new Details("More", detailsLayout(privacyNotice));
         VerticalLayout card = new VerticalLayout(new HorizontalLayout(avatar , name) , details);
         card.addClassName("card");
+        card.addClassName("canOpen");
+        card.addClickListener(e-> {
+            if(card.hasClassName("canOpen")){
+                details.setOpened(true);
+                card.removeClassNames("canOpen");
+            }
+            else if(!details.isOpened()){
+                card.addClassName("canOpen");
+            }
+        });
         return card;
     }
 
