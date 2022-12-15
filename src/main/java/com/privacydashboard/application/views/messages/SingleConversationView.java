@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views.messages;
 
+import com.privacydashboard.application.data.GlobalVariables;
 import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
@@ -7,13 +8,14 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
 
@@ -21,32 +23,34 @@ import javax.annotation.security.PermitAll;
 import java.time.ZoneOffset;
 import java.util.*;
 
-@PageTitle("Conversation")
 @Route(value="conversation", layout = MainLayout.class)
 @PermitAll
-public class SingleConversationView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver{
+public class SingleConversationView extends Span implements BeforeEnterObserver, AfterNavigationObserver,HasDynamicTitle{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private User contact;
 
-    private final Span title=new Span();
-    private Scroller scroller;
-    private final MessageList messageList= new MessageList();
+    private String title;
+    private final Grid<Message> grid=new Grid<>();
     private final TextArea messageText=new TextArea();
     private final Button sendMessageButton= new Button("Send Message");
 
     @Override
-    public void beforeEnter(BeforeEnterEvent event){
+    public void beforeEnter(BeforeEnterEvent event) {
         contact=communicationService.getContact();
         if(contact==null || !dataBaseService.getAllContactsFromUser(authenticatedUser.getUser()).contains(contact)){
             event.rerouteTo(NoContactView.class);
         }
         else{
-            title.setText(contact.getName());
-            /*title.removeAll();
-            title.add(new H2(contact.getName()));*/
+            title= contact.getName();
+            GlobalVariables.pageTitle= contact.getName();
         }
+    }
+
+    @Override
+    public String getPageTitle() {
+        return title;
     }
 
     public SingleConversationView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
@@ -54,37 +58,42 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
         this.authenticatedUser = authenticatedUser;
         this.communicationService=communicationService;
 
-        initializeScroller();
-        add(title, scroller, initializeTextAndButton());
+        addClassName("messages-view");
+        initializeGrid();
+        add(grid, initializeTextAndButton());
     }
 
     private HorizontalLayout initializeTextAndButton(){
         messageText.setPlaceholder("Text...");
-        messageText.setWidth("700px");
+        messageText.addClassName("messageText");
         sendMessageButton.addClickListener(e-> sendMessage());
         sendMessageButton.addClassName("buuutton");
         HorizontalLayout layout=new HorizontalLayout(messageText , sendMessageButton);
-        layout.setAlignItems(Alignment.CENTER);
-        layout.setVerticalComponentAlignment(Alignment.CENTER);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        layout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        layout.addClassName("textAndButton");
         return layout;
     }
 
-    private void initializeScroller(){
-        scroller = new Scroller(messageList);
-        scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
-        scroller.addClassName("scroller");
+    private void initializeGrid(){
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addComponentColumn(this::showMessage);
     }
 
     //DA SISTEMARE LA TIME ZONE
-    private List<MessageListItem> getMessages(){
-        List<Message> conversation=dataBaseService.getConversationFromUsers(authenticatedUser.getUser(), contact);
-        List<MessageListItem> messageListItems=new LinkedList<>();
-        for(Message message : conversation){
-            User u=message.getSender();
-            MessageListItem messageItem=new MessageListItem(message.getMessage(),message.getTime().toInstant(ZoneOffset.UTC), u.getName());
-            messageListItems.add(messageItem);
+    private HorizontalLayout showMessage(Message message){
+        HorizontalLayout card= new HorizontalLayout();
+        card.addClassName("card");
+        MessageListItem messageItem=new MessageListItem(message.getMessage(),message.getTime().toInstant(ZoneOffset.UTC), message.getSender().getName());
+        MessageList messageList= new MessageList(messageItem);
+        card.add(messageList);
+        if(message.getSender().equals(authenticatedUser.getUser())){
+            card.addClassName("isUser");
         }
-        return messageListItems;
+        else{
+            card.addClassName("isContact");
+        }
+        return card;
     }
 
     private void sendMessage(){
@@ -101,7 +110,9 @@ public class SingleConversationView extends VerticalLayout implements BeforeEnte
     }
 
     private void updateConversation(){
-        messageList.setItems(getMessages());
+        List<Message> messageList= dataBaseService.getConversationFromUsers(authenticatedUser.getUser(), contact);
+        grid.setItems(messageList);
+        grid.scrollToIndex(messageList.size());
     }
 
     @Override

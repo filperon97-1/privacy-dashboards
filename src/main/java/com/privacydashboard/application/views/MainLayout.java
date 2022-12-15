@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views;
 
+import com.privacydashboard.application.data.GlobalVariables;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
@@ -174,6 +175,7 @@ public class MainLayout extends AppLayout {
 
             ContextMenu userMenu = new ContextMenu(avatar);
             userMenu.setOpenOnClick(true);
+            avatar.addClassNames("avatar pointer");
             ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService, userDetailsService);
             userMenu.addOpenedChangeListener(e->profileView.closePasswordDetail());
             userMenu.addOpenedChangeListener(e->profileView.closeMailDetail());
@@ -198,6 +200,6 @@ public class MainLayout extends AppLayout {
 
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
-        return title == null ? "" : title.value();
+        return title == null ? GlobalVariables.pageTitle : title.value();
     }
 }

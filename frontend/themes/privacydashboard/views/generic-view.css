@@ -62,3 +62,9 @@ vaadin-button:hover{
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
 }
+
+.avatar:hover{
+  height: 16%;
+  width: 16%;
+  background-color: #7E98BA;
+}

@@ -9,7 +9,6 @@ import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -60,7 +59,6 @@ public class MessagesView extends Div implements AfterNavigationObserver{
 
     private void initializeHeaderLayout(){
         newMessageButton.addClassName("buuutton");
-        //newMessageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         newMessageButton.addClickListener(e-> newMessageDialog.open());
         searchText.setPlaceholder("Search...");
         searchText.setValueChangeMode(ValueChangeMode.LAZY);

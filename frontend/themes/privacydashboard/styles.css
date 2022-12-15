@@ -8,6 +8,7 @@
 @import url('./views/privacy_notice-view');
 @import url('./views/questionnaire-view');
 @import url('./views/home-view');
+@import url('./views/messages-view');
 @import url('line-awesome/dist/line-awesome/css/line-awesome.min.css');    html {
       --lumo-border-radius: calc(var(--lumo-size-m) / 2);
 
