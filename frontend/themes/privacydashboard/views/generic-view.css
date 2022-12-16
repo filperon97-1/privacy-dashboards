@@ -62,7 +62,9 @@ vaadin-button:hover{
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
 }
-.loginSpan > vaadin-loginForm{
-  color:red;
+
+.avatar:hover{
+  background-color: #7E98BA;
+  cursor:pointer;
 }
 

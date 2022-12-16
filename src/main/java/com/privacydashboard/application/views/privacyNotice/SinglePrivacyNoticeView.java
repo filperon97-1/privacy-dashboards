@@ -55,7 +55,7 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
     public void beforeEnter(BeforeEnterEvent event) {
         privacyNotice=communicationService.getPrivacyNotice();
         if(privacyNotice==null || privacyNotice.getApp()==null || !dataBaseService.getUserApps(authenticatedUser.getUser()).contains(privacyNotice.getApp())){
-            event.rerouteTo(ControllerDPOPrivacyNoticeView.class);
+            event.rerouteTo(PrivacyNoticeView.class);
             return;
         }
 

@@ -10,8 +10,7 @@ import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
-import com.privacydashboard.application.views.privacyNotice.SinglePrivacyNoticeView;
-import com.privacydashboard.application.views.privacyNotice.SubjectPrivacyNoticeView;
+import com.privacydashboard.application.views.privacyNotice.PrivacyNoticeView;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -164,12 +163,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
 
     private void goToPrivacyNotice(IoTApp i){
         communicationService.setPrivacyNotice(dataBaseService.getPrivacyNoticeFromApp(i));
-        if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
-            UI.getCurrent().navigate(SubjectPrivacyNoticeView.class);
-        }
-        else{
-            UI.getCurrent().navigate(SinglePrivacyNoticeView.class);
-        }
+        UI.getCurrent().navigate(PrivacyNoticeView.class);
     }
 
     private VerticalLayout getUsers(IoTApp i, Role role){

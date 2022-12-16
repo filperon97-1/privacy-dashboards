@@ -62,15 +62,13 @@ public class HomeView extends VerticalLayout {
         createSingleSection(0, "Contacts", "contacts", "la-address-book");
         createSingleSection(1, "Messages", "messages", "la-comments");
         createSingleSection(3, "Apps", "apps-view", "la-list");
+        createSingleSection(4, "Privacy Notice", "privacyNotice", "la-file");
         if(authenticatedUser.getUser().getRole().equals(Role.CONTROLLER) || authenticatedUser.getUser().getRole().equals(Role.DPO)){
             createSingleSection(2, "Rights", "rights_controller", "la-school");
-            createSingleSection(4, "Privacy Notice", "controller_privacyNotice", "la-file");
             createSingleSection(5, "Questionnaire", "questionnaire","la-archive");
         }
         else{
             createSingleSection(2, "Rights", "rights", "la-school");
-            createSingleSection(4, "Privacy Notice", "subject_privacyNotice", "la-file");
-
             titles[5].setText("Pending Requests");
             layouts[5].addClickListener((e->{
                 communicationService.setOpenPendingRequests(true);
