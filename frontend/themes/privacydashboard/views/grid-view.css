@@ -43,3 +43,17 @@
 .grid-view .canOpen:hover .name{
   font-size: var(--lumo-font-size-l);
 }
+
+.grid-view vaadin-details > span:hover{
+  cursor: pointer;
+}
+
+.grid-view vaadin-button{
+  background-color: #4185DF;
+  color:white;
+}
+.grid-view vaadin-button:hover{
+  background-color: blue;
+  font-size: var(--lumo-font-size-m);
+  font-weight: bold;
+}

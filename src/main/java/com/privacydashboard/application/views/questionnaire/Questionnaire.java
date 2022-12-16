@@ -48,7 +48,6 @@ public class Questionnaire extends Div implements AfterNavigationObserver{
         initializeGrid();
         initializeNewQuestionnaireDialog();
 
-        newQuestionnaireButton.addClassName("buuutton");
         HorizontalLayout headerLayout= new HorizontalLayout(searchText, newQuestionnaireButton);
         headerLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(headerLayout, grid);

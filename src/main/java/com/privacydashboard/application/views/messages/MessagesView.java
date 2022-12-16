@@ -58,7 +58,6 @@ public class MessagesView extends Div implements AfterNavigationObserver{
     }
 
     private void initializeHeaderLayout(){
-        newMessageButton.addClassName("buuutton");
         newMessageButton.addClickListener(e-> newMessageDialog.open());
         searchText.setPlaceholder("Search...");
         searchText.setValueChangeMode(ValueChangeMode.LAZY);

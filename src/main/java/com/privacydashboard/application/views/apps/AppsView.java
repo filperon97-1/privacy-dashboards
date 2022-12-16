@@ -80,7 +80,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         Avatar avatar = new Avatar(app.getName());
         Span name = new Span(app.getName());
         name.addClassName("name");
-        Details details = new Details("More", initializeApp(app));
+        Details details = new Details(new Span("More"), initializeApp(app));
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
         card.addClassName("canOpen");
@@ -109,18 +109,17 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         Span privacyNotice= new Span("Privacy Notice");
         privacyNotice.addClassName("link");
         privacyNotice.addClickListener(e-> goToPrivacyNotice(i));
-        Details controllerDetails= new Details("Data Controllers: " , getUsers(i, Role.CONTROLLER));
-        Details DPODetails= new Details("Data Protection Officer: ", getUsers(i, Role.DPO));
+        Details controllerDetails= new Details(new Span("Data Controllers: "), getUsers(i, Role.CONTROLLER));
+        Details DPODetails= new Details(new Span("Data Protection Officer: "), getUsers(i, Role.DPO));
 
         VerticalLayout content=new VerticalLayout(description, vote, privacyNotice, controllerDetails, DPODetails);
         if(authenticatedUser.getUser().getRole().equals(Role.SUBJECT)){
-            content.add(new Details("Consenses: " , getConsenses(i)));
+            content.add(new Details(new Span("Consenses: ") , getConsenses(i)));
             Button removeEverythingButton= new Button("Remove everything", e->removeEverything(i));
-            removeEverythingButton.addClassName("buuutton");
             content.add(removeEverythingButton);
         }
         else{
-            content.add(new Details("Data Subjects: " , getUsers(i, Role.SUBJECT)));
+            content.add(new Details(new Span("Data Subjects: ") , getUsers(i, Role.SUBJECT)));
         }
         return content;
     }
@@ -204,10 +203,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         VerticalLayout layout=new VerticalLayout();
         List<String> consenses=dataBaseService.getConsensesFromUserAndApp(authenticatedUser.getUser(), i);
         for(String consens :  consenses){
-            Span consensSpan=new Span(consens);
-            Button button=new Button("Withdraw consent", e -> withdrawConsent(i, consens));
-            button.addClassName("buuutton");
-            HorizontalLayout l=new HorizontalLayout(consensSpan, button);
+            HorizontalLayout l=new HorizontalLayout(new Span(consens), new Button("Withdraw consent", e -> withdrawConsent(i, consens)));
             l.setAlignItems(FlexComponent.Alignment.CENTER);
             l.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
             layout.add(l);

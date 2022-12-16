@@ -85,3 +85,8 @@
     margin-left: calc(0.5*var(--lumo-size-s));
     width:40%;
 }
+
+.goBackButton-questionnaire:hover{
+    margin-left: calc(0.5*var(--lumo-size-s));
+    width:45%;
+}

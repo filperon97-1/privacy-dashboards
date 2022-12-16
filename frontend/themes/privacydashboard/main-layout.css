@@ -122,6 +122,24 @@
   padding-top: var(--lumo-space-xs);
 }
 
+.footer:hover{
+  cursor: pointer;
+  background-color: #E7EEF5;
+  background-color: var(--lumo-primary-color-10pct);
+  margin-top:-1%;
+}
+
+.footer:hover .avatar{
+  /*height: 0.1%;*/
+  width: 15%;
+  background-color: #7E98BA;
+}
+
+.footer:hover .footerName{
+  font-size: var(--lumo-font-size-l);
+  color:black;
+}
+
 .bell-icon{
     position:absolute;
     right: 1rem;
@@ -133,10 +151,6 @@
 .badge{
     position:absolute;
     background: rgba(255,0,0,1);
-    /*height:1rem;
-    top:1rem;
-    right:1.5rem;
-    width:2rem;*/
     height:0.8rem;
     width:0.8rem;
     top:0.1rem;
@@ -146,4 +160,10 @@
     border-radius: 50%;
     color:white;
     border:2px solid red;
+}
+
+.bell-icon:hover .badge{
+    width:0.9rem;
+    font-size: 0.9rem;
+    border:3px solid red;
 }

@@ -1,7 +1,6 @@
 package com.privacydashboard.application.views.rights;
 
 import com.privacydashboard.application.data.RightType;
-import com.privacydashboard.application.data.entity.Notification;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;

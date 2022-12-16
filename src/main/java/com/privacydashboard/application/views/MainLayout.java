@@ -173,17 +173,17 @@ public class MainLayout extends AppLayout {
             Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
             avatar.addClassNames("me-xs");
 
-            ContextMenu userMenu = new ContextMenu(avatar);
+            ContextMenu userMenu = new ContextMenu(layout);
             userMenu.setOpenOnClick(true);
-            avatar.addClassNames("avatar pointer");
+            avatar.addClassNames("avatar");
             ProfileView profileView=new ProfileView(user, authenticatedUser, dataBaseService, userDetailsService);
             userMenu.addOpenedChangeListener(e->profileView.closePasswordDetail());
             userMenu.addOpenedChangeListener(e->profileView.closeMailDetail());
             userMenu.add(profileView);
-            Span name = new Span(user.getName());
-            name.addClassNames("font-medium", "text-s", "text-secondary");
-            layout.add(avatar, name);
 
+            Span name = new Span(user.getName());
+            name.addClassNames("font-medium", "text-s", "text-secondary", "footerName");
+            layout.add(avatar, name);
         } else {
             Anchor loginLink = new Anchor("login", "Sign in");
             layout.add(loginLink);

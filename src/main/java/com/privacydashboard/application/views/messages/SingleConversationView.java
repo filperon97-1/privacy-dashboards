@@ -7,6 +7,7 @@ import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -15,7 +16,6 @@ import com.vaadin.flow.component.messages.MessageList;
 import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
 
@@ -31,7 +31,7 @@ public class SingleConversationView extends Span implements BeforeEnterObserver,
     private final CommunicationService communicationService;
     private User contact;
 
-    private String title;
+    private String title="";
     private final Grid<Message> grid=new Grid<>();
     private final TextArea messageText=new TextArea();
     private final Button sendMessageButton= new Button("Send Message");
@@ -40,7 +40,8 @@ public class SingleConversationView extends Span implements BeforeEnterObserver,
     public void beforeEnter(BeforeEnterEvent event) {
         contact=communicationService.getContact();
         if(contact==null || !dataBaseService.getAllContactsFromUser(authenticatedUser.getUser()).contains(contact)){
-            event.rerouteTo(NoContactView.class);
+            UI.getCurrent().navigate(MessagesView.class);
+            event.rerouteTo(MessagesView.class);
         }
         else{
             title= contact.getName();

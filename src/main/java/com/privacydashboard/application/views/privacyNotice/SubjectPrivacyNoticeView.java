@@ -88,7 +88,7 @@ public class SubjectPrivacyNoticeView extends Div implements AfterNavigationObse
         name.addClassName("name");
         name.addClassName("link");
         //name.addClickListener(e-> showPrivacyNotice(privacyNotice));
-        Details details = new Details("More", detailsLayout(privacyNotice));
+        Details details = new Details(new Span("More"), detailsLayout(privacyNotice));
         HorizontalLayout avatarLayout= new HorizontalLayout(avatar, name);
         avatarLayout.addClickListener(e-> showPrivacyNotice(privacyNotice));
         VerticalLayout card = new VerticalLayout(avatarLayout , details);
@@ -121,7 +121,7 @@ public class SubjectPrivacyNoticeView extends Div implements AfterNavigationObse
             contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
             controllersLayout.add(contactLink);
         }
-        Details controllersDetails= new Details("Data Controllers:", controllersLayout);
+        Details controllersDetails= new Details(new Span("Data Controllers:"), controllersLayout);
 
         List<User> dpos= dataBaseService.getDPOsFromApp(privacyNotice.getApp());
         VerticalLayout dposLayout= new VerticalLayout();
@@ -132,7 +132,7 @@ public class SubjectPrivacyNoticeView extends Div implements AfterNavigationObse
             contactLink.addClickListener(e-> UI.getCurrent().navigate(ContactsView.class));
             dposLayout.add(contactLink);
         }
-        Details dposDetails= new Details("Data Protection Officers:", dposLayout);
+        Details dposDetails= new Details(new Span("Data Protection Officers:"), dposLayout);
 
         return new VerticalLayout(goToApp, controllersDetails, dposDetails);
     }

@@ -70,7 +70,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         Avatar avatar = new Avatar(contact.getName(), contact.getProfilePictureUrl());
         Span name = new Span(contact.getName());
         name.addClassName("name");
-        Details details = new Details("More", generateContactInformations(contact));
+        Details details = new Details(new Span("More"), generateContactInformations(contact));
         VerticalLayout card = new VerticalLayout();
         card.addClassName("card");
         card.addClassName("canOpen");
@@ -103,7 +103,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
                                   new Span("Role: Data " +contact.getRole()),
                                   new Span("Mail: "+ (contact.getMail()==null ? "There's no mail yet" : contact.getMail())),
                                   messageLink,
-                                  new Details("Apps:" , getApps(contact)));
+                                  new Details(new Span("Apps:") , getApps(contact)));
     }
 
     private VerticalLayout getApps(User contact){

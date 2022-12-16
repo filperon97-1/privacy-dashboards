@@ -47,7 +47,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
 
     private final Integer nSections= 4;
     private final VerticalLayout[] sections= new VerticalLayout[nSections];
-    private final Button goBackbutton= new Button("Go back", e->goBack());
+    private final Button goBackButton = new Button("Go back", e->goBack());
 
     private final Div[] titles= new Div[GlobalVariables.nQuestions];
     private final RadioButtonGroup<String>[] radioGroups= new RadioButtonGroup[GlobalVariables.nQuestions];
@@ -111,7 +111,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         setContent(content);
         setPrimarySection(Section.DRAWER);
 
-        goBackbutton.addClassName("goBackButton-questionnaire");
+        goBackButton.addClassNames("goBackButton-questionnaire buuutton");
     }
 
     // SEZIONE 1: DATI SENSIBILI
@@ -643,7 +643,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
 
         H1 title= new H1("Questionnaire " + app.getName());
         title.addClassName("title-questionnaire");
-        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs, goBackbutton);
+        com.vaadin.flow.component.html.Section sectionDrawer= new com.vaadin.flow.component.html.Section(title, tabs, goBackButton);
         sectionDrawer.addClassNames("drawer-questionnaire");
         addToDrawer(sectionDrawer);
     }
