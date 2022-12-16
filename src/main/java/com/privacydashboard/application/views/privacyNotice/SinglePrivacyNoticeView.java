@@ -155,7 +155,7 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
                 dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
                 Notification notification = Notification.show("Privacy Notice uploaded correctly");
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                UI.getCurrent().navigate(PrivacyNoticeView.class);
                 dialog.close();
             });
         }
@@ -166,7 +166,7 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
                 dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
                 Notification notification = Notification.show("Privacy Notice overwritten correctly");
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                UI.getCurrent().navigate(PrivacyNoticeView.class);
                 dialog.close();
             });
         }

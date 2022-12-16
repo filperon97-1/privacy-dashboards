@@ -13,8 +13,6 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FormPrivacyNotice extends VerticalLayout {
     private final PrivacyNotice privacyNotice;
@@ -141,7 +139,7 @@ public class FormPrivacyNotice extends VerticalLayout {
                 dataBaseService.addPrivacyNoticeForApp(privacyNotice.getApp(), text);
                 Notification notification = Notification.show("Privacy Notice uploaded correctly");
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                UI.getCurrent().navigate(PrivacyNoticeView.class);
                 dialog.close();
             });
         }
@@ -151,7 +149,7 @@ public class FormPrivacyNotice extends VerticalLayout {
                 dataBaseService.changePrivacyNoticeForApp(privacyNotice.getApp(), text);
                 Notification notification = Notification.show("Privacy Notice overwritten correctly");
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                UI.getCurrent().navigate(ControllerDPOPrivacyNoticeView.class);
+                UI.getCurrent().navigate(PrivacyNoticeView.class);
                 dialog.close();
             });
         }
