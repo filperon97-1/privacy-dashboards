@@ -6,37 +6,36 @@ import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.apps.AppsView;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
 @PageTitle("Rights")
 @Route(value="rights", layout = MainLayout.class)
 @RolesAllowed("SUBJECT")
+@NpmPackage(value = "line-awesome", version = "1.3.0")
 public class SubjectRightsView extends VerticalLayout implements BeforeEnterObserver{
     private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private final Grid<RightRequest> grid= new Grid<>();
+    private MyDialog rightList;
+    private MyDialog requestDialog;
     private RightRequest priorityRight=null;
-
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private final GridComponentRightsView gridComponentRightsView;
 
     // Uso ComponentUtil per passare le informazioni invece dei parametri dell'url. Dopo bisogna resettarlo
     @Override
@@ -66,20 +65,26 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
         this.communicationService=communicationService;
+
+        addClassName("rights-view");
+
+        gridComponentRightsView= new GridComponentRightsView(authenticatedUser.getUser().getRole());
+        initializeGridComponentRightsView();
         initializeGrid();
         createButtons();
         generateAllRightsDetails();
     }
 
+    private void initializeGridComponentRightsView(){
+        gridComponentRightsView.addListener(GridComponentRightsView.ContactEvent.class, this::goToUser);
+        gridComponentRightsView.addListener(GridComponentRightsView.AppEvent.class, this::goToApp);
+    }
+
     private void initializeGrid(){
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
-        grid.addColumn(request -> request.getReceiver().getName()).setHeader("NAME").setSortable(true);
-        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE").setSortable(true);
-        grid.addColumn(request -> request.getApp().getName()).setHeader("APP").setSortable(true);
-        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME").setSortable(true);
-        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS").setSortable(true);
-        grid.addColumn(RightRequest::getHandled).setHeader("HANDLED");
-        grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
+        HorizontalLayout headerGrid=gridComponentRightsView.getHeaderLayout();
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addComponentColumn(this::showRequestCard);
+        grid.getColumns().get(0).setHeader(headerGrid);
     }
 
     private void createButtons(){
@@ -91,7 +96,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     }
 
     private void showRequestList(Boolean handled){
-        MyDialog rightList=new MyDialog();
+        rightList=new MyDialog();
         List<RightRequest> rightRequests;
         if(handled) {
             rightRequests = dataBaseService.getHandledRequestsFromSender(authenticatedUser.getUser());
@@ -106,79 +111,84 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         }
         grid.setItems(rightRequests);
         grid.select(priorityRight);
+        HorizontalLayout contentLayout= new HorizontalLayout(grid);
+        contentLayout.addClassName("rights-view");
         rightList.setWithoutFooter(true);
-        rightList.setContent(new HorizontalLayout(grid));
+        rightList.setContent(contentLayout);
         rightList.setWidthFull();
+        rightList.setHeight("70%");
         rightList.open();
         priorityRight=null;
     }
 
+    private HorizontalLayout showRequestCard(RightRequest request){
+        HorizontalLayout card=gridComponentRightsView.getCard(request);
+        card.addClickListener(e -> showRequest(request));
+        return card;
+    }
+
     private void showRequest(RightRequest request){
-        MyDialog requestDialog=new MyDialog();
+        requestDialog=new MyDialog();
         if(request==null){
             return;
         }
-        Span sender=new Span("Receiving User:   "+ request.getReceiver().getName());
-        Span rightType=new Span("Right:   " + request.getRightType().toString());
-        Span app=new Span("App:   " + request.getApp().getName());
-        Span time=new Span("Time:   " + dtf.format(request.getTime()));
-        Span details=new Span("Details:   " + request.getDetails());
-        String otherString="";
-        if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
-            otherString="Consent to withdraw:   ";
-        }
-        if(request.getRightType().equals(RightType.COMPLAIN)){
-            otherString="Complain:   ";
-        }
-        if(request.getRightType().equals(RightType.INFO)){
-            otherString="Info:   ";
-        }
-        if(request.getRightType().equals(RightType.ERASURE)){
-            otherString="What to erase:   ";
-        }
-        Span other=new Span(otherString + (request.getOther()==null ? "" : request.getOther()));
-        TextArea textArea=new TextArea("Controller response");
-        textArea.setValue(request.getResponse()==null ? "" : request.getResponse());
-        textArea.setReadOnly(true);
-        Checkbox checkbox=new Checkbox();
-        checkbox.setValue(request.getHandled());
-        checkbox.setLabel("Handled");
-        checkbox.setReadOnly(true);
+        VerticalLayout contentLayout=gridComponentRightsView.getContent(request);
         requestDialog.setWithoutFooter(true);
         requestDialog.setTitle("Right request");
-        requestDialog.setContent(new VerticalLayout(sender, rightType, app, time, details, other, textArea, checkbox));
+        requestDialog.setContent(contentLayout);
         requestDialog.open();
     }
 
     private void generateAllRightsDetails(){
-        add(generateRightDetail("Data portability", "you have the right to receive your personal data [GDPR, article 20]",
-                "Access data", RightType.PORTABILITY));
-
-        add(generateRightDetail("Consenses", "you have the right to withdraw consent at any time [GDPR, article 13 2(C)]",
-                "Withdraw a consent", RightType.WITHDRAWCONSENT));
-
-        add(generateRightDetail("Ask information", "you have the right to know some information:\n" +
+        add(generateRightCard("Access data", "you have the right to receive your personal data [GDPR, article 20]",
+                 RightType.PORTABILITY));
+        add(generateRightCard("Withdraw a consent", "you have the right to withdraw consent at any time [GDPR, article 13 2(C)]",
+                 RightType.WITHDRAWCONSENT));
+        add(generateRightCard("Ask information", "you have the right to know some information:\n" +
                         "the period for which the personal data will be stored,\n" +
                         "the purposes of the processing for which the personal data are intended,\n" +
                         "the recipients or categories of recipients of the personal data",
-                "Ask information", RightType.INFO));
-
-        add(generateRightDetail("Complain", "compile a complain to the supervisory authority",
-                "Compile a complain", RightType.COMPLAIN));
-
-        add(generateRightDetail("Right to erasure", "ask to erase some personal data",
-                "Ask to erase", RightType.ERASURE));
-
-    }
-
-    private Details generateRightDetail(String title, String description, String buttonString , RightType rightType){
-        Button button=new Button(buttonString, e-> startRequest(rightType));
-        button.addClassName("buuutton");
-        return new Details(title, new VerticalLayout(new Span(description), button));
+                RightType.INFO));
+        add(generateRightCard("Compile a complain", "compile a complain to the supervisory authority",
+                 RightType.COMPLAIN));
+        add(generateRightCard("Erase data", "ask to erase some personal data",
+                RightType.ERASURE));
     }
 
     private void startRequest(RightType rightType){
         DialogRight dialogRight=new DialogRight(dataBaseService, authenticatedUser);
         dialogRight.showDialogRequest(rightType);
+    }
+
+    private HorizontalLayout generateRightCard(String title, String info, RightType rightType){
+        Span name= new Span(title);
+        name.addClassName("name");
+        Span icon=new Span();
+        icon.addClassNames("las la-info-circle");
+        icon.addClassName("pointer");
+        Span infoSpan= new Span(info);
+        infoSpan.addClassName("infoSpan");
+        HorizontalLayout iconLayout= new HorizontalLayout(icon, infoSpan);
+        iconLayout.addClassName("iconLayout");
+        HorizontalLayout card = new HorizontalLayout(name, iconLayout);
+        card.addClassName("card");
+        card.addClassName("canOpen");
+
+        card.addClickListener(e-> startRequest(rightType));
+        return card;
+    }
+
+    private void goToUser(GridComponentRightsView.ContactEvent event){
+        rightList.close();
+        requestDialog.close();
+        communicationService.setContact(event.getContact());
+        UI.getCurrent().navigate(ContactsView.class);
+    }
+
+    private void goToApp(GridComponentRightsView.AppEvent event){
+        rightList.close();
+        requestDialog.close();
+        communicationService.setApp(event.getApp());
+        UI.getCurrent().navigate(AppsView.class);
     }
 }

@@ -2,7 +2,6 @@ package com.privacydashboard.application.views.home;
 
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.service.CommunicationService;
-import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -21,7 +20,6 @@ import java.util.Arrays;
 @PermitAll
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class HomeView extends VerticalLayout {
-    private final DataBaseService dataBaseService;
     private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
 
@@ -31,8 +29,7 @@ public class HomeView extends VerticalLayout {
     private final Span[] titles= new Span[nSection];
     private final Div[] icons= new Div[nSection];
 
-    public HomeView(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
-        this.dataBaseService= dataBaseService;
+    public HomeView(AuthenticatedUser authenticatedUser, CommunicationService communicationService) {
         this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 

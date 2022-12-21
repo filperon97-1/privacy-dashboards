@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.privacydashboard.application.data.entity.*;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -23,9 +21,6 @@ public class ApiNotificationController {
     @Autowired
     private ApiGeneralController apiGeneralController;
 
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     /**
      * Get information about Notification
      * RESTRICTIONS: The one calling the function MUST BE the user identified by the senderId or receiverId
@@ -42,7 +37,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonFromNotification(notification));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -62,7 +57,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonNotificationsFromUser(user, true, true));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -82,7 +77,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonNotificationsFromUser(user, false, true));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -102,7 +97,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonNotificationsFromUser(user, false, false));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -139,7 +134,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok(objectNode);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -171,7 +166,7 @@ public class ApiNotificationController {
             }
             return ResponseEntity.ok("Notification added successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -194,7 +189,7 @@ public class ApiNotificationController {
             dataBaseService.deleteNotification(notification);
             return ResponseEntity.ok("Notification deleted successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -213,14 +208,14 @@ public class ApiNotificationController {
             if(!isReadString.equalsIgnoreCase("true") && !isReadString.equalsIgnoreCase("false")){
                 return ResponseEntity.badRequest().body("Invalid isReadString value. MUST be true or false");
             }
-            Boolean isRead=Boolean.valueOf(isReadString);
+            boolean isRead=Boolean.parseBoolean(isReadString);
             if(!notification.getReceiver().equals(apiGeneralController.getAuthenicatedUser())){
                 return ResponseEntity.badRequest().body("You MUST be the receiver of the notification");
             }
             dataBaseService.changeIsReadNotification(notification, isRead);
             return ResponseEntity.ok("Notification value changed successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -233,7 +228,7 @@ public class ApiNotificationController {
         switch (notification.getType()){
             case "Message":
                 Optional<Message> message= dataBaseService.getMessageFromID(notification.getObjectId());
-                if(message.get().getReceiver().equals(notification.getReceiver())){
+                if(message.isPresent() && message.get().getReceiver().equals(notification.getReceiver())){
                     return true;
                 }
                 break;
@@ -247,7 +242,7 @@ public class ApiNotificationController {
                 break;
             case "PrivacyNotice":
                 Optional<PrivacyNotice> privacyNotice= dataBaseService.getPrivacyNoticeFromId(notification.getObjectId());
-                IoTApp app= privacyNotice.get().getApp();
+                IoTApp app= privacyNotice.map(PrivacyNotice::getApp).orElse(null);
                 if(dataBaseService.userHasApp(notification.getReceiver(), app) && dataBaseService.userHasApp(notification.getSender(), app)){
                     return true;
                 }

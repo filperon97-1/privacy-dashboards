@@ -55,7 +55,7 @@ public class ProfileView extends VerticalLayout {
             removeEverythingButton.addClassName("buuutton");
             add(removeEverythingButton);
         }
-        logOutButton.addClassName("buuutton");
+        logOutButton.addClassName("cancelButton");
         add(logOutButton);
         setAlignItems(Alignment.CENTER);
     }

@@ -124,20 +124,15 @@
 
 .footer:hover{
   cursor: pointer;
-  background-color: #E7EEF5;
-  background-color: var(--lumo-primary-color-10pct);
-  margin-top:-1%;
 }
 
 .footer:hover .avatar{
-  /*height: 0.1%;*/
   width: 15%;
   background-color: #7E98BA;
 }
 
 .footer:hover .footerName{
   font-size: var(--lumo-font-size-l);
-  color:black;
 }
 
 .bell-icon{

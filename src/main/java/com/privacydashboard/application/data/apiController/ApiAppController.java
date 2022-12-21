@@ -36,7 +36,7 @@ public class ApiAppController {
             return ResponseEntity.ok(apiGeneralController.createJsonFromApp(app));
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -54,7 +54,7 @@ public class ApiAppController {
             List<User> controllers= dataBaseService.getControllersFromApp(app);
             return ResponseEntity.ok(getJsonArrayFromUsers(controllers));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class ApiAppController {
             List<User> dpos= dataBaseService.getDPOsFromApp(app);
             return ResponseEntity.ok(getJsonArrayFromUsers(dpos));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public class ApiAppController {
             List<User> subjects= dataBaseService.getSubjectsFromApp(app);
             return ResponseEntity.ok(getJsonArrayFromUsers(subjects));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class ApiAppController {
             return ResponseEntity.ok("app created successfully");
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -156,7 +156,7 @@ public class ApiAppController {
             }
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ public class ApiAppController {
             return ResponseEntity.ok("app updated successfully");
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }

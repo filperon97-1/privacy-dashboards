@@ -1,14 +1,11 @@
 package com.privacydashboard.application.data.apiController;
 
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -28,9 +25,6 @@ public class ApiRightRequestController {
     @Autowired
     private ApiGeneralController apiGeneralController;
 
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     /**
      * Get information about a Right Request
      * RESTRICTIONS: The one calling the function must be the sender or the receiver of the request
@@ -47,7 +41,7 @@ public class ApiRightRequestController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonFromRequest(request));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -65,7 +59,7 @@ public class ApiRightRequestController {
             List<RightRequest> requestList= getRequestList(user, true, true);
             return ResponseEntity.ok(apiGeneralController.createJsonRequestCheckAuthorizedUser(requestList, apiGeneralController.getAuthenicatedUser()));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -83,7 +77,7 @@ public class ApiRightRequestController {
             List<RightRequest> requestList= getRequestList(user, false, true);
             return ResponseEntity.ok(apiGeneralController.createJsonRequestCheckAuthorizedUser(requestList, apiGeneralController.getAuthenicatedUser()));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -101,7 +95,7 @@ public class ApiRightRequestController {
             List<RightRequest> requestList= getRequestList(user, false, false);
             return ResponseEntity.ok(apiGeneralController.createJsonRequestCheckAuthorizedUser(requestList, apiGeneralController.getAuthenicatedUser()));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -129,7 +123,7 @@ public class ApiRightRequestController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonRequestOfApp(requestList, app));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -156,7 +150,7 @@ public class ApiRightRequestController {
             }
             return ResponseEntity.ok(apiGeneralController.createJsonRequestOfRightType(requestList, rightType));
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -198,7 +192,7 @@ public class ApiRightRequestController {
             }
             return ResponseEntity.ok("request added successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -224,7 +218,7 @@ public class ApiRightRequestController {
                 return ResponseEntity.badRequest().body("You MUST be the sender of the request");
             }
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -258,7 +252,7 @@ public class ApiRightRequestController {
             dataBaseService.changeRightRequest(request);
             return ResponseEntity.ok("Response added successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -293,7 +287,7 @@ public class ApiRightRequestController {
             dataBaseService.changeRightRequest(request);
             return ResponseEntity.ok("Handled parameter successfully changed");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -329,7 +323,7 @@ public class ApiRightRequestController {
             dataBaseService.changeValuesOfRightRequest(request);
             return ResponseEntity.ok("Response added successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }

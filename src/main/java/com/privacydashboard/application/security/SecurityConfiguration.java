@@ -23,7 +23,9 @@ public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        http.csrf().disable()
+                .authorizeRequests().antMatchers("/api/**").authenticated()
+                .and().httpBasic();
         super.configure(http);
         setLoginView(http, LoginView.class, LOGOUT_URL);
     }

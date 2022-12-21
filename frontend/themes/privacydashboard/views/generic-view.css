@@ -45,20 +45,19 @@ vaadin-button:hover{
 }
 
 .buuutton:hover{
-  /**background-color: #4A99FF;**/
   background-color: blue;
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
 }
 
 .cancelButton{
-  /**background-color: #FF6666;**/
-  background-color: #FF6680;
+  background-color: #EF6690;
   color:white;
 }
 
 .cancelButton:hover{
   background-color: red;
+  background-color: #FF3630;
   font-size: var(--lumo-font-size-m);
   font-weight: bold;
 }

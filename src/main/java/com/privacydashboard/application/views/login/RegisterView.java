@@ -18,6 +18,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Route("registration")
 @PageTitle("Registration")
@@ -51,12 +52,12 @@ public class RegisterView extends VerticalLayout {
         password.setMinLength(8);
         password.setErrorMessage("the password must be at least 8 characters");
         binder.forField(username).withValidator(name -> name.length()>=5, "name must be at least 5 characters")
-                .withValidator(name-> isUniqueName(name), "username already in use, please use another one")
+                .withValidator(this::isUniqueName, "username already in use, please use another one")
                 .bind(User::getUsername, User::setUsername);
         binder.forField(confirmPassword).withValidator(pass-> pass.length()>=8, "the password must be at least 8 characters")
                 .withValidator(pass -> pass.equals(password.getValue()), "the two passwords must be equals")
                 .bind(User::getHashedPassword, User::setHashedPassword);
-        binder.forField(role).withValidator(value -> value!=null, "please select a role").bind(User::getRole, User::setRole);
+        binder.forField(role).withValidator(Objects::nonNull, "please select a role").bind(User::getRole, User::setRole);
     }
 
     private boolean isUniqueName(String name){

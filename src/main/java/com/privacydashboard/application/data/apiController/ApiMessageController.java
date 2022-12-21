@@ -8,8 +8,6 @@ import com.privacydashboard.application.data.entity.Message;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -28,8 +26,6 @@ public class ApiMessageController {
     @Autowired
     private ApiGeneralController apiGeneralController;
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     /**
      * Get the message identified by the messageId
      * RESTRICTION: The one calling the function MUST BE the RECEIVER or SENDER of the message
@@ -47,7 +43,7 @@ public class ApiMessageController {
             JsonNode messageJson= apiGeneralController.createJsonFromMessage(message);
             return ResponseEntity.ok(messageJson);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -75,7 +71,7 @@ public class ApiMessageController {
             }
             return ResponseEntity.ok(conversationArray);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -108,7 +104,7 @@ public class ApiMessageController {
             }
             return ResponseEntity.ok(allMessagesJson);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
@@ -141,7 +137,7 @@ public class ApiMessageController {
             }
             return ResponseEntity.ok("Message sent successfully");
         } catch (IllegalArgumentException | DateTimeParseException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }

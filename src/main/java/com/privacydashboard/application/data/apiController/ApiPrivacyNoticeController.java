@@ -9,8 +9,6 @@ import com.privacydashboard.application.data.entity.PrivacyNotice;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -30,9 +28,6 @@ public class ApiPrivacyNoticeController {
     @Autowired
     private ApiGeneralController apiGeneralController;
 
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     /**
      * Get information about Privacy Notice
      * RESTRICTIONS: NONE
@@ -47,7 +42,7 @@ public class ApiPrivacyNoticeController {
             JsonNode privacyNoticeJson= apiGeneralController.createJsonFromPrivacyNotice(privacyNotice);
             return ResponseEntity.ok(privacyNoticeJson);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -65,7 +60,7 @@ public class ApiPrivacyNoticeController {
             JsonNode privacyNoticeJson= apiGeneralController.createJsonFromPrivacyNotice(privacyNotice);
             return ResponseEntity.ok(privacyNoticeJson);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -94,7 +89,7 @@ public class ApiPrivacyNoticeController {
             }
             return ResponseEntity.ok(privacyNoticesArray);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -121,7 +116,7 @@ public class ApiPrivacyNoticeController {
             }
 
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -151,7 +146,7 @@ public class ApiPrivacyNoticeController {
             }
             return ResponseEntity.ok("Privacy Notice added to all the apps");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -180,7 +175,7 @@ public class ApiPrivacyNoticeController {
             }
             return ResponseEntity.ok("Privacy Notice added to all the apps");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -209,7 +204,7 @@ public class ApiPrivacyNoticeController {
             }
             return ResponseEntity.ok("Privacy Notice added to all the apps");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -236,7 +231,7 @@ public class ApiPrivacyNoticeController {
             dataBaseService.deletePrivacyNotice(privacyNotice);
             return ResponseEntity.ok("Privacy Notice successfully deleted");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -261,7 +256,7 @@ public class ApiPrivacyNoticeController {
             dataBaseService.deletePrivacyNotice(privacyNotice);
             return ResponseEntity.ok("Privacy Notice successfully deleted");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

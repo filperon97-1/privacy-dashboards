@@ -8,8 +8,6 @@ import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.entity.UserAppRelation;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -22,8 +20,6 @@ import java.util.List;
 
 @RestController
 public class ApiUserAppRelationController {
-
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private DataBaseService dataBaseService;
@@ -54,7 +50,7 @@ public class ApiUserAppRelationController {
             ObjectNode userAppRelationJson= apiGeneralController.createJsonFromUserAppRelation(userAppRelation);
             return ResponseEntity.ok(userAppRelationJson);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -82,7 +78,7 @@ public class ApiUserAppRelationController {
                 return ResponseEntity.badRequest().body("user already has this app");
             }
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -118,7 +114,7 @@ public class ApiUserAppRelationController {
             dataBaseService.addConsenses(userAppRelation, newConsenses);
             return ResponseEntity.ok("consenses added successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -148,7 +144,7 @@ public class ApiUserAppRelationController {
                 return ResponseEntity.badRequest().body("user doesn't have this app");
             }
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -184,7 +180,7 @@ public class ApiUserAppRelationController {
             dataBaseService.removeConsensesFromUserAppRelation(userAppRelation, newConsenses);
             return ResponseEntity.ok("consenses removed successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -212,7 +208,7 @@ public class ApiUserAppRelationController {
             dataBaseService.removeAllConsenses(userAppRelation);
             return ResponseEntity.ok("consenses removed successfully");
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

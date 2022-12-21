@@ -8,8 +8,6 @@ import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -26,9 +24,6 @@ public class ApiUserController {
     private UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
     private ApiGeneralController apiGeneralController;
-
-
-    Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Get information about a user
@@ -47,7 +42,7 @@ public class ApiUserController {
             return ResponseEntity.ok(userJson);
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -70,7 +65,7 @@ public class ApiUserController {
             return ResponseEntity.ok(userJson);
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -101,7 +96,7 @@ public class ApiUserController {
             return ResponseEntity.ok(contactsArray);
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -133,7 +128,7 @@ public class ApiUserController {
             }
             return ResponseEntity.ok(appsArray);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -155,7 +150,7 @@ public class ApiUserController {
             return ResponseEntity.ok("user created successfully");
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -181,7 +176,7 @@ public class ApiUserController {
             }
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -205,7 +200,7 @@ public class ApiUserController {
             return ResponseEntity.ok("user updated successfully");
         }
         catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getStackTrace()[0].toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e){
             return ResponseEntity.badRequest().body("invalid JSON");
         }
@@ -218,10 +213,7 @@ public class ApiUserController {
         if(dataBaseService.getAllContactsFromUser(user1).contains(user2)){
             return true;
         }
-        if(user2.getRole().equals(Role.CONTROLLER) || user2.getRole().equals(Role.DPO)){
-            return true;
-        }
-        return false;
+        return user2.getRole().equals(Role.CONTROLLER) || user2.getRole().equals(Role.DPO);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

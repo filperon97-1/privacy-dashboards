@@ -146,6 +146,16 @@
             <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.privacydashboard.application</groupId>
+            <artifactId>privacydashboard</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+
+
+
     </dependencies>
 
     <build>

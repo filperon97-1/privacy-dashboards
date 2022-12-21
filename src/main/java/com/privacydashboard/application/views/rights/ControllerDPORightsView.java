@@ -1,24 +1,25 @@
 package com.privacydashboard.application.views.rights;
 
-import com.privacydashboard.application.data.RightType;
 import com.privacydashboard.application.data.entity.RightRequest;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
+import com.privacydashboard.application.views.apps.AppsView;
+import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.privacydashboard.application.views.usefulComponents.ToggleButton;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,9 +34,8 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     private final Grid<RightRequest> grid= new Grid<>();
     private final ToggleButton toggleButton=new ToggleButton("HANDLED", false);
     private final MyDialog requestDialog= new MyDialog();
+    private final GridComponentRightsView gridComponentRightsView;
     private RightRequest priorityRight=null;
-
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     @Override
     public void beforeEnter(BeforeEnterEvent event){
@@ -49,58 +49,45 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         this.dataBaseService = dataBaseService;
         this.authenticatedUser = authenticatedUser;
         this.communicationService= communicationService;
+
+        addClassName("rights-view");
+        gridComponentRightsView= new GridComponentRightsView(authenticatedUser.getUser().getRole());
+        initializeGridComponentRightsView();
         initializeGrid();
     }
 
-    private void initializeGrid(){
-        toggleButton.addClickListener(e-> updateGrid(toggleButton.getValue()));
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
-        grid.addColumn(request -> request.getSender().getName()).setHeader("NAME").setSortable(true);
-        grid.addColumn(request -> request.getRightType().toString()).setHeader("RIGHT TYPE").setSortable(true);
-        grid.addColumn(request -> request.getApp().getName()).setHeader("APP").setSortable(true);
-        grid.addColumn(request -> dtf.format(request.getTime())).setHeader("TIME").setSortable(true);
-        grid.addColumn(RightRequest::getDetails).setHeader("DETAILS").setSortable(true);
-        grid.addColumn(RightRequest::getHandled).setHeader(toggleButton);
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.asSingleSelect().addValueChangeListener(event -> showRequest(event.getValue()));
+    private void initializeGridComponentRightsView(){
+        gridComponentRightsView.addListener(GridComponentRightsView.ContactEvent.class, this::goToUser);
+        gridComponentRightsView.addListener(GridComponentRightsView.AppEvent.class, this::goToApp);
+    }
 
+    private void initializeGrid(){
+        HorizontalLayout headerGrid=gridComponentRightsView.getHeaderLayout(toggleButton);
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
+        grid.addComponentColumn(this::showRequestCard);
+        grid.getColumns().get(0).setHeader(headerGrid);
+        toggleButton.addClickListener(e-> updateGrid(toggleButton.getValue()));
         add(grid);
+    }
+
+    private HorizontalLayout showRequestCard(RightRequest request){
+        HorizontalLayout card=gridComponentRightsView.getCard(request);
+        card.addClickListener(e -> showRequest(request));
+        return card;
     }
 
     private void showRequest(RightRequest request){
         if(request==null){
             return;
         }
-        Span sender=new Span("Sender User:   "+ request.getSender().getName());
-        Span rightType=new Span("Right:   " + request.getRightType().toString());
-        Span app=new Span("App:   " + request.getApp().getName());
-        Span time=new Span("Time:   " + dtf.format(request.getTime()));
-        Span details=new Span("Details:   " + request.getDetails());
-        String otherString="";
-        if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
-            otherString="Consent to withdraw:   ";
-        }
-        if(request.getRightType().equals(RightType.COMPLAIN)){
-            otherString="Complain:   ";
-        }
-        if(request.getRightType().equals(RightType.INFO)){
-            otherString="Info:   ";
-        }
-        if(request.getRightType().equals(RightType.ERASURE)){
-            otherString="What to erase:   ";
-        }
-        Span other=new Span(otherString + (request.getOther()==null ? "" : request.getOther()));
-        TextArea textArea=new TextArea("Your response");
-        textArea.setPlaceholder("Write your response...");
-        textArea.setValue(request.getResponse()==null ? "" : request.getResponse());
-        Checkbox checkbox=new Checkbox();
-        checkbox.setValue(request.getHandled());
-        checkbox.setLabel("Handled");
+        VerticalLayout contentLayout= gridComponentRightsView.getContent(request);
+        Checkbox checkbox= (Checkbox) contentLayout.getComponentAt(7);
+        TextArea textArea= (TextArea) contentLayout.getComponentAt(6);
 
         Button save=new Button("Save" , e->changeRequest(request, checkbox.getValue(), textArea.getValue()));
         requestDialog.setTitle("Right Request");
         requestDialog.setContinueButton(save);
-        requestDialog.setContent(new VerticalLayout(sender, rightType, app, time, details, other, textArea, checkbox));
+        requestDialog.setContent(contentLayout);
         requestDialog.open();
     }
 
@@ -135,5 +122,17 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
        updateGrid(false);
+    }
+
+    private void goToUser(GridComponentRightsView.ContactEvent event){
+        requestDialog.close();
+        communicationService.setContact(event.getContact());
+        UI.getCurrent().navigate(ContactsView.class);
+    }
+
+    private void goToApp(GridComponentRightsView.AppEvent event){
+        requestDialog.close();
+        communicationService.setApp(event.getApp());
+        UI.getCurrent().navigate(AppsView.class);
     }
 }

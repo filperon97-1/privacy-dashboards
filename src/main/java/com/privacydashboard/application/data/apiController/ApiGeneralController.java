@@ -82,11 +82,15 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException If user with that ID does not exist
      */
     public User getUserFromId(String uuid) throws IllegalArgumentException {
-        Optional<User> maybeUser = dataBaseService.getUser(UUID.fromString(uuid));
-        if (maybeUser.isPresent()) {
-            return maybeUser.get();
-        } else {
-            throw new IllegalArgumentException("user does not exist");
+        try {
+            Optional<User> maybeUser = dataBaseService.getUser(UUID.fromString(uuid));
+            if (maybeUser.isPresent()) {
+                return maybeUser.get();
+            } else {
+                throw new IllegalArgumentException("user does not exist");
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
@@ -97,20 +101,28 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException If app with that ID does not exist
      */
     public IoTApp getAppFromId(String uuid) throws IllegalArgumentException {
-        Optional<IoTApp> maybeApp = dataBaseService.getApp(UUID.fromString(uuid));
-        if (maybeApp.isPresent()) {
-            return maybeApp.get();
-        } else {
-            throw new IllegalArgumentException("app does not exist");
+        try {
+            Optional<IoTApp> maybeApp = dataBaseService.getApp(UUID.fromString(uuid));
+            if (maybeApp.isPresent()) {
+                return maybeApp.get();
+            } else {
+                throw new IllegalArgumentException("app does not exist");
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
     public Message getMessageFromId(String uuid) throws IllegalArgumentException {
-        Optional<Message> message = dataBaseService.getMessageFromID(UUID.fromString(uuid));
-        if (message.isPresent()) {
-            return message.get();
-        } else {
-            throw new IllegalArgumentException("message does not exist");
+        try {
+            Optional<Message> message = dataBaseService.getMessageFromID(UUID.fromString(uuid));
+            if (message.isPresent()) {
+                return message.get();
+            } else {
+                throw new IllegalArgumentException("message does not exist");
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
@@ -136,11 +148,15 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException if IDs invalid, privacy notice does not exist
      */
     public PrivacyNotice getPrivacyNoticeFromId(String privacyNoticeId) throws IllegalArgumentException {
-        Optional<PrivacyNotice> privacyNotice = dataBaseService.getPrivacyNoticeFromId(UUID.fromString(privacyNoticeId));
-        if (privacyNotice.isPresent()) {
-            return privacyNotice.get();
-        } else {
-            throw new IllegalArgumentException("privacy notice does not exist");
+        try {
+            Optional<PrivacyNotice> privacyNotice = dataBaseService.getPrivacyNoticeFromId(UUID.fromString(privacyNoticeId));
+            if (privacyNotice.isPresent()) {
+                return privacyNotice.get();
+            } else {
+                throw new IllegalArgumentException("privacy notice does not exist");
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
@@ -164,11 +180,15 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException if IDs invalid, notification does not exist
      */
     public Notification getNotificationFromId(String notificationId) throws IllegalArgumentException {
-        Optional<Notification> notification= dataBaseService.getNotificationFromId(UUID.fromString(notificationId));
-        if (notification.isPresent()) {
-            return notification.get();
-        } else {
-            throw new IllegalArgumentException("notification does not exist");
+        try {
+            Optional<Notification> notification = dataBaseService.getNotificationFromId(UUID.fromString(notificationId));
+            if (notification.isPresent()) {
+                return notification.get();
+            } else {
+                throw new IllegalArgumentException("notification does not exist");
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
@@ -178,12 +198,15 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException if IDs invalid, RightRequest does not exist
      */
     public RightRequest getRequestFromId(String requestId) throws IllegalArgumentException {
-        RightRequest request= dataBaseService.getRequestFromId(UUID.fromString(requestId));
-        if(request==null){
-            throw new IllegalArgumentException("Right Request does not exist");
-        }
-        else{
-            return request;
+        try {
+            RightRequest request = dataBaseService.getRequestFromId(UUID.fromString(requestId));
+            if (request == null) {
+                throw new IllegalArgumentException("Right Request does not exist");
+            } else {
+                return request;
+            }
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid ID");
         }
     }
 
@@ -242,8 +265,12 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException If the indicated ID is an invalid UUID
      */
     public IoTApp getAppFromJsonString(boolean nameMandatory, String body) throws IOException, IllegalArgumentException {
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getAppFromJsonNode(nameMandatory, rootNode);
+        try{
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getAppFromJsonNode(nameMandatory, rootNode);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        }
     }
 
     /**
@@ -365,8 +392,12 @@ public class ApiGeneralController {
      * @throws IllegalArgumentException If the indicated ID is an invalid UUID
      */
     public User getUserFromJsonString(boolean parametersMandatory, String body) throws IllegalArgumentException, IOException {
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getUserFromJsonNode(parametersMandatory, rootNode);
+        try {
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getUserFromJsonNode(parametersMandatory, rootNode);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        }
     }
 
     /**
@@ -480,8 +511,16 @@ public class ApiGeneralController {
      * @throws DateTimeParseException   If time is invalid
      */
     public Message getMessageFromJsonString(String body) throws IllegalArgumentException, IOException, DateTimeParseException {
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getMessageFromJsonNode(rootNode);
+        try {
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getMessageFromJsonNode(rootNode);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        } catch (DateTimeParseException e){
+            throw new IllegalArgumentException("invalid date");
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid JSON parameters");
+        }
     }
 
     /**
@@ -548,8 +587,12 @@ public class ApiGeneralController {
      * @throws IOException              if invalid JSON
      */
     public PrivacyNotice getPrivacyNoticeFromJsonString(boolean mandatoryParameters, String body) throws IllegalArgumentException, IOException {
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getPrivacyNoticeFromJsonNode(mandatoryParameters, rootNode);
+        try {
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getPrivacyNoticeFromJsonNode(mandatoryParameters, rootNode);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        }
     }
 
     /**
@@ -638,8 +681,12 @@ public class ApiGeneralController {
      * @throws IOException if invalid JSON
      */
     public Notification getNotificationFromJsonString(String body) throws IllegalArgumentException, IOException{
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getNotificationFromJsonNode( rootNode);
+        try {
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getNotificationFromJsonNode(rootNode);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        }
     }
 
     /**
@@ -668,7 +715,11 @@ public class ApiGeneralController {
             }
         }
         notification.setType(type);
-        notification.setObjectId(UUID.fromString(node.get("objectId").asText()));
+        try {
+            notification.setObjectId(UUID.fromString(node.get("objectId").asText()));
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid object ID");
+        }
 
         if(node.has("description")){
             notification.setDescription(node.get("description").asText());
@@ -726,8 +777,6 @@ public class ApiGeneralController {
     }
 
     /**
-     * @param requestList
-     * @param user
      * @return JSON representing the requests in the request list that have the sender or the receiver equals to the parameter user
      */
     public ArrayNode createJsonRequestCheckAuthorizedUser(List<RightRequest> requestList, User user){
@@ -741,8 +790,6 @@ public class ApiGeneralController {
     }
 
     /**
-     * @param requestList
-     * @param app
      * @return JSON representing the requests in the request list that have the app equals to the parameter app
      */
     public ArrayNode createJsonRequestOfApp(List<RightRequest> requestList, IoTApp app){
@@ -756,12 +803,15 @@ public class ApiGeneralController {
     }
 
     /**
-     * @param requestList
-     * @param rightTypeString
      * @return JSON representing the requests in the request list that have the rightType equals to the parameter rightTypeString
      */
     public ArrayNode createJsonRequestOfRightType(List<RightRequest> requestList, String rightTypeString) throws IllegalArgumentException{
-        RightType rightType= RightType.valueOf(rightTypeString.toUpperCase());
+        RightType rightType;
+        try {
+            rightType = RightType.valueOf(rightTypeString.toUpperCase());
+        } catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("invalid Right Type");
+        }
         ArrayNode requestArray = mapper.createArrayNode();
         for(RightRequest request : requestList){
             if(request.getRightType().equals(rightType)){
@@ -779,8 +829,12 @@ public class ApiGeneralController {
      * @throws IOException if invalid JSON
      */
     public RightRequest getRequestFromJsonString(String body, boolean mandatoryParameters) throws IllegalArgumentException, IOException{
-        JsonNode rootNode = mapper.readTree(new StringReader(body));
-        return getRequestFromJsonNode(rootNode, mandatoryParameters);
+        try {
+            JsonNode rootNode = mapper.readTree(new StringReader(body));
+            return getRequestFromJsonNode(rootNode, mandatoryParameters);
+        } catch (IOException e){
+            throw new IOException("invalid JSON");
+        }
     }
 
     /**
@@ -817,7 +871,11 @@ public class ApiGeneralController {
         }
 
         if(node.has("time")){
-            request.setTime(LocalDateTime.parse(node.get("time").asText()));
+            try{
+                request.setTime(LocalDateTime.parse(node.get("time").asText()));
+            } catch (DateTimeParseException e){
+                throw new IllegalArgumentException("invalid date");
+            }
         }
         if(node.has("other")){
             request.setOther(node.get("other").asText());

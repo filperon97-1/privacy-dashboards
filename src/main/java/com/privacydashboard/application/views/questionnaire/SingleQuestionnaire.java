@@ -5,7 +5,6 @@ import com.privacydashboard.application.data.QuestionnaireVote;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;
-import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
@@ -38,7 +37,6 @@ import java.util.stream.Stream;
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserver, AfterNavigationObserver {
     private final DataBaseService dataBaseService;
-    private final AuthenticatedUser authenticatedUser;
     private final CommunicationService communicationService;
     private IoTApp app;
 
@@ -66,9 +64,8 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         }
     }
 
-    public SingleQuestionnaire(DataBaseService dataBaseService, AuthenticatedUser authenticatedUser, CommunicationService communicationService){
+    public SingleQuestionnaire(DataBaseService dataBaseService, CommunicationService communicationService){
         this.dataBaseService= dataBaseService;
-        this.authenticatedUser= authenticatedUser;
         this.communicationService= communicationService;
 
         n=0;
