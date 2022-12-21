@@ -129,6 +129,7 @@ public class PrivacyNoticeView extends Div implements AfterNavigationObserver, B
                 card.addClassName("canOpen");
             }
         });
+        card.add(new Span("ID: ") + privacyNotice.getId().toString());
         return card;
     }
 

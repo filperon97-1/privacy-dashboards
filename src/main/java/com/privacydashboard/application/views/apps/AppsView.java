@@ -120,6 +120,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         else{
             content.add(new Details(new Span("Data Subjects: ") , getUsers(i, Role.SUBJECT)));
         }
+        content.add(new Span("ID: ") + i.getId().toString());
         return content;
     }
 
