@@ -30,8 +30,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import java.util.Collections;
@@ -199,6 +197,9 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         }
 
         for(User u : users){
+            if(u.equals(authenticatedUser.getUser())){
+                continue;
+            }
             Span contactLink=new Span(u.getName());
             contactLink.addClassName("link");
             contactLink.addClickListener(e->communicationService.setContact(u));
