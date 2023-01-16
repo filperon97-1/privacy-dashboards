@@ -1,7 +1,7 @@
 package com.privacydashboard.application.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

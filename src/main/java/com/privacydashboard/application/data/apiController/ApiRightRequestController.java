@@ -2,7 +2,7 @@ package com.privacydashboard.application.data.apiController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 import com.privacydashboard.application.data.entity.*;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.UserDetailsServiceImpl;

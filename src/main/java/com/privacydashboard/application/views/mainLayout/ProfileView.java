@@ -1,6 +1,6 @@
 package com.privacydashboard.application.views.mainLayout;
 
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
 import com.privacydashboard.application.security.AuthenticatedUser;

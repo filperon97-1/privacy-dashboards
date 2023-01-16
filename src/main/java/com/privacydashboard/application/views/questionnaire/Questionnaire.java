@@ -1,6 +1,6 @@
 package com.privacydashboard.application.views.questionnaire;
 
-import com.privacydashboard.application.data.QuestionnaireVote;
+import com.privacydashboard.application.data.GlobalVariables.QuestionnaireVote;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.service.CommunicationService;
 import com.privacydashboard.application.data.service.DataBaseService;

@@ -1,6 +1,6 @@
 package com.privacydashboard.application.views.privacyNotice;
 
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.PrivacyNotice;
 import com.privacydashboard.application.data.entity.User;

@@ -1,6 +1,6 @@
 package com.privacydashboard.application.data.service;
 
-import com.privacydashboard.application.data.QuestionnaireVote;
+import com.privacydashboard.application.data.GlobalVariables.QuestionnaireVote;
 import com.privacydashboard.application.data.entity.IoTApp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

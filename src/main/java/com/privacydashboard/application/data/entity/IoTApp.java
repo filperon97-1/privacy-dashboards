@@ -1,6 +1,6 @@
 package com.privacydashboard.application.data.entity;
 
-import com.privacydashboard.application.data.QuestionnaireVote;
+import com.privacydashboard.application.data.GlobalVariables.QuestionnaireVote;
 
 import javax.persistence.*;
 import java.util.Hashtable;

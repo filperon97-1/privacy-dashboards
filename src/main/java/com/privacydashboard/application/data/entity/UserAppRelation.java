@@ -1,6 +1,6 @@
 package com.privacydashboard.application.data.entity;
 
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 
 import javax.persistence.*;
 import java.util.List;

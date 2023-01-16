@@ -10,4 +10,10 @@ public class GlobalVariables {
     public enum RightType {
         WITHDRAWCONSENT, COMPLAIN, ERASURE, DELTEEVERYTHING, INFO, PORTABILITY
     }
+    public enum Role {
+        SUBJECT, CONTROLLER, DPO
+    }
+    public enum QuestionnaireVote {
+        RED, ORANGE, GREEN
+    }
 }

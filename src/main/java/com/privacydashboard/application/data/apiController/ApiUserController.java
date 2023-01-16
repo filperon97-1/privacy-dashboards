@@ -3,7 +3,7 @@ package com.privacydashboard.application.data.apiController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.privacydashboard.application.data.Role;
+import com.privacydashboard.application.data.GlobalVariables.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.User;
 import com.privacydashboard.application.data.service.DataBaseService;
