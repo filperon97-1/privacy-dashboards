@@ -30,25 +30,21 @@ public class AuthenticatedUser {
     }
 
     public Optional<User> get() {
-        return getAuthentication().map(authentication -> userRepository.findByUsername(authentication.getName()));
+        return getAuthentication().map(authentication -> userRepository.findByName(authentication.getName()));
     }
 
     // AGGIUNTA, RESTITUISCE USER SENZA DOVER OGNI VOLTA GUARDARE IL DB. E' SICURO??????
     public User getUser(){
         if(UI.getCurrent().getSession().getAttribute("user")==null){
             Optional<User> maybeUser=get();
-            if(maybeUser.isPresent()){
-                UI.getCurrent().getSession().setAttribute("user", maybeUser.get());
-            }
+            maybeUser.ifPresent(user -> UI.getCurrent().getSession().setAttribute("user", user));
         }
         return (User) UI.getCurrent().getSession().getAttribute("user");
     }
 
     public User updateUser(){
         Optional<User> maybeUser=get();
-        if(maybeUser.isPresent()){
-            UI.getCurrent().getSession().setAttribute("user", maybeUser.get());
-        }
+        maybeUser.ifPresent(user -> UI.getCurrent().getSession().setAttribute("user", user));
         return (User) UI.getCurrent().getSession().getAttribute("user");
     }
 

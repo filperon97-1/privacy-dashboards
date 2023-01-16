@@ -7,13 +7,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.util.Set;
 
 @Entity
 @Table(name = "application_user")
 public class User extends AbstractEntity {
 
-    private String username;
     private String name;
     @JsonIgnore
     private String hashedPassword;
@@ -25,12 +23,6 @@ public class User extends AbstractEntity {
     @Lob
     private String profilePictureUrl;
 
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
     public String getName() {
         return name;
     }

@@ -40,21 +40,18 @@ public class DataGenerator {
             apps=new IoTApp[50];
             for(int i=0; i<50;i++){
                 subjects[i]= new User();
-                subjects[i].setUsername("subject" + String.valueOf(i));
                 subjects[i].setName("subject" + String.valueOf(i));
                 subjects[i].setHashedPassword(passwordEncoder.encode("subject" + String.valueOf(i)));
                 subjects[i].setRole(Role.SUBJECT);
                 userRepository.save(subjects[i]);
 
                 controller[i]= new User();
-                controller[i].setUsername("controller" + String.valueOf(i));
                 controller[i].setName("controller" + String.valueOf(i));
                 controller[i].setHashedPassword(passwordEncoder.encode("controller" + String.valueOf(i)));
                 controller[i].setRole(Role.CONTROLLER);
                 userRepository.save(controller[i]);
 
                 DPO[i]= new User();
-                DPO[i].setUsername("DPO" + String.valueOf(i));
                 DPO[i].setName("DPO" + String.valueOf(i));
                 DPO[i].setHashedPassword(passwordEncoder.encode("DPO" + String.valueOf(i)));
                 DPO[i].setRole(Role.DPO);

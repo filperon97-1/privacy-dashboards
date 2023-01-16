@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    User findByUsername(String username);
+    User findByName(String username);
 
     @Modifying
     @Query("UPDATE User SET hashedPassword=:pass WHERE id=:id")

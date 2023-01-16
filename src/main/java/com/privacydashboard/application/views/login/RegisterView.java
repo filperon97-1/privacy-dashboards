@@ -53,7 +53,7 @@ public class RegisterView extends VerticalLayout {
         password.setErrorMessage("the password must be at least 8 characters");
         binder.forField(username).withValidator(name -> name.length()>=5, "name must be at least 5 characters")
                 .withValidator(this::isUniqueName, "username already in use, please use another one")
-                .bind(User::getUsername, User::setUsername);
+                .bind(User::getName, User::setName);
         binder.forField(confirmPassword).withValidator(pass-> pass.length()>=8, "the password must be at least 8 characters")
                 .withValidator(pass -> pass.equals(password.getValue()), "the two passwords must be equals")
                 .bind(User::getHashedPassword, User::setHashedPassword);

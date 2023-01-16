@@ -28,11 +28,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByName(username);
         if (user == null) {
             throw new UsernameNotFoundException("No user present with username: " + username);
         } else {
-            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getHashedPassword(),
+            return new org.springframework.security.core.userdetails.User(user.getName(), user.getHashedPassword(),
                     getAuthorities(user));
         }
     }
@@ -67,7 +67,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public boolean isAlreadyPresent(String name){
-        return userRepository.findByUsername(name)!=null;
+        return userRepository.findByName(name)!=null;
     }
 
     public void changeUserPassword(User user, String password){
