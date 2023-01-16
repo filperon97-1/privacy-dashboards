@@ -1,6 +1,6 @@
 package com.privacydashboard.application.views.apps;
 
-import com.privacydashboard.application.data.RightType;
+import com.privacydashboard.application.data.GlobalVariables.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
 import com.privacydashboard.application.data.entity.RightRequest;

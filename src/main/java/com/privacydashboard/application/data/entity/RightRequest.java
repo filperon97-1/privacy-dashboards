@@ -1,6 +1,6 @@
 package com.privacydashboard.application.data.entity;
 
-import com.privacydashboard.application.data.RightType;
+import com.privacydashboard.application.data.GlobalVariables.RightType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

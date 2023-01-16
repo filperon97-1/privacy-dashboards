@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.privacydashboard.application.data.GlobalVariables;
 import com.privacydashboard.application.data.QuestionnaireVote;
-import com.privacydashboard.application.data.RightType;
+import com.privacydashboard.application.data.GlobalVariables.RightType;
 import com.privacydashboard.application.data.Role;
 import com.privacydashboard.application.data.entity.*;
 import com.privacydashboard.application.data.service.DataBaseService;
