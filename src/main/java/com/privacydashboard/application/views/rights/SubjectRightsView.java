@@ -140,19 +140,11 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
     }
 
     private void generateAllRightsDetails(){
-        add(generateRightCard("Access data", "you have the right to receive your personal data [GDPR, article 20]",
-                 RightType.PORTABILITY));
-        add(generateRightCard("Withdraw a consent", "you have the right to withdraw consent at any time [GDPR, article 13 2(C)]",
-                 RightType.WITHDRAWCONSENT));
-        add(generateRightCard("Ask information", "you have the right to know some information:\n" +
-                        "the period for which the personal data will be stored,\n" +
-                        "the purposes of the processing for which the personal data are intended,\n" +
-                        "the recipients or categories of recipients of the personal data",
-                RightType.INFO));
-        add(generateRightCard("Compile a complain", "compile a complain to the supervisory authority",
-                 RightType.COMPLAIN));
-        add(generateRightCard("Erase data", "ask to erase some personal data",
-                RightType.ERASURE));
+        add(generateRightCard("Access data", RightType.PORTABILITY));
+        add(generateRightCard("Withdraw a consent", RightType.WITHDRAWCONSENT));
+        add(generateRightCard("Ask information", RightType.INFO));
+        add(generateRightCard("Compile a complain", RightType.COMPLAIN));
+        add(generateRightCard("Erase data", RightType.ERASURE));
     }
 
     private void startRequest(RightType rightType){
@@ -160,20 +152,11 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         dialogRight.showDialogRequest(rightType);
     }
 
-    private HorizontalLayout generateRightCard(String title, String info, RightType rightType){
+    private HorizontalLayout generateRightCard(String title, RightType rightType){
         Span name= new Span(title);
         name.addClassName("name");
-        Span icon=new Span();
-        icon.addClassNames("las la-info-circle");
-        icon.addClassName("pointer");
-        Span infoSpan= new Span(info);
-        infoSpan.addClassName("infoSpan");
-        HorizontalLayout iconLayout= new HorizontalLayout(icon, infoSpan);
-        iconLayout.addClassName("iconLayout");
-        HorizontalLayout card = new HorizontalLayout(name, iconLayout);
-        card.addClassName("card");
-        card.addClassName("canOpen");
-
+        HorizontalLayout card = new HorizontalLayout(name);
+        card.addClassNames("card canOpen");
         card.addClickListener(e-> startRequest(rightType));
         return card;
     }

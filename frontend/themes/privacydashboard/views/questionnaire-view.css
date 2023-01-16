@@ -48,6 +48,10 @@
     color: black;
 }
 
+.activeButton-questionnaire:hover{
+    color:#1A2189;
+}
+
 .green{
     background-color:#3cb371;
 }

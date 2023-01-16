@@ -130,7 +130,7 @@ public class GridComponentRightsView extends Dialog {
         checkbox.setValue(request.getHandled());
         checkbox.setLabel("Handled");
 
-        return new VerticalLayout(user, rightType, appLayout, time, details, other, textArea, checkbox, new Span("ID: " + request.getId().toString()));
+        return new VerticalLayout(user, rightType, appLayout, time, details, other, textArea, checkbox/*, new Span("ID: " + request.getId().toString())*/);
     }
 
     public static class ContactEvent extends ComponentEvent<GridComponentRightsView> {

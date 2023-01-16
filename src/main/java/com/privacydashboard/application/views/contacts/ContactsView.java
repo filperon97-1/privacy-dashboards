@@ -89,7 +89,7 @@ public class ContactsView extends Div implements AfterNavigationObserver, Before
         if(contact.equals(priorityUser)){
             details.setOpened(true);
         }
-        card.add(new Span("ID: ") + contact.getId().toString());
+        //card.add(new Span("ID: " + contact.getId().toString()));
         return card;
     }
 

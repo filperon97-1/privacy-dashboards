@@ -144,13 +144,21 @@ public class DialogRight{
 
         ComboBox<String> infoComboBox= new ComboBox<>("info");
         LinkedList<String> infos= new LinkedList<>();
-        infos.add("Periodo di mantenimento dei dati");
+        /*infos.add("Periodo di mantenimento dei dati");
         infos.add("Contatto del Data Protection Officer");
         infos.add("Conoscere lo scopo del processamento dei dati e le sue basi legali");
         infos.add("Conoscere gli interessi legittimi del Controller o delle terze parti");
         infos.add("Conoscere i destinatari dei dati");
         infos.add("Sapere se i dati vanno a paesi terzi");
-        infos.add("Altro");
+        infos.add("Altro");*/
+
+        infos.add("The period for which the personal data will be stored");
+        infos.add("The contact details of the data protection officer,");
+        infos.add("The purposes of the processing and the legal basis for it");
+        infos.add("The legitimate interests pursued by the controller or by a third party");
+        infos.add("The recipients or categories of recipients of the personal data");
+        infos.add("The fact that the controller intends to transfer personal data to a third country");
+        infos.add("Other");
         infoComboBox.setItems(infos);
         requestDialog.setContent(new VerticalLayout(appComboBox, infoComboBox));
 

@@ -27,7 +27,6 @@ import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +53,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
     private final TextArea[] textAreas= new TextArea[GlobalVariables.nQuestions];
     private final VerticalLayout[] singleQuestion= new VerticalLayout[GlobalVariables.nQuestions];
 
+    private int redAnswers, orangeAnswers, greenAnswers;
     private Integer n;    // question number
 
     @Override
@@ -468,7 +468,7 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
 
         if(end){
             Button saveButton= new Button("Save", e-> saveQuestionnaire());
-            saveButton.addClassNames("saveButton-questionnaire");
+            saveButton.addClassNames("saveButton-questionnaire buuutton");
             layout.add(saveButton);
         }
 
@@ -503,7 +503,9 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         VerticalLayout greenLayout = new VerticalLayout();
         VerticalLayout orangeLayout = new VerticalLayout();
         VerticalLayout redLayout = new VerticalLayout();
-        int greenN=0, orangeN=0, redN=0;
+        redAnswers=0;
+        orangeAnswers=0;
+        greenAnswers=0;
 
         for(int i=0; i<GlobalVariables.nQuestions; i++){
             if(!singleQuestion[i].isVisible()){
@@ -521,17 +523,17 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
             answer.addClassName("singleQuestion-questionnaire");
 
             if(singleQuestion[i].hasClassName("green")){
-                greenN++;
+                greenAnswers++;
                 answer.addClassName("green");
                 greenLayout.add(answer);
             }
             else if(singleQuestion[i].hasClassName("orange")){
-                orangeN++;
+                orangeAnswers++;
                 answer.addClassName("orange");
                 orangeLayout.add(answer);
             }
             else{
-                redN++;
+                redAnswers++;
                 answer.addClassName("red");
                 redLayout.add(answer);
             }
@@ -540,23 +542,23 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
         VerticalLayout summarize= new VerticalLayout(new Span("Each answer can be a green answer (compliant with the GDPR), an orange answer (not so compliant withe the GDPR) " +
                 "or a red answer (not compliant with the GDPR)"));
         summarize.addClassName("bold");
-        VerticalLayout redTitle= new VerticalLayout(new Span("YOU HAVE " + redN + " RED ANSWERS"));
+        VerticalLayout redTitle= new VerticalLayout(new Span("YOU HAVE " + redAnswers + " RED ANSWERS"));
         redTitle.addClassNames("redName", "bold");
-        VerticalLayout orangeTitle= new VerticalLayout(new Span("YOU HAVE " + orangeN + " ORANGE ANSWERS"));
+        VerticalLayout orangeTitle= new VerticalLayout(new Span("YOU HAVE " + orangeAnswers + " ORANGE ANSWERS"));
         orangeTitle.addClassNames("orangeName", "bold");
-        VerticalLayout greenTitle= new VerticalLayout(new Span("YOU HAVE " + greenN + " GREEN ANSWERS"));
+        VerticalLayout greenTitle= new VerticalLayout(new Span("YOU HAVE " + greenAnswers + " GREEN ANSWERS"));
         greenTitle.addClassNames("greenName", "bold");
 
         sections[nSections-1].add(summarize, redTitle);
-        if(redN!=0){
+        if(redAnswers!=0){
             sections[nSections-1].add(redLayout);
         }
         sections[nSections-1].add(orangeTitle);
-        if(orangeN!=0){
+        if(orangeAnswers!=0){
             sections[nSections-1].add(orangeLayout);
         }
         sections[nSections-1].add(greenTitle);
-        if(greenN!=0){
+        if(greenAnswers!=0){
             sections[nSections-1].add(greenLayout);
         }
 
@@ -570,56 +572,38 @@ public class SingleQuestionnaire extends AppLayout implements BeforeEnterObserve
     private void saveQuestionnaire(){
         String[] detailVote= new String[GlobalVariables.nQuestions];
         Hashtable<Integer, String> optionalAnswers= new Hashtable<>();
-        AtomicReference<QuestionnaireVote> vote = new AtomicReference<>();
-        evaluateAndConfirm(vote, detailVote, optionalAnswers);
-
+        for(int i=0; i<GlobalVariables.nQuestions; i++){
+            detailVote[i]= radioGroups[i].getValue();
+            if(textAreas[i]!= null){
+                optionalAnswers.put(i, textAreas[i].getValue());
+            }
+        }
+        QuestionnaireVote vote;
         String textEvaluation;
-        switch (vote.get()){
-            case GREEN: textEvaluation="GREEN (Compliant with the GDPR)"; break;
-            case ORANGE: textEvaluation="ORANGE (Not so compliant with the GDPR)"; break;
-            default: textEvaluation="RED (Not compliant with the GDPR)"; break;
+        if(redAnswers>0){
+            vote=QuestionnaireVote.RED;
+            textEvaluation="RED (Not compliant with the GDPR)";
+        }
+        else if(orangeAnswers>0){
+            vote=QuestionnaireVote.ORANGE;
+            textEvaluation="ORANGE (Not so compliant with the GDPR)";
+        }
+        else{
+            vote=QuestionnaireVote.GREEN;
+            textEvaluation="GREEN (Compliant with the GDPR)";
         }
 
         MyDialog dialog= new MyDialog();
         dialog.setTitle("Confirm");
         dialog.setContent(new VerticalLayout(new Span("Questionnaire evaluation: " + textEvaluation), new Span("Are you sure you want to upload the questionnaire? Any previous one will be lost")));
         dialog.setContinueButton(new Button("Confirm", e-> {
-            dataBaseService.updateQuestionnaireForApp(app, vote.get(), detailVote, optionalAnswers);
+            dataBaseService.updateQuestionnaireForApp(app, vote, detailVote, optionalAnswers);
             Notification notification = Notification.show("Questionnaire uploaded correctly");
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             dialog.close();
             UI.getCurrent().navigate(Questionnaire.class);
         }));
         dialog.open();
-    }
-
-    private void evaluateAndConfirm(AtomicReference<QuestionnaireVote> vote, String[] detailVote, Hashtable<Integer, String> optionalAnswers){
-        vote.set(QuestionnaireVote.GREEN);
-        for(int i=0; i<GlobalVariables.nQuestions; i++){
-            /*
-            VOTE:
-            if there is a orange answer-> vote=orange
-            if there is a red answer or a not given answer(not hidden question) -> vote=red
-            otherwise -> vote=green
-             */
-            if(radioGroups[i].hasClassName("red")){
-                vote.set(QuestionnaireVote.RED);
-            }
-            else if(radioGroups[i].hasClassName("orange") && !vote.get().equals(QuestionnaireVote.RED)){
-                vote.set(QuestionnaireVote.ORANGE);
-            }
-            else if(!radioGroups[i].hasClassName("green") && radioGroups[i].isVisible()){ //Risposta non data e non è una domanda hidden?
-                vote.set(QuestionnaireVote.RED);
-            }
-
-            //DetailVote
-            detailVote[i]= radioGroups[i].getValue();
-
-            //optional answers
-            if(textAreas[i]!= null){
-                optionalAnswers.put(i, textAreas[i].getValue());
-            }
-        }
     }
 
     @Override
