@@ -11,6 +11,7 @@ import com.privacydashboard.application.security.AuthenticatedUser;
 import com.privacydashboard.application.views.MainLayout;
 import com.privacydashboard.application.views.contacts.ContactsView;
 import com.privacydashboard.application.views.privacyNotice.PrivacyNoticeView;
+import com.privacydashboard.application.views.questionnaire.SingleQuestionnaire;
 import com.privacydashboard.application.views.usefulComponents.MyDialog;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -29,6 +30,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import java.util.Collections;
@@ -134,33 +137,44 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         contextMenu.addClassName("info");
         Span descr= new Span("Evaluation: ");
         Span vote=new Span();
+        String text="";
 
         if(app.getQuestionnaireVote()==null){
             vote.setText("NO EVALUATION YET");
             vote.addClassName("redName");
-            contextMenu.addItem("The questionnaire to evaluate this app hasn't been performed yet");
+            text= "The questionnaire to evaluate this app hasn't been performed yet";
+
         }
         else{
             switch (app.getQuestionnaireVote()){
                 case RED:
                     vote.setText("RED ");
                     vote.addClassName("redName");
-                    contextMenu.addItem("The app is not compliant with the GDPR");
+                    text= "The app is not compliant with the GDPR";
                     break;
                 case ORANGE:
                     vote.setText("ORANGE ");
                     vote.addClassName("orangeName");
-                    contextMenu.addItem("The app is not so compliant with the GDPR");
+                    text= "The app is not so compliant with the GDPR";
                     break;
                 case GREEN:
                     vote.setText("GREEN ");
                     vote.addClassName("greenName");
-                    contextMenu.addItem("The app is compliant with the GDPR");
+                    text= "The app is compliant with the GDPR";
                     break;
             }
         }
-        return new Div(descr, vote, icon);
+        if(!authenticatedUser.getUser().getRole().equals(Role.SUBJECT)) {
+            contextMenu.addItem("Go to the questionnaire", e -> {
+                communicationService.setApp(app);
+                UI.getCurrent().navigate(SingleQuestionnaire.class);
+            });
         }
+        else {
+            contextMenu.addItem(text);
+        }
+        return new Div(descr, vote, icon);
+    }
 
     private void goToPrivacyNotice(IoTApp i){
         communicationService.setPrivacyNotice(dataBaseService.getPrivacyNoticeFromApp(i));
