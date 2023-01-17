@@ -16,8 +16,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.shared.Registration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 
@@ -77,44 +75,59 @@ public class GridComponentRightsView extends Dialog {
     }
 
     public VerticalLayout getContent(RightRequest request){
+        Span[] boldSpans= new Span[7];
+        Span[] normalSpans= new Span[7];
+        HorizontalLayout[] horizontalLayouts= new HorizontalLayout[7];
+
         User contact;
-        Span descriptionSpan= new Span();
         if(role.equals(Role.SUBJECT)){
-            descriptionSpan.setText("Receiver User:   ");
-            contact= request.getReceiver();
+            boldSpans[0]= new Span("Receiver User:   ");
+            contact=request.getReceiver();
         }
         else{
-            descriptionSpan.setText("Sender User:   ");
-            contact= request.getSender();
+            boldSpans[0]= new Span("Sender User:   ");
+            contact=request.getSender();
         }
-        Span userSpan= new Span(contact.getName());
-        userSpan.addClassName("link");
-        userSpan.addClickListener(e-> fireEvent(new ContactEvent(this, contact)));
-        HorizontalLayout user= new HorizontalLayout(descriptionSpan, userSpan);
-        Span rightType=new Span("Right:   " + request.getRightType().toString());
+        normalSpans[0]= new Span(contact.getName());
+        normalSpans[0].addClassName("link");
+        normalSpans[0].addClickListener(e-> fireEvent(new ContactEvent(this, contact)));
 
-        Span app= new Span("App:   ");
-        Span appSpan= new Span(request.getApp().getName());
-        appSpan.addClickListener(e-> fireEvent(new AppEvent(this, request.getApp())));
-        appSpan.addClassName("link");
-        HorizontalLayout appLayout= new HorizontalLayout(app, appSpan);
+        boldSpans[1]= new Span("Right:   ");
+        normalSpans[1]= new Span(request.getRightType().toString());
 
-        Span time=new Span("Time:   " + DateTimeFormatter.ofPattern("dd/MM/yyy").format(request.getTime()));
-        Span details=new Span("Details:   " + request.getDetails());
-        String otherString="";
+        boldSpans[2]= new Span("App:   ");
+        normalSpans[2]= new Span(request.getApp().getName());
+        normalSpans[2].addClickListener(e-> fireEvent(new AppEvent(this, request.getApp())));
+        normalSpans[2].addClassName("link");
+
+        boldSpans[3]= new Span("Time:   ");
+        normalSpans[3]= new Span(DateTimeFormatter.ofPattern("dd/MM/yyy").format(request.getTime()));
+
+        boldSpans[4]= new Span("Content: ");
+        normalSpans[4]= new Span(new DialogRight(null, null).getPremadeText(request));
+
+        boldSpans[5]= new Span("Details:   ");
+        normalSpans[5]= new Span(request.getDetails());
+
         if(request.getRightType().equals(RightType.WITHDRAWCONSENT)){
-            otherString="Consent to withdraw:   ";
+            boldSpans[6]= new Span("Consent to withdraw:   ");
         }
-        if(request.getRightType().equals(RightType.COMPLAIN)){
-            otherString="Complain:   ";
+        else if(request.getRightType().equals(RightType.COMPLAIN)){
+            boldSpans[6]= new Span("Complain:   ");
         }
-        if(request.getRightType().equals(RightType.INFO)){
-            otherString="Info:   ";
+        else if(request.getRightType().equals(RightType.INFO)){
+            boldSpans[6]= new Span("Info:   ");
         }
-        if(request.getRightType().equals(RightType.ERASURE)){
-            otherString="What to erase:   ";
+        else if(request.getRightType().equals(RightType.ERASURE)){
+            boldSpans[6]= new Span("What to erase:   ");
         }
-        Span other=new Span(otherString + (request.getOther()==null ? "" : request.getOther()));
+        normalSpans[6]= new Span(request.getOther()==null ? "" : request.getOther());
+
+        for(int i=0; i<7; i++){
+            boldSpans[i].addClassName("bold");
+            horizontalLayouts[i]= new HorizontalLayout(boldSpans[i], normalSpans[i]);
+        }
+
         TextArea textArea;
         Checkbox checkbox= new Checkbox();
         if(role.equals(Role.SUBJECT)){
@@ -127,18 +140,19 @@ public class GridComponentRightsView extends Dialog {
             textArea.setPlaceholder("Write your response...");
         }
         textArea.setValue(request.getResponse()==null ? "" : request.getResponse());
+        textArea.setWidthFull();
         checkbox.setValue(request.getHandled());
         checkbox.setLabel("Handled");
 
-        return new VerticalLayout(user, rightType, appLayout, time, details, other, textArea, checkbox/*, new Span("ID: " + request.getId().toString())*/);
+        VerticalLayout layout= new VerticalLayout(horizontalLayouts);
+        layout.add(textArea, checkbox);
+        return layout;
     }
 
     public static class ContactEvent extends ComponentEvent<GridComponentRightsView> {
-        Logger logger = LoggerFactory.getLogger(getClass());
         private final User contact;
         ContactEvent(GridComponentRightsView source, User contact){
             super(source, false);
-            logger.info("contact event");
             this.contact= contact;
         }
 

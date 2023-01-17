@@ -15,12 +15,15 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedList;
 
 public class DialogRight{
-    private final DataBaseService dataBaseService;
-    private final AuthenticatedUser authenticatedUser;
+    @Autowired
+    private DataBaseService dataBaseService;
+    @Autowired
+    private AuthenticatedUser authenticatedUser;
 
     private final MyDialog requestDialog= new MyDialog();
     private final Button continueButton=new Button("Continue");
@@ -229,10 +232,10 @@ public class DialogRight{
         confirmDialog.open();
     }
 
-    private String getPremadeText(RightRequest request){
+    public String getPremadeText(RightRequest request){
         if(request.getRightType().equals(RightType.PORTABILITY)){
             return("Dear " + request.getReceiver().getName() + ", \n" +
-                    "\"I would like to have access to my data from the app " +  request.getApp().getName() + " in a commonly used open format (XML, JSON),\n" +
+                    "I would like to have access to my data from the app " +  request.getApp().getName() + " in a commonly used open format (XML, JSON),\n" +
                     "Best regards, \n" +
                     request.getSender().getName());
         }

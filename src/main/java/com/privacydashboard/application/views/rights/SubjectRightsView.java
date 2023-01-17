@@ -109,9 +109,9 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         }
         if(priorityRight!=null && rightRequests.contains(priorityRight)){
             Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
+            showRequestCard(priorityRight);
         }
         grid.setItems(rightRequests);
-        grid.select(priorityRight);
         HorizontalLayout contentLayout= new HorizontalLayout(grid);
         contentLayout.addClassName("rights-view");
         rightList.setWithoutFooter(true);

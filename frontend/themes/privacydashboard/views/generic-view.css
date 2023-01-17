@@ -67,3 +67,6 @@ vaadin-button:hover{
   cursor:pointer;
 }
 
+.bold{
+  font-size: bold;
+}

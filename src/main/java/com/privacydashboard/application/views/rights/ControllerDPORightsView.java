@@ -81,8 +81,8 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
             return;
         }
         VerticalLayout contentLayout= gridComponentRightsView.getContent(request);
-        Checkbox checkbox= (Checkbox) contentLayout.getComponentAt(7);
-        TextArea textArea= (TextArea) contentLayout.getComponentAt(6);
+        Checkbox checkbox= (Checkbox) contentLayout.getComponentAt(8);
+        TextArea textArea= (TextArea) contentLayout.getComponentAt(7);
 
         Button save=new Button("Save" , e->changeRequest(request, checkbox.getValue(), textArea.getValue()));
         requestDialog.setTitle("Right Request");
@@ -93,6 +93,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
     private void changeRequest(RightRequest request, Boolean handled, String response){
         if((response.equals(request.getResponse()) || response.equals(""))  && handled==request.getHandled()){
+            requestDialog.close();
             return;
         }
         request.setResponse(response);
@@ -113,15 +114,15 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
         if(priorityRight!=null && rightRequests.contains(priorityRight)){
             Collections.swap(rightRequests, 0 , rightRequests.indexOf(priorityRight));
+            showRequest(priorityRight);
         }
         grid.setItems(rightRequests);
-        grid.select(priorityRight);
         priorityRight=null;
     }
 
     @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-       updateGrid(false);
+    public void afterNavigation(AfterNavigationEvent event){
+        updateGrid(false);
     }
 
     private void goToUser(GridComponentRightsView.ContactEvent event){
