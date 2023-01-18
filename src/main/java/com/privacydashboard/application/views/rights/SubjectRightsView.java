@@ -114,7 +114,6 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         grid.setItems(rightRequests);
         HorizontalLayout contentLayout= new HorizontalLayout(grid);
         contentLayout.addClassName("rights-view");
-        rightList.setWithoutFooter(true);
         rightList.setContent(contentLayout);
         rightList.setWidthFull();
         rightList.setHeight("70%");
@@ -134,7 +133,6 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
             return;
         }
         VerticalLayout contentLayout=gridComponentRightsView.getContent(request);
-        requestDialog.setWithoutFooter(true);
         requestDialog.setTitle("Right request");
         requestDialog.setContent(contentLayout);
         requestDialog.open();

@@ -184,7 +184,6 @@ public class PrivacyNoticeView extends Div implements AfterNavigationObserver, B
     private void showPrivacyNotice(PrivacyNotice privacyNotice){
         privacyNoticeDialog.setTitle("Privacy Notice " + privacyNotice.getApp().getName());
         privacyNoticeDialog.setContent(new VerticalLayout(convertText(privacyNotice.getText())));
-        privacyNoticeDialog.setWithoutFooter(true);
         privacyNoticeDialog.setWidth("100%");
         privacyNoticeDialog.open();
     }
