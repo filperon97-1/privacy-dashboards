@@ -1,5 +1,6 @@
 package com.privacydashboard.application.views.rights;
 
+import com.privacydashboard.application.data.GlobalVariables;
 import com.privacydashboard.application.data.GlobalVariables.RightType;
 import com.privacydashboard.application.data.GlobalVariables.Role;
 import com.privacydashboard.application.data.entity.IoTApp;
@@ -59,7 +60,7 @@ public class GridComponentRightsView extends Dialog {
         else {
             spans[0] = new Span(request.getSender().getName());
         }
-        spans[1]= new Span(request.getRightType().toString());
+        spans[1]= new Span(GlobalVariables.rightDict.get(request.getRightType()).toString());
         spans[2]= new Span(request.getApp().getName());
         spans[3]= new Span(DateTimeFormatter.ofPattern("dd/MM/yyy").format(request.getTime()));
         spans[4]= new Span(request.getHandled().toString());
@@ -93,7 +94,7 @@ public class GridComponentRightsView extends Dialog {
         normalSpans[0].addClickListener(e-> fireEvent(new ContactEvent(this, contact)));
 
         boldSpans[1]= new Span("Right:   ");
-        normalSpans[1]= new Span(request.getRightType().toString());
+        normalSpans[1]= new Span(GlobalVariables.rightDict.get(request.getRightType()).toString());
 
         boldSpans[2]= new Span("App:   ");
         normalSpans[2]= new Span(request.getApp().getName());
@@ -120,6 +121,12 @@ public class GridComponentRightsView extends Dialog {
         }
         else if(request.getRightType().equals(RightType.ERASURE)){
             boldSpans[6]= new Span("What to erase:   ");
+        }
+        else if(request.getRightType().equals(RightType.DELTEEVERYTHING)){
+            boldSpans[6]= new Span("");
+        }
+        else if(request.getRightType().equals(RightType.PORTABILITY)){
+            boldSpans[6]= new Span("");
         }
         normalSpans[6]= new Span(request.getOther()==null ? "" : request.getOther());
 

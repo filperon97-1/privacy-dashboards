@@ -144,6 +144,7 @@ public class SubjectRightsView extends VerticalLayout implements BeforeEnterObse
         add(generateRightCard("Ask information", RightType.INFO));
         add(generateRightCard("Compile a complain", RightType.COMPLAIN));
         add(generateRightCard("Erase data", RightType.ERASURE));
+        add(generateRightCard("Remove everything", RightType.DELTEEVERYTHING));
     }
 
     private void startRequest(RightType rightType){
