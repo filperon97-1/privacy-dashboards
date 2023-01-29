@@ -31,8 +31,293 @@ public class DataGenerator {
 
             logger.info("Generating demo data");
 
+            // APPS
+            String[] greenAnswers= new String[]{"Yes", "Yes", "less than 1 month", "Yes", "No", "", "They're located only in United Europe", "No", "Yes",
+                                                "I encrypt them", "SHA-3", "Yes", "Yes", "Yes", "Yes", "Yes", "TLS 1.2 or 1.3", "Yes", "every week", "Yes",
+                                                "Yes, OpenChain", "Yes", "Yes", "Yes", "Yes", "No", "", "Yes", "Yes, >=90%", "Yes"};
+            String[] orangeAnswers= new String[]{"Yes", "Yes", "between 1 month and 6 months", "Yes", "No", "", "They're located only in United Europe", "Yes", "Yes",
+                                                "I encrypt them", "SHA-3", "Yes", "Yes", "Yes", "Yes", "Yes", "TLS 1.2 or 1.3", "Yes", "between a week and a month", "Yes",
+                                                "No", "Yes", "Yes", "Yes", "No", "No", "", "Yes", "Yes, >=90%", "Yes"};
+            String[] redAnswers= new String[]{"Yes", "Yes", "less than 1 month", "No", "No", "", "They're located only in United Europe", "Yes", "Yes",
+                                                "Plain text", "", "No", "Yes", "Yes", "Yes", "Yes", "TLS 1.2 or 1.3", "Yes", "never", "Yes",
+                                                "No", "No", "", "No", "No", "Yes", "I don't know", "Yes", "Yes, >=90%", "Yes"};
+            IoTApp[] apps= new IoTApp[10];
+            int i=0;
+            apps[i]= new IoTApp();
+            apps[i].setName("Thermostat");
+            apps[i].setDescription("Efficiently regulates the temperature of the room using its sensors to perceive if there are people inside");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.GREEN);
+            apps[i].setDetailVote(greenAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Door Opener");
+            apps[i].setDescription("Automatically opens and closes the door when a person is near");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.ORANGE);
+            apps[i].setDetailVote(orangeAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Smart TV");
+            apps[i].setDescription("TV connected with internet");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.RED);
+            apps[i].setDetailVote(redAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Air Purifier");
+            apps[i].setDescription("Automatically analyzes and purifies the air in the room");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.ORANGE);
+            apps[i].setDetailVote(orangeAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Security Cameras");
+            apps[i].setDescription("Outdoor cameras connected with WIFI");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.RED);
+            apps[i].setDetailVote(redAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Video Doorbell");
+            apps[i].setDescription("Allows to let you see who's there without moving from the couch");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.GREEN);
+            apps[i].setDetailVote(greenAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Voice Assistant");
+            apps[i].setDescription("Takes care of all your needs");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.RED);
+            apps[i].setDetailVote(redAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Smart Lights Bulbs");
+            apps[i].setDescription("Vocally controlled light bulbs");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.GREEN);
+            apps[i].setDetailVote(greenAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Windows Opener");
+            apps[i].setDescription("Opens and closes the windows in the house based on the hour and on the outside climatic conditions");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.ORANGE);
+            apps[i].setDetailVote(orangeAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+            i++;
+
+            apps[i]= new IoTApp();
+            apps[i].setName("Smart Fridge");
+            apps[i].setDescription("WiFI connected fridge with recipe database integrated");
+            apps[i].setQuestionnaireVote(QuestionnaireVote.GREEN);
+            apps[i].setDetailVote(greenAnswers);
+            //apps[i].setOptionalAnswers();
+            ioTAppRepository.save(apps[i]);
+
+            // MAIN USERS
+            User subject, controller, dpo;
+            subject= new User();
+            subject.setRole(Role.SUBJECT);
+            subject.setName("UserSubject");
+            subject.setHashedPassword(passwordEncoder.encode("UserSubject"));
+            subject.setMail("userSubject@protonmail.com");
+            userRepository.save(subject);
+
+            controller= new User();
+            controller.setRole(Role.CONTROLLER);
+            controller.setName("UserController");
+            controller.setHashedPassword(passwordEncoder.encode("UserController"));
+            controller.setMail("userController@protonmail.com");
+            userRepository.save(controller);
+
+            dpo= new User();
+            dpo.setRole(Role.DPO);
+            dpo.setName("UserDPO");
+            dpo.setHashedPassword(passwordEncoder.encode("UserDPO"));
+            dpo.setMail("userDPO@protonmail.com");
+            userRepository.save(dpo);
+
+            // UserAppRelation MAIN
+            UserAppRelation[] userAppRelationSubject= new UserAppRelation[10];
+            UserAppRelation[] userAppRelationController= new UserAppRelation[10];
+            UserAppRelation[] userAppRelationDPO= new UserAppRelation[10];
+            for(int j=0; j<10; j++){
+                userAppRelationSubject[j]=new UserAppRelation();
+                userAppRelationSubject[j].setUser(subject);
+                userAppRelationSubject[j].setApp(apps[j]);
+                userAppRelationSubject[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                userAppRelationRepository.save(userAppRelationSubject[j]);
+
+                userAppRelationController[j]=new UserAppRelation();
+                userAppRelationController[j].setUser(controller);
+                userAppRelationController[j].setApp(apps[j]);
+                userAppRelationController[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                userAppRelationRepository.save(userAppRelationController[j]);
+
+                userAppRelationDPO[j]=new UserAppRelation();
+                userAppRelationDPO[j].setUser(dpo);
+                userAppRelationDPO[j].setApp(apps[j]);
+                userAppRelationDPO[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                userAppRelationRepository.save(userAppRelationDPO[j]);
+            }
+
+            // SUBJECTS
+            User[] subjects= new User[30];
+            String[] names= new String[]{"Luca Sandini", "Matt Brown", "Andrea Rizzato", "Alivia Wallace", "Lucinda Singleton", "Rehan Small", "Gilbert Melton", "Estelle Yates", "Jade Alvarado", "Tobias Bishop",
+                                        "Enzo Pessegatto", "Lucia Pianezzola", "Lino Peruzzo", "Margherita Dimasi", "Rafael Lloyd", "Stephen Moran", "Dominik Gardner", "Natalie Ingram", "Leia Erickson", "Anisa Hutchinson",
+                                        "Matteo Matei", "Daniele De Santi", "Victor Moran", "Todd Lyin", "Nicola Pozzato", "Benedetta Zenere", "Giorgia Gissi", "Nate Shelton", "Sofia Holman", "Teresa Silva"};
+
+            for(int j=0; j<30; j++){
+                subjects[j]=new User();
+                subjects[j].setRole(Role.SUBJECT);
+                subjects[j].setName(names[j]);
+                subjects[j].setHashedPassword(passwordEncoder.encode(names[j]));
+                subjects[j].setMail(names[j].replaceAll("\\s","") + "@protonmail.com");
+                userRepository.save(subjects[j]);
+
+                for(int k=j-2;k<j+2;k++){
+                    if(k<0){
+                        k*=-1;
+                    }
+                    int m=k%10;
+                    UserAppRelation userAppRelation= new UserAppRelation();
+                    userAppRelation.setApp(apps[m]);
+                    userAppRelation.setUser(subjects[j]);
+                    userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                    userAppRelationRepository.save(userAppRelation);
+                }
+            }
+
+            // CONTROLLERS
+            User[] controllers= new User[5];
+            String[] names2= new String[]{"Yuvraj Allison", "Vincent Houston", "Yousef Horne", "Wayne Cohen", "Xanthe Blackburn"};
+
+            for(int j=0; j<5; j++){
+                controllers[j]=new User();
+                controllers[j].setRole(Role.CONTROLLER);
+                controllers[j].setName(names2[j]);
+                controllers[j].setHashedPassword(names2[j]);
+                controllers[j].setMail(names2[j].replaceAll("\\s","") + "@protonmail.com");
+                userRepository.save(controllers[j]);
+
+                UserAppRelation userAppRelation= new UserAppRelation();
+                userAppRelation.setUser(controllers[j]);
+                userAppRelation.setApp(apps[j]);
+                userAppRelationRepository.save(userAppRelation);
+            }
+
+            // DPOs
+            User[] dpos= new User[5];
+            String[] names3= new String[]{"Xander Mcconnell", "Virginia Santini", "Zaira Romani", "Walter Santi", "Walter Treschi"};
+
+            for(int j=0; j<5; j++){
+                dpos[j]=new User();
+                dpos[j].setRole(Role.DPO);
+                dpos[j].setName(names3[j]);
+                dpos[j].setHashedPassword(names3[j]);
+                dpos[j].setMail(names3[j].replaceAll("\\s","") + "@protonmail.com");
+                userRepository.save(dpos[j]);
+
+                UserAppRelation userAppRelation= new UserAppRelation();
+                userAppRelation.setUser(dpos[j]);
+                userAppRelation.setApp(apps[j+5]);
+                userAppRelationRepository.save(userAppRelation);
+            }
+
+            // RIGHTS
+            for(int j=0; j<6; j++){
+                RightRequest request= new RightRequest();
+                request.setReceiver(controller);
+                request.setSender(subjects[j]);
+                request.setApp(apps[j]);
+                request.setHandled(j%2!=0);
+                request.setTime(LocalDateTime.now());
+                if(j==0){
+                    request.setSender(subject);
+                    request.setRightType(RightType.PORTABILITY);
+                    request.setDetails("Could you send me by my mail?");
+                }
+                else if(j==1){
+                    request.setSender(subject);
+                    request.setRightType(RightType.WITHDRAWCONSENT);
+                    request.setOther("consenso1");
+                }
+                else if(j==2){
+                    request.setRightType(RightType.ERASURE);
+                    request.setOther("The video made on August 19 2022");
+                }
+                else if(j==3){
+                    request.setRightType(RightType.INFO);
+                    request.setOther("The period for which the personal data will be stored");
+                    request.setResponse("For 1 year");
+                }
+                else if(j==4){
+                    request.setRightType(RightType.DELTEEVERYTHING);
+                    request.setDetails("I would like ALL my data to be deleted");
+                }
+                else if(j==5){
+                    request.setRightType(RightType.PORTABILITY);
+                    request.setDetails("As soon as possible, thanks");
+                }
+                rightRequestRepository.save(request);
+            }
+
+            for(int j=0; j<4; j++){
+                RightRequest request= new RightRequest();
+                request.setReceiver(controllers[j]);
+                request.setSender(subject);
+                request.setApp(apps[j]);
+                request.setHandled(j%2!=0);
+                request.setTime(LocalDateTime.now());
+                if(j==0){
+                    request.setRightType(RightType.WITHDRAWCONSENT);
+                    request.setOther("consenso2");
+                }
+                else if(j==1){
+                    request.setRightType(RightType.PORTABILITY);
+                }
+                else if(j==2){
+                    request.setRightType(RightType.DELTEEVERYTHING);
+                }
+                else if(j==3){
+                    request.setRightType(RightType.INFO);
+                    request.setOther("The contact details of the data protection officer");
+                    request.setResponse("his mail is: carlocarli@protonmail.com");
+                }
+                rightRequestRepository.save(request);
+            }
+
+
+
+
+
+
+
+
+
+
             //AGGIUNTA SUBJECTS, CONTROLLER, DPO, APP. TUTTI HANNO 50 ELEMENTI
-            User[] subjects, controller, DPO;
+            /*User[] subjects, controller, DPO;
             IoTApp[] apps;
             subjects= new User[50];
             controller= new User[50];
@@ -554,7 +839,7 @@ public class DataGenerator {
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime notNow=LocalDateTime.of(2020, 4, 13, 22, 11, 30);
             logger.info(dtf.format(notNow));
-
+            */
             //FINE AGGIUNTA
 
             logger.info("Generated demo data");

@@ -104,7 +104,9 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
     }
 
     private VerticalLayout initializeApp(IoTApp i){
-        Span description= new Span(i.getDescription());
+        Span descriptionSpan= new Span("Description:   ");
+        descriptionSpan.addClassName("bold");
+        Span description= new Span(descriptionSpan,  new Span(i.getDescription()));
         Div vote= getEvaluation(i);
         Span privacyNotice= new Span("Privacy Notice");
         privacyNotice.addClassName("link");
@@ -134,6 +136,7 @@ public class AppsView extends Div implements AfterNavigationObserver, BeforeEnte
         contextMenu.setOpenOnClick(true);
         contextMenu.addClassName("info");
         Span descr= new Span("Evaluation: ");
+        descr.addClassName("bold");
         Span vote=new Span();
         String text="";
 

@@ -33,7 +33,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
 
     private final Grid<RightRequest> grid= new Grid<>();
     private final ToggleButton toggleButton=new ToggleButton("HANDLED", false);
-    private final MyDialog requestDialog= new MyDialog();
+    private MyDialog requestDialog= new MyDialog();
     private final GridComponentRightsView gridComponentRightsView;
     private RightRequest priorityRight=null;
 
@@ -85,6 +85,7 @@ public class ControllerDPORightsView extends VerticalLayout implements BeforeEnt
         TextArea textArea= (TextArea) contentLayout.getComponentAt(7);
 
         Button save=new Button("Save" , e->changeRequest(request, checkbox.getValue(), textArea.getValue()));
+        requestDialog= new MyDialog();
         requestDialog.setTitle("Right Request");
         requestDialog.setContinueButton(save);
         requestDialog.setContent(contentLayout);

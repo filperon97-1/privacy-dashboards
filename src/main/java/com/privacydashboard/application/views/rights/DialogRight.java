@@ -150,7 +150,7 @@ public class DialogRight{
         LinkedList<String> infos= new LinkedList<>();
 
         infos.add("The period for which the personal data will be stored");
-        infos.add("The contact details of the data protection officer,");
+        infos.add("The contact details of the data protection officer");
         infos.add("The purposes of the processing and the legal basis for it");
         infos.add("The legitimate interests pursued by the controller or by a third party");
         infos.add("The recipients or categories of recipients of the personal data");
