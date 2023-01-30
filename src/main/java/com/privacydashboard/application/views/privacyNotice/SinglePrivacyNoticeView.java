@@ -19,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.richtexteditor.RichTextEditor;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
+import java.awt.*;
 import java.io.InputStream;
 
 @PageTitle("Compile privacy notice")
@@ -79,16 +81,17 @@ public class SinglePrivacyNoticeView extends VerticalLayout implements BeforeEnt
 
     private void initializeCustomizedLayout(){
         customizedTab.addClassName("pointer");
-        RichTextEditor textEditor=new RichTextEditor();
+        TextArea textEditor=new TextArea();
+        textEditor.setWidthFull();
         Button saveButton= new Button("Save", e->{
             if(textEditor.getValue()!=null){
-                savePrivacyNotice("<span>" + textEditor.asHtml().getValue() + "</span>");
+                savePrivacyNotice("<span>" + textEditor.getValue() + "</span>");
             }
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         if(privacyNotice.getText()!=null) {
-            textEditor.asHtml().setValue(privacyNotice.getText());
+            textEditor.setValue(privacyNotice.getText());
         }
 
         customizedLayout.add(textEditor, saveButton);

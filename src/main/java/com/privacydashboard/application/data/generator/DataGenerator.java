@@ -328,6 +328,196 @@ public class DataGenerator {
             }
 
 
+            // PRIVACY NOTICE
+            for(int j=0; j<10; j++){
+                PrivacyNotice privacyNotice= new PrivacyNotice();
+                privacyNotice.setApp(apps[j]);
+                if(j==0){
+                    privacyNotice.setText("Information Collected: We collect data about your heating and cooling preferences, temperature settings, and usage patterns to provide you our services.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the thermostat, as well as to offer personalized features and services.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the National Authority.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. \n" +
+                            "\n" +
+                            "Your Data will be stored for 6 months. ");
+                }
+                if(j==1){
+                    privacyNotice.setText("Information Collected: We collect information about your use of the door opener, including the dates and times when the door is opened and closed.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the door opener\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                if(j==2){
+                    privacyNotice.setText("Information Collected: We collect information about your TV usage, such as the channels you watch, the programs you record, and the on-demand content you access.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to personalize your viewing experience, to improve the performance and functionality of the TV and, with your consent, to provide you personalized content.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com.");
+                }
+                if(j==3){
+                    privacyNotice.setText("Information Collected: We collect information about your air purifier usage, such as the dates and times when it is turned on and off, the history of the air quality in your room and the settings you use.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the air purifier, and to offer personalized features and services.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                if(j==4){
+                    privacyNotice.setText("Information Collected: We collect video and audio recordings captured by your security cameras, as well as information about when and how the cameras are used.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to provide the security features and services, and to improve their performance.\n" +
+                            "\n" +
+                            "Sharing Information: We may share your information with an online service provider to allow remote access to your cameras. This provider is subject to strict confidentiality and security obligations.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                if(j==5){
+                    privacyNotice.setText("Information Collected: We collect video and audio recordings captured by your doorbell, as well as information about when and how the doorbell is used. \n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to provide the doorbell's features and services, and to improve their performance.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. \n");
+                }
+                if(j==6){
+                    privacyNotice.setText("Information Collected: We collect information about your use of the voice assistant, including voice commands and queries, and any related audio recordings.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to provide the voice assistant features and services, and to improve their performance, and, with your consent, to provide you personalized content\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                if(j==7){
+                    privacyNotice.setText("Information Collected: We collect information about your use of the smart light bulbs, including the dates and times when they are turned on and off, the settings you use, and the time of day that is needed to provide the automatic on and off switching feature.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the smart light bulbs, and to offer personalized features and services.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                if(j==8){
+                    privacyNotice.setText("Information Collected: We collect information about your use of the window opener, including the dates and times when it is activated and the settings you use.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the window opener, and to offer personalized features and services.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com.");
+                }
+                if(j==9){
+                    privacyNotice.setText("Information Collected: We collect information about your use of the smart fridge, including the items you store and the dates and times when you open and close the fridge.\n" +
+                            "\n" +
+                            "Use of Information: The information collected is used to improve the performance and functionality of the smart fridge, and to offer personalized features and services.\n" +
+                            "\n" +
+                            "Sharing Information: We do not share your information with third parties, except as required by law or with your consent.\n" +
+                            "\n" +
+                            "Data Security: We take appropriate technical and organizational measures to secure your information against unauthorized access, disclosure, or destruction.\n" +
+                            "\n" +
+                            "Your Rights: You have the right to access, correct, or delete your information, and to request that we stop processing it. You can also file a complaint with the national authority.\n" +
+                            "\n" +
+                            "Data Retention: We retain your information for a period of 6 months.\n" +
+                            "\n" +
+                            "Contact Us: If you have any questions or concerns about our privacy notice or practices, please contact us at fakemail@protonmail.com. ");
+                }
+                privacyNoticeRepository.save(privacyNotice);
+            }
+
+
+            // MESSAGGI
+            Message message= new Message();
+            message.setSender(subject);
+            message.setReceiver(controller);
+            message.setMessage("Dear UserController,\n" +
+                    "\n" +
+                    "I am writing to request the removal of my personal information in accordance with the General Data Protection Regulation (GDPR). As the owner of the smart light bulbs, I have the right to have my personal data erased.\n" +
+                    "\n" +
+                    "Please confirm that you have received this request and provide me with a timeline for the removal of my personal information from your systems.\n" +
+                    "\n" +
+                    "Sincerely,\n" +
+                    "UserSubject \n");
+            message.setTime(LocalDateTime.now());
+            messageRepository.save(message);
+
+            Message message2= new Message();
+            message2.setSender(subjects[0]);
+            message2.setReceiver(controller);
+            message2.setMessage("Dear UserController,\n" +
+                    "\n" +
+                    "I am writing to request the removal of my personal information in accordance with the General Data Protection Regulation (GDPR). As the owner of the smart light bulbs, I have the right to have my personal data erased.\n" +
+                    "\n" +
+                    "Please confirm that you have received this request and provide me with a timeline for the removal of my personal information from your systems.\n" +
+                    "\n" +
+                    "Sincerely,\n" +
+                    "Luca Sandini \n");
+            message2.setTime(LocalDateTime.now());
+            messageRepository.save(message2);
+
+
+
+
 
 
 

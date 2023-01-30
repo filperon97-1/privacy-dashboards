@@ -12,6 +12,7 @@ public class Message extends AbstractEntity{
     @ManyToOne
     @JoinColumn(name = "receiverId")
     private User receiver;
+    @Lob
     private String message;
     private LocalDateTime time;
 

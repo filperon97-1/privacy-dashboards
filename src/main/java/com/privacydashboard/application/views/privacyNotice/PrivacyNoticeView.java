@@ -47,7 +47,6 @@ public class PrivacyNoticeView extends Div implements AfterNavigationObserver, B
     private final MyDialog newPrivacyNoticeDialog=new MyDialog();
     private final Button newPrivacyNoticeButton= new Button("Compile new Privacy Notice", e-> newPrivacyNoticeDialog.open());
     private final ComboBox<IoTApp> appComboBox= new ComboBox<>("Apps");
-    private final MyDialog privacyNoticeDialog= new MyDialog();
 
     private PrivacyNotice priorityNotice;
 
@@ -182,6 +181,7 @@ public class PrivacyNoticeView extends Div implements AfterNavigationObserver, B
 
     // ONLY FOR SUBJECTS
     private void showPrivacyNotice(PrivacyNotice privacyNotice){
+        MyDialog privacyNoticeDialog= new MyDialog();
         privacyNoticeDialog.setTitle("Privacy Notice " + privacyNotice.getApp().getName());
         privacyNoticeDialog.setContent(new VerticalLayout(convertText(privacyNotice.getText())));
         privacyNoticeDialog.setWidth("100%");
