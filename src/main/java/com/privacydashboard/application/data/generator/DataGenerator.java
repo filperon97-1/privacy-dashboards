@@ -165,19 +165,34 @@ public class DataGenerator {
                 userAppRelationSubject[j]=new UserAppRelation();
                 userAppRelationSubject[j].setUser(subject);
                 userAppRelationSubject[j].setApp(apps[j]);
-                userAppRelationSubject[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                if(j==2 || j==6){
+                    userAppRelationSubject[j].setConsenses(List.of("processing of personal information to provide the service", "processing of personal information to personalize the content"));
+                }
+                else{
+                    userAppRelationSubject[j].setConsenses(List.of("processing of personal information to provide the service"));
+                }
                 userAppRelationRepository.save(userAppRelationSubject[j]);
 
                 userAppRelationController[j]=new UserAppRelation();
                 userAppRelationController[j].setUser(controller);
                 userAppRelationController[j].setApp(apps[j]);
-                userAppRelationController[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                if(j==2 || j==6){
+                    userAppRelationController[j].setConsenses(List.of("processing of personal information to provide the service", "processing of personal information to personalize the content"));
+                }
+                else{
+                    userAppRelationController[j].setConsenses(List.of("processing of personal information to provide the service"));
+                }
                 userAppRelationRepository.save(userAppRelationController[j]);
 
                 userAppRelationDPO[j]=new UserAppRelation();
                 userAppRelationDPO[j].setUser(dpo);
                 userAppRelationDPO[j].setApp(apps[j]);
-                userAppRelationDPO[j].setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                if(j==2 || j==6){
+                    userAppRelationDPO[j].setConsenses(List.of("processing of personal information to provide the service", "processing of personal information to personalize the content"));
+                }
+                else{
+                    userAppRelationDPO[j].setConsenses(List.of("processing of personal information to provide the service"));
+                }
                 userAppRelationRepository.save(userAppRelationDPO[j]);
             }
 
@@ -203,7 +218,12 @@ public class DataGenerator {
                     UserAppRelation userAppRelation= new UserAppRelation();
                     userAppRelation.setApp(apps[m]);
                     userAppRelation.setUser(subjects[j]);
-                    userAppRelation.setConsenses(List.of("consenso1", "consenso2", "consenso3"));
+                    if(m==2 || m==6){
+                        userAppRelation.setConsenses(List.of("processing of personal information to provide the service", "processing of personal information to personalize the content"));
+                    }
+                    else{
+                        userAppRelation.setConsenses(List.of("processing of personal information to provide the service"));
+                    }
                     userAppRelationRepository.save(userAppRelation);
                 }
             }
@@ -259,12 +279,12 @@ public class DataGenerator {
                 }
                 else if(j==1){
                     request.setSender(subject);
-                    request.setRightType(RightType.WITHDRAWCONSENT);
-                    request.setOther("consenso1");
+                    request.setRightType(RightType.DELTEEVERYTHING);
+                    request.setDetails("I would like ALL my data to be deleted");
                 }
                 else if(j==2){
-                    request.setRightType(RightType.ERASURE);
-                    request.setOther("The video made on August 19 2022");
+                    request.setRightType(RightType.WITHDRAWCONSENT);
+                    request.setOther("processing of personal information to personalize the content");
                 }
                 else if(j==3){
                     request.setRightType(RightType.INFO);
@@ -272,8 +292,8 @@ public class DataGenerator {
                     request.setResponse("For 1 year");
                 }
                 else if(j==4){
-                    request.setRightType(RightType.DELTEEVERYTHING);
-                    request.setDetails("I would like ALL my data to be deleted");
+                    request.setRightType(RightType.ERASURE);
+                    request.setOther("The video made on August 19 2022");
                 }
                 else if(j==5){
                     request.setRightType(RightType.PORTABILITY);
@@ -290,14 +310,14 @@ public class DataGenerator {
                 request.setHandled(j%2!=0);
                 request.setTime(LocalDateTime.now());
                 if(j==0){
-                    request.setRightType(RightType.WITHDRAWCONSENT);
-                    request.setOther("consenso2");
+                    request.setRightType(RightType.DELTEEVERYTHING);
                 }
                 else if(j==1){
                     request.setRightType(RightType.PORTABILITY);
                 }
                 else if(j==2){
-                    request.setRightType(RightType.DELTEEVERYTHING);
+                    request.setRightType(RightType.WITHDRAWCONSENT);
+                    request.setOther("processing of personal information to personalize the content");
                 }
                 else if(j==3){
                     request.setRightType(RightType.INFO);
