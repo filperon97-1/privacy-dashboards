@@ -155,7 +155,11 @@ public class FormPrivacyNotice extends VerticalLayout {
         }
 
         dialog.setTitle(titleText);
-        dialog.setContent(new HorizontalLayout(visualizeText(text)));
+        TextArea textArea= new TextArea();
+        textArea.setValue(text);
+        textArea.setWidthFull();
+        textArea.setReadOnly(true);
+        dialog.setContent(new HorizontalLayout(textArea));
         dialog.setContinueButton(saveButton);
         dialog.open();
     }
@@ -165,11 +169,17 @@ public class FormPrivacyNotice extends VerticalLayout {
     PER ORA LO SALVO COME HTML MA IN CASO SI VOGLIA CARICARE DIRETTAMENTE IL FILE BISOGNA CAPIRE COME FARE
      */
     private String convertText(){
-        String privacyNoticeText = "<p>";
+        /*String privacyNoticeText = "<p>";
         for (int i = 0; i < nQuestions; i++) {
             privacyNoticeText += "<b>" + mainText[i].getText() + "</b><br/>" + textAreas[i].getValue() + "<br/><br/>";
         }
-        return privacyNoticeText + "</p>";
+        return privacyNoticeText + "</p>";*/
+
+        String privacyNoticeText = "";
+        for (int i = 0; i < nQuestions; i++) {
+            privacyNoticeText += mainText[i].getText() + "\n" + textAreas[i].getValue() + "\n";
+        }
+        return privacyNoticeText;
     }
 
     /*
